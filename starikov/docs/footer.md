@@ -1,0 +1,56 @@
+# Footer
+```
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.12.3/tocbot.min.js"></script>
+
+<script>
+    const parent = document.querySelector(".gh-content.gh-canvas");
+    // Create the <aside> element
+    const asideElement = document.createElement("aside");
+    asideElement.setAttribute("class", "gh-sidebar");
+    //asideElement.style.zIndex = 0; // sent to back so it doesn't show on top of images
+
+    // Create the container div for title and TOC
+    const containerElement = document.createElement("div");
+    containerElement.setAttribute("class", "gh-toc-container");
+
+    // Create the title element
+    const titleElement = document.createElement("div");
+    titleElement.textContent = "Table of Contents";
+    titleElement.style.fontWeight = "bold";
+    containerElement.appendChild(titleElement);
+
+    // Create the <div> element for TOC
+    const divElement = document.createElement("div");
+    divElement.setAttribute("class", "gh-toc");
+    containerElement.appendChild(divElement);
+
+    // Append the <div> element to the <aside> element
+    asideElement.appendChild(containerElement);
+    parent.insertBefore(asideElement, parent.firstChild);
+    
+    tocbot.init({
+        // Where to render the table of contents.
+        tocSelector: '.gh-toc',
+        // Where to grab the headings to build the table of contents.
+        contentSelector: '.gh-content',
+        // Which headings to grab inside of the contentSelector element.
+        headingSelector: 'h1, h2, h3, h4',
+        // Ensure correct positioning
+        hasInnerContainers: true,
+    });
+    
+    // Get the table of contents element
+    const toc = document.querySelector(".gh-toc");
+    const sidebar = document.querySelector(".gh-sidebar");
+
+    // Check the number of items in the table of contents
+    const tocItems = toc.querySelectorAll('li').length;
+
+    // Only show the table of contents if it has more than 5 items
+    if (tocItems > 2) {
+      sidebar.style.display = 'block';
+    } else {
+      sidebar.style.display = 'none';
+    }
+</script>
+```

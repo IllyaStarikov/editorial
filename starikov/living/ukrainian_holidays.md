@@ -1,0 +1,22 @@
+# Ukrainian Holidays
+
+- **New Year’s Day** *Новий Рік* January 1
+- **Unity Day** January 16
+- **Cyborg Remembrance Day** January 20
+- **Mourning Day of the Beginning of the Russian invasion of Ukraine** February 24
+- **International Women’s Day** *Міжнародний жіночий день* March 8
+- **Labour Day** *День праці* May 1
+- **Easter**
+- **Second World War Remembrance Day** May 7
+- **Victory Day (over Nazism in World War II)** *‌День пам'яті та перемоги над нацизмом у Другій світовій війні* May 8
+- **Trinity (Pentecost)** *Трійця*
+- **Constitution Day** *День Конституції України* June 28
+- **Statehood Day** *День Української Державності* July 15
+- **Flag Day** August 23
+- **Independence Day of Ukraine** *День Незалежності України* August 24
+- **Day of Knowledge** September 1
+- **Ukraine Defender Day** *День захисників і захисниць України* October 1
+- **Teacher’s Day** October 2
+- **Holodomor Memorial Day** Final Saturday of November
+- **Armed Forces of Ukraine Day** December 6
+- **Christmas** *Різдво Христове* December 25
