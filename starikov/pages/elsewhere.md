@@ -1,4 +1,6 @@
-# Links
+# Elsewhere 🔗
+> Elsewhere is where you'll find the else of my digital self.
+
 - [`starikov.co`](https://starikov.co)
 - [`starikov.io`](https://starikov.io)
 - **[Github](http://github.com/IllyaStarikov/)** `IllyaStarikov`

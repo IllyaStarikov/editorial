@@ -1,4 +1,5 @@
-# Resume
+# Resume 🎓
+> All the reasons you should (or shouldn’t) hire me.
 
 - Résumé [Dark]
 - Curriculum Vitae [Dark]

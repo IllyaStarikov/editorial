@@ -1,10 +1,9 @@
-# Vogue Video Games
+# Video Games Vault 👾
+> The pixels and polygons I played with growing up.
 
 TODO:
 - Flippers?
 - [Prince of Persia]()
-
-
 
 ## PC
 - [DOOM](https://en.wikipedia.org/wiki/Doom_(1993_video_game)) ⭐️

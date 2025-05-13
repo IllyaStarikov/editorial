@@ -1,17 +1,21 @@
+# Sitemap 🗺️
+> X marks the spot.
+
 - 🏠 [`https://starikov.co`](https://starikov.co/) [you're on this website]
 - 🗺️ [`https://starikov.co/sitemap`](https://starikov.co/sitemap) [you're on this page]
 
 ## ✨ Mains
 - ⭐ [About](https://starikov.co/about)
-- 🎓 [Resume](https://starikov.co/resume)
-- 🔗 [Links](https://starikov.co/links)
+- 🔗 [Elsewhere](https://starikov.co/elsewhere)
 - 💬 [Contact](https://starikov.co/contact)
+- 🔖 [Citations](https://starikov.co/citations/)
+- ⚖️ [(Work/Life) Balance](https://starikov.co/balance)
+- 🎓 [Resume](https://starikov.co/resume)
 - 📝 [Feedback](https://starikov.co/feedback)
 - 🏆 [Milestones](https://starikov.co/milestones)
-- ⚖️ [(Work/Life) Balance](https://starikov.co/balance)
 
 ## 🏷️ Tags
-  - <img src="https://starikov.co/content/images/2025/05/garmin_logo.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> [Garmin](https://starikov.co/tag/google/)
+  - <img src="https://starikov.co/content/images/2025/05/garmin_logo.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> [Garmin](https://starikov.co/tag/garmin/)
   - <img src="https://starikov.co/content/images/2025/05/google_logo.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> [Google](https://starikov.co/tag/google/)
   - <img src="https://starikov.co/content/images/2025/05/missouri_s_t_logo.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> [Missouri S&T](https://starikov.co/tag/missouri-s-t/)
   - <img src="https://starikov.co/content/images/size/w1600/2025/04/bodie-2.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> [Pets](https://starikov.co/tag/pets/)
@@ -21,14 +25,14 @@
 ## 📑 Pages
 - 🐈‍⬛ [Mallory](https://starikov.co/mallory)
 - 🐈 [Bodie](https://starikov.co/bodie)
-- 📚 [Beloved Books](https://starikov.co/books)
-- 🎮 [Vogue Video Games](https://starikov.co/video-games/)
-- 🎧 [Principal Podcasts](https://starikov.co/podcasts)
+- 📚 [Bookmarked Books](https://starikov.co/books)
+- 👾 [Video Game Vault](https://starikov.co/video-games)
+- 🎧 [Played Podcasts](https://starikov.co/podcasts)
 - 🇺🇦 [Ukraine](https://starikov.co/ukraine)
-    - [Ukrainian Books](https://starikov.co/ukraine-books)
-    - [Ukrainian Clothing](https://starikov.co/ukraine-clothing)
-    - [Ukrainian Movies & Shows](https://starikov.co/ukraine-movies-shows)
-    - [Ukrainian Holidays](https://starikov.co/ukraine-holidays)
+    - [Ukrainian Books](https://starikov.co/ukrainian-books)
+    - [Ukrainian Clothing](https://starikov.co/ukrainian-clothing)
+    - [Ukrainian Movies & Shows](https://starikov.co/ukrainian-movies-shows)
+    - [Ukrainian Holidays](https://starikov.co/ukrainian-holidays)
 
 ## 💼 Work
 - Google

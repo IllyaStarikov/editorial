@@ -1,6 +1,5 @@
-# Ukraine
-
-**🇺🇦 Donate today, save Ukrainian lives tomorrow 🇺🇦**
+# Ukraine 🇺🇦
+> Ukraine is an eternity, not only the present but above all the future and the past.
 
 * **[United24](https://u24.gov.ua)** — an official fundraising platform launched by President Zelenskyy that routes donations straight to government accounts supporting defense, medical aid, and reconstruction. Highly recommended.
 * **[Nova Ukraine](http://novaukraine.org)** — a U.S.-based nonprofit delivering humanitarian aid to civilians.
@@ -20,13 +19,12 @@ Every day, I hope for a Ukrainian victory.
 **Slava Ukraini. 🇺🇦**
 
 
-
 ## Links 
 - **[📰 Posts](https://starikov.co/tag/ukraine)**
-- **[📚 Books](https://starikov.co/ukraine-books)**
-- **[👕 Clothing](https://starikov.co/ukraine-clothing)**
-- **[📺 Movies & Shows](https://starikov.co/ukraine-movies-shows)**
-- **[🥚 Holidays](https://starikov.co/ukraine-holidays)**
+- **[📚 Books](https://starikov.co/ukrainian-books)**
+- **[👕 Clothing](https://starikov.co/ukrainian-clothing)**
+- **[📺 Movies & Shows](https://starikov.co/ukrainian-movies-shows)**
+- **[🥚 Holidays](https://starikov.co/ukrainian-holidays)**
 
 
 ## Salutes

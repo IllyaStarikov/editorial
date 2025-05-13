@@ -1,4 +1,5 @@
 # Milestones
+> Every great milestone is but a small peak in the mountain range of life.
 
 - Sky diving
 - 10 record number of tacos in one sitting

@@ -1,8 +1,7 @@
-# Balance
+# Balance 💼/🏡
+> Balance doesn't mean doing everything; it means doing the right thing.
 
-**The following are my work-life balance preferences. They are subject to change and may be out of date. Although these are primarily work-specific, they are generally applicable to my personal life.**
-
-*Some companies provide these — they might even call them Balance — but I opt to create my own for completeness and to own the data.*
+**The following are my work-life balance preferences. They are subject to change and may be out of date.**
 
 **⚖️ TL;DR** Message me anytime, anywhere, anyhow. Don’t use send laters with me, I’ll check and message back appropriately. Please avoid meetings. My reply times can vary, especially in crunch time. I have a unique work style — such as sending emails/messages at all times of the day — but I can accommodate anyone. I appreciate directness and candor, I value honesty over diplomacy. 
 
