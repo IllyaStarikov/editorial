@@ -1,0 +1,1185 @@
+<div id="youtube-analyzer-widget" style="max-width: 100%; margin: 0 auto;">
+    <style>
+        #youtube-analyzer-widget * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        #youtube-analyzer-widget {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        #youtube-analyzer-widget .yt-container {
+            background: #0f0f0f;
+            border-radius: 12px;
+            padding: 40px;
+            margin: 20px auto;
+            max-width: 1200px;
+            width: 100%;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        #youtube-analyzer-widget .content-wrapper {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        #youtube-analyzer-widget h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            color: #ffffff;
+        }
+
+        #youtube-analyzer-widget .youtube-logo {
+            width: 50px;
+            height: 50px;
+            background: #FF0000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        #youtube-analyzer-widget .youtube-logo::after {
+            content: '▶';
+            color: white;
+            font-size: 20px;
+        }
+
+        #youtube-analyzer-widget .subtitle {
+            text-align: center;
+            color: #909090;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        #youtube-analyzer-widget .upload-section {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        #youtube-analyzer-widget .upload-section:hover {
+            border-color: #FF0000;
+            background: rgba(255, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        #youtube-analyzer-widget .upload-section.dragover {
+            border-color: #FF0000;
+            background: rgba(255, 0, 0, 0.1);
+            transform: scale(1.02);
+        }
+
+        #youtube-analyzer-widget input[type="file"] {
+            display: none;
+        }
+
+        #youtube-analyzer-widget .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        #youtube-analyzer-widget .parameters {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        #youtube-analyzer-widget .parameters h3 {
+            margin-bottom: 25px;
+            font-size: 1.5rem;
+            color: #ffffff;
+        }
+
+        #youtube-analyzer-widget .param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        #youtube-analyzer-widget .param-group {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #youtube-analyzer-widget .param-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #F9F9F9;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        #youtube-analyzer-widget .param-group input[type="number"],
+        #youtube-analyzer-widget .param-group input[type="text"],
+        #youtube-analyzer-widget .param-group input[type="date"],
+        #youtube-analyzer-widget .param-group select {
+            width: 100%;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 6px;
+            color: #ffffff;
+            font-size: 14px;
+        }
+
+        #youtube-analyzer-widget .param-group input:focus,
+        #youtube-analyzer-widget .param-group select:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+        }
+         #youtube-analyzer-widget .param-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            vertical-align: middle;
+            accent-color: #FF0000;
+        }
+
+
+        #youtube-analyzer-widget .btn {
+            background: #FF0000;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+
+        #youtube-analyzer-widget .btn:hover {
+            background: #CC0000;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+        }
+
+        #youtube-analyzer-widget .btn:disabled {
+            background: #4a4a4a;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        #youtube-analyzer-widget .btn-secondary {
+            background: #065f46; 
+        }
+
+        #youtube-analyzer-widget .btn-secondary:hover {
+            background: #047857; 
+        }
+
+        #youtube-analyzer-widget .stats-section { 
+            display: none; 
+            margin-top: 30px;
+            margin-bottom: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 25px;
+        }
+        
+        #youtube-analyzer-widget .stats-section h3 {
+             margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        #youtube-analyzer-widget .stat-item {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255,255,255,0.08);
+        }
+        #youtube-analyzer-widget .stat-item-label {
+            font-size: 0.9rem;
+            color: #b0b0b0; 
+            margin-bottom: 5px;
+            display: block;
+        }
+        #youtube-analyzer-widget .stat-item-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #FF0000; 
+        }
+         #youtube-analyzer-widget .stat-item-subvalue {
+            font-size: 0.9rem;
+            color: #ffffff;
+            margin-left: 8px;
+        }
+
+
+        #youtube-analyzer-widget .results-section {
+            display: none;
+            margin-bottom: 40px;
+        }
+
+        #youtube-analyzer-widget .results-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        #youtube-analyzer-widget .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 15px;
+        }
+
+        #youtube-analyzer-widget .search-box:focus {
+            outline: none;
+            border-color: #FF0000;
+            box-shadow: 0 0 0 2px rgba(255, 0, 0, 0.2);
+        }
+
+        #youtube-analyzer-widget .table-container {
+            background: rgba(0,0,0,0.3); 
+            border-radius: 12px;
+            overflow: hidden; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        #youtube-analyzer-widget .table-scroll {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch; 
+            width: 100%;
+        }
+
+        #youtube-analyzer-widget table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px; 
+        }
+
+        #youtube-analyzer-widget th {
+            background: rgba(255, 0, 0, 0.15); 
+            color: #ffffff;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap; 
+            position: sticky; 
+            top: 0; 
+            z-index: 10; 
+        }
+
+        #youtube-analyzer-widget th:hover {
+            background: rgba(255, 0, 0, 0.25);
+        }
+
+        #youtube-analyzer-widget td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        #youtube-analyzer-widget tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        #youtube-analyzer-widget .video-info {
+            min-width: 300px; 
+        }
+
+        #youtube-analyzer-widget .video-title {
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 4px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2; 
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        #youtube-analyzer-widget .video-url {
+            color: #FF0000;
+            text-decoration: none;
+            font-size: 0.85rem;
+        }
+        #youtube-analyzer-widget .video-url:hover {
+            text-decoration: underline;
+        }
+
+        #youtube-analyzer-widget .channel-name {
+            color: #909090;
+            white-space: nowrap;
+        }
+
+        #youtube-analyzer-widget .play-count {
+            font-weight: 700;
+            color: #10b981; 
+            text-align: center;
+        }
+
+        #youtube-analyzer-widget .date-cell {
+            white-space: nowrap;
+            color: #909090;
+        }
+
+        #youtube-analyzer-widget .loading {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+
+        #youtube-analyzer-widget .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-top: 4px solid #FF0000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: yt-spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes yt-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #youtube-analyzer-widget .progress-bar {
+            width: 100%;
+            max-width: 400px;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px auto;
+        }
+
+        #youtube-analyzer-widget .progress-fill {
+            height: 100%;
+            background: #FF0000;
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        #youtube-analyzer-widget .error,
+        #youtube-analyzer-widget .success {
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: none;
+            font-weight: 500;
+        }
+
+        #youtube-analyzer-widget .error {
+            background: rgba(239, 68, 68, 0.1); 
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        #youtube-analyzer-widget .success {
+            background: rgba(16, 185, 129, 0.1); 
+            color: #10b981;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            #youtube-analyzer-widget .yt-container {
+                padding: 20px;
+            }
+            
+            #youtube-analyzer-widget h1 {
+                font-size: 1.8rem;
+                flex-direction: column;
+            }
+            
+            #youtube-analyzer-widget .youtube-logo {
+                width: 40px;
+                height: 40px;
+            }
+            
+            #youtube-analyzer-widget .param-grid {
+                grid-template-columns: 1fr;
+            }
+                       
+            #youtube-analyzer-widget .results-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            #youtube-analyzer-widget .search-box {
+                min-width: 100%;
+            }
+            
+            #youtube-analyzer-widget table {
+                font-size: 14px;
+            }
+            
+            #youtube-analyzer-widget td,
+            #youtube-analyzer-widget th {
+                padding: 10px;
+            }
+        }
+    </style>
+
+    <div class="yt-container">
+        <div class="content-wrapper"> 
+            <h1><div class="youtube-logo"></div>YourTube History</h1>
+            <p class="subtitle">Like and subscribe to find out what you've subscribed to!</p>
+            
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-icon">📂</div>
+                <h3>Drop your watch-history.html file here</h3>
+                <p>or click to browse</p>
+                <input type="file" id="fileInput" accept=".html,.htm">
+            </div>
+
+            <div class="error" id="errorMessage"></div>
+            <div class="success" id="successMessage"></div>
+
+            <div class="parameters" id="parameters">
+                <h3>Analysis Parameters</h3>
+                <div class="param-grid">
+                    <div class="param-group">
+                        <label for="topN">Number of Top Videos in Table</label>
+                        <input type="number" id="topN" value="250" min="1" max="10000">
+                    </div>
+                    
+                    <div class="param-group">
+                        <label for="minPlays">Minimum Play Count (for table)</label>
+                        <input type="number" id="minPlays" value="1" min="1">
+                    </div>
+                    
+                    <div class="param-group">
+                        <label for="dateFrom">From Date (for table)</label>
+                        <input type="date" id="dateFrom">
+                    </div>
+                    
+                    <div class="param-group">
+                        <label for="dateTo">To Date (for table)</label>
+                        <input type="date" id="dateTo">
+                    </div>
+                    
+                    <div class="param-group">
+                        <label for="channelFilter">Channel Filter (for table)</label>
+                        <input type="text" id="channelFilter" placeholder="e.g. Marques Brownlee">
+                    </div>
+                    
+                    <div class="param-group">
+                        <label for="sortBy">Sort Table By</label>
+                        <select id="sortBy">
+                            <option value="plays">Play Count</option>
+                            <option value="title">Video Title</option>
+                            <option value="channel">Channel Name</option>
+                            <option value="date">First Watch Date</option>
+                        </select>
+                    </div>
+                                     
+                    <div class="param-group">
+                        <label>
+                            <input type="checkbox" id="excludeMusic" checked>
+                            Exclude YouTube Music from all analysis
+                        </label>
+                    </div>
+                </div>
+                
+                <div style="text-align: center;">
+                    <button class="btn" onclick="ytAnalyzer.processFile()">Analyze Watch History</button>
+                    <button class="btn btn-secondary" onclick="ytAnalyzer.resetAnalysis()">Reset</button>
+                </div>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Processing your watch history...</p>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressBar"></div>
+                </div>
+                <p id="progressText">0%</p>
+            </div>
+
+            <div class="stats-section" id="statsSection">
+                <h3>Watch Statistics</h3>
+                <div id="watchStatisticsContent">
+                    </div>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <h3 style="font-size: 1.5rem; margin-bottom: 25px; color: #ffffff;">Top Videos Table</h3>
+                <div class="results-controls">
+                    <input type="text" class="search-box" id="searchBox" placeholder="Search table...">
+                    <div>
+                        <button class="btn btn-secondary" onclick="ytAnalyzer.exportToCSV()">Export CSV</button>
+                        <button class="btn btn-secondary" onclick="ytAnalyzer.exportToJSON()">Export JSON</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <div class="table-scroll">
+                        <table id="resultsTable">
+                            <thead>
+                                <tr>
+                                    <th onclick="ytAnalyzer.sortTable('rank')" style="width: 60px;">Rank ↕</th>
+                                    <th onclick="ytAnalyzer.sortTable('title')">Video Title ↕</th>
+                                    <th onclick="ytAnalyzer.sortTable('channel')">Channel ↕</th>
+                                    <th onclick="ytAnalyzer.sortTable('plays')" style="width: 80px;">Plays ↕</th>
+                                    <th onclick="ytAnalyzer.sortTable('date')" style="width: 150px;">First Watched ↕</th>
+                                </tr>
+                            </thead>
+                            <tbody id="resultsBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // This function defines and initializes the analyzer.
+        function initializeAnalyzer() {
+            window.ytAnalyzer = {
+                allVideos: [], // Aggregated data for unique videos
+                filteredVideos: [], // Videos for the table display, after filters
+                allWatches: [], // Every single watch event
+                currentSort: { field: 'plays', ascending: false },
+                uploadedFile: null,
+                // charts and miniCharts properties removed as they are no longer used
+
+                init: function() {
+                    // Cache DOM elements
+                    const uploadSection = document.getElementById('uploadSection');
+                    const fileInput = document.getElementById('fileInput');
+                    const searchBox = document.getElementById('searchBox');
+                    const parameterInputs = document.querySelectorAll('#parameters input, #parameters select');
+
+                    // Event listener for clicking the upload section to trigger file input
+                    uploadSection.addEventListener('click', () => fileInput.click());
+                    
+                    // Event listener for file selection
+                    fileInput.addEventListener('change', (e) => {
+                        const file = e.target.files[0];
+                        if (file) this.handleFile(file);
+                    });
+
+                    // Event listeners for drag and drop functionality
+                    uploadSection.addEventListener('dragover', (e) => {
+                        e.preventDefault(); // Prevent default behavior (opening file)
+                        uploadSection.classList.add('dragover');
+                    });
+
+                    uploadSection.addEventListener('dragleave', () => {
+                        uploadSection.classList.remove('dragover');
+                    });
+
+                    uploadSection.addEventListener('drop', (e) => {
+                        e.preventDefault(); // Prevent default behavior
+                        uploadSection.classList.remove('dragover');
+                        const file = e.dataTransfer.files[0]; // Get the dropped file
+                        if (file) this.handleFile(file);
+                    });
+
+                    // Event listener for the search box in the results table
+                    searchBox.addEventListener('input', (e) => {
+                        const searchTerm = e.target.value.toLowerCase();
+                        const tableRows = document.querySelectorAll('#resultsBody tr');
+                        tableRows.forEach(row => {
+                            const rowText = row.textContent.toLowerCase();
+                            row.style.display = rowText.includes(searchTerm) ? '' : 'none';
+                        });
+                    });
+
+                    // Event listeners for changes in analysis parameters
+                    parameterInputs.forEach(input => {
+                        input.addEventListener('change', () => {
+                            if (this.allVideos.length > 0) { // Only re-filter if data exists
+                                this.applyFiltersAndDisplay();
+                            }
+                        });
+                    });
+                },
+
+                handleFile: function(file) {
+                    // Validate file type
+                    if (!file.name.match(/\.html?$/i)) {
+                        this.showError('Please upload an HTML file (e.g., watch-history.html).');
+                        return;
+                    }
+                    this.uploadedFile = file; // Store the file
+                    this.showSuccess(`File loaded: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+                    document.getElementById('parameters').style.display = 'block'; // Show parameter options
+                    this.resetPreviousResults(); // Clear any old data from previous analyses
+                },
+                
+                resetPreviousResults: function() {
+                    // Clear data arrays
+                    this.allVideos = [];
+                    this.filteredVideos = [];
+                    this.allWatches = [];
+
+                    // Hide and clear UI sections
+                    document.getElementById('statsSection').style.display = 'none';
+                    document.getElementById('watchStatisticsContent').innerHTML = '';
+                    document.getElementById('resultsSection').style.display = 'none';
+                    document.getElementById('resultsBody').innerHTML = '';
+                },
+
+                showError: function(message) {
+                    // Display an error message to the user
+                    const errorEl = document.getElementById('errorMessage');
+                    errorEl.textContent = message;
+                    errorEl.style.display = 'block';
+                    setTimeout(() => errorEl.style.display = 'none', 6000); // Hide after 6 seconds
+                },
+
+                showSuccess: function(message) {
+                    // Display a success message to the user
+                    const successEl = document.getElementById('successMessage');
+                    successEl.textContent = message;
+                    successEl.style.display = 'block';
+                    setTimeout(() => successEl.style.display = 'none', 5000); // Hide after 5 seconds
+                },
+
+                processFile: function() {
+                    // Ensure a file has been uploaded
+                    if (!this.uploadedFile) { 
+                        this.showError('Please upload a file first.');
+                        return;
+                    }
+                    this.resetPreviousResults(); // Clear previous data before new processing
+
+                    // Show loading indicator
+                    document.getElementById('loading').style.display = 'block';
+                    document.getElementById('progressBar').style.width = '0%';
+                    document.getElementById('progressText').textContent = '0%';
+                    
+                    // Read the file content
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            this.parseHistory(e.target.result); // Parse the HTML content
+                        } catch (error) {
+                            this.showError('Error parsing file: ' + error.message);
+                            console.error('Parse error:', error);
+                            document.getElementById('loading').style.display = 'none'; // Hide loading
+                        }
+                    };
+                    reader.onerror = () => { // Handle file reading errors
+                        this.showError('Error reading the file.');
+                        console.error('File reading error:', reader.error);
+                        document.getElementById('loading').style.display = 'none';
+                    };
+                    reader.readAsText(this.uploadedFile);
+                },
+
+                parseHistory: function(htmlContent) {
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlContent, 'text/html');
+                    
+                    const videos = {}; // To store aggregated data for unique videos
+                    this.allWatches = []; // To store every individual watch event
+                    
+                    // Selector for YouTube watch history entries from Google Takeout
+                    const entries = doc.querySelectorAll('.outer-cell .content-cell'); 
+                    const totalEntriesToProcess = entries.length;
+                    let processedWatchEvents = 0;
+                    const excludeMusic = document.getElementById('excludeMusic').checked;
+                    
+                    entries.forEach((contentCell) => {
+                        const text = contentCell.textContent || ""; // Ensure text is not null
+                        // Filter for actual "Watched" entries
+                        if (!text.includes('Watched') && !text.includes('Gesehen')) return; // Added 'Gesehen' for German
+                        
+                        // Optionally exclude YouTube Music entries
+                        if (excludeMusic && (text.includes('YouTube Music') || 
+                            (contentCell.querySelector('a[href*="music.youtube.com"]') !== null))) {
+                            return;
+                        }
+                        
+                        const videoLink = contentCell.querySelector('a');
+                        if (!videoLink || !videoLink.href) return; 
+                        
+                        const videoUrl = videoLink.href;
+                        // Skip if it's clearly not a standard video URL (e.g. channel link mistakenly parsed)
+                        if (!videoUrl.includes("watch?v=") && !videoUrl.includes("youtu.be/")) return;
+
+                        const videoTitle = videoLink.textContent.trim();
+                        
+                        // Attempt to find channel link and name
+                        const allLinks = Array.from(contentCell.querySelectorAll('a'));
+                        let channelName = 'Unknown Channel';
+                        let channelUrl = '';
+                        // The channel link is usually the second 'a' tag that doesn't point to the video itself
+                        // and often contains '/@' or '/channel/' or '/c/'
+                        const potentialChannelLink = allLinks.find(link => 
+                            link.href !== videoUrl && 
+                            (link.href.includes('/@') || link.href.includes('/channel/') || link.href.includes('/c/'))
+                        );
+
+                        if (potentialChannelLink) {
+                            channelName = potentialChannelLink.textContent.trim();
+                            channelUrl = potentialChannelLink.href;
+                        } else if (allLinks.length > 1 && allLinks[1].href !== videoUrl) {
+                            // Fallback if specific channel URL patterns aren't found but there's a second link
+                            channelName = allLinks[1].textContent.trim();
+                            channelUrl = allLinks[1].href;
+                        }
+                        
+                        let watchDateStr = 'Unknown Date';
+                        let timestamp = null;
+                        
+                        // Extract date string (usually the last text node after <br> tags)
+                        const htmlParts = contentCell.innerHTML.split('<br>');
+                        for (let i = htmlParts.length - 1; i >= 0; i--) {
+                            const partText = new DOMParser().parseFromString(htmlParts[i], 'text/html').body.textContent.trim();
+                            // Regex for various date formats, including different month lengths and timezones
+                            const match = partText.match(/([A-Za-z]{3,9}\s\d{1,2},\s\d{4},\s\d{1,2}:\d{2}:\d{2}\s[AP]M\s[A-Z]{2,4})|(\d{1,2}\s[A-Za-z]{3,9}\s\d{4}\s\d{1,2}:\d{2}:\d{2})|(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d+)?Z)/i);
+                            if (match) {
+                                watchDateStr = match[0]; // Use the full matched string
+                                timestamp = new Date(watchDateStr.replace(/\s[A-Z]{2,4}$/i, '')); // Attempt to remove timezone for robust parsing
+                                if (isNaN(timestamp.getTime())) { // If parsing failed, try with original string
+                                    timestamp = new Date(watchDateStr);
+                                }
+                                if (isNaN(timestamp.getTime())) { // If still failed
+                                    timestamp = null; 
+                                    // console.warn("Failed to parse date:", watchDateStr);
+                                }
+                                break;
+                            }
+                        }
+                        
+                        // Add to allWatches array
+                        this.allWatches.push({
+                            url: videoUrl,
+                            title: videoTitle,
+                            channel: channelName,
+                            dateString: watchDateStr, 
+                            timestamp: timestamp 
+                        });
+                        
+                        // If timestamp is valid, aggregate video data
+                        if (timestamp) { 
+                            processedWatchEvents++;
+                            if (!videos[videoUrl]) {
+                                videos[videoUrl] = {
+                                    title: videoTitle,
+                                    url: videoUrl,
+                                    channel: channelName,
+                                    channelUrl: channelUrl,
+                                    plays: 0,
+                                    firstWatchedString: watchDateStr,
+                                    firstTimestamp: timestamp, 
+                                    lastTimestamp: timestamp,
+                                    watchDates: [] 
+                                };
+                            }
+                            videos[videoUrl].plays++;
+                            videos[videoUrl].watchDates.push(timestamp);
+                            
+                            // Update first and last watched timestamps for the unique video
+                            if (timestamp < videos[videoUrl].firstTimestamp) {
+                                videos[videoUrl].firstTimestamp = timestamp;
+                                videos[videoUrl].firstWatchedString = watchDateStr;
+                            }
+                            if (timestamp > videos[videoUrl].lastTimestamp) {
+                                videos[videoUrl].lastTimestamp = timestamp;
+                            }
+                        }
+                        
+                        // Update progress bar (less frequently for performance on very large files)
+                        if (processedWatchEvents % 200 === 0 || processedWatchEvents === totalEntriesToProcess) {
+                            const progress = Math.round((processedWatchEvents / Math.max(1,totalEntriesToProcess)) * 100);
+                            document.getElementById('progressBar').style.width = progress + '%';
+                            document.getElementById('progressText').textContent = progress + '% (' + processedWatchEvents + ' events)';
+                        }
+                    });
+                     // Final progress update
+                    document.getElementById('progressBar').style.width = '100%';
+                    document.getElementById('progressText').textContent = '100% (' + processedWatchEvents + ' events processed)';
+
+                    // Filter out videos that might not have had a valid firstTimestamp (though current logic should prevent this)
+                    this.allVideos = Object.values(videos).filter(v => v.firstTimestamp); 
+                    
+                    document.getElementById('loading').style.display = 'none'; // Hide loading indicator
+
+                    // Provide feedback based on parsing results
+                    if (this.allWatches.length === 0 && totalEntriesToProcess > 0) {
+                         this.showError('No watch events could be extracted. Please check if the file is a valid YouTube watch history and not corrupted. Also, try unchecking "Exclude YouTube Music" if applicable.');
+                    } else if (this.allWatches.length === 0) {
+                         this.showError('The uploaded file does not seem to contain any processable watch history entries.');
+                    } else if (this.allVideos.length === 0 && this.allWatches.length > 0) {
+                        this.showError(`Found ${this.allWatches.length.toLocaleString()} watch events, but could not extract detailed video data (often due to unrecognized date formats in the file). Some general stats might be available.`);
+                        this.applyFiltersAndDisplay(); // Still try to show what we can
+                    }
+                     else {
+                        this.showSuccess(`Successfully parsed ${this.allVideos.length.toLocaleString()} unique videos from ${this.allWatches.length.toLocaleString()} total watch events.`);
+                        this.applyFiltersAndDisplay(); 
+                    }
+                },
+
+                applyFiltersAndDisplay: function() {
+                    // Filter videos for the main table display
+                    this.filteredVideos = [...this.allVideos]; // Start with all unique videos that had valid timestamps
+                    
+                    const minPlays = parseInt(document.getElementById('minPlays').value) || 1;
+                    this.filteredVideos = this.filteredVideos.filter(v => v.plays >= minPlays);
+                    
+                    const dateFromStr = document.getElementById('dateFrom').value;
+                    if (dateFromStr) {
+                        const fromDate = new Date(dateFromStr);
+                        // Adjust fromDate to the start of the day for inclusive filtering
+                        fromDate.setHours(0, 0, 0, 0);
+                        this.filteredVideos = this.filteredVideos.filter(v => v.firstTimestamp && v.firstTimestamp >= fromDate);
+                    }
+                    
+                    const dateToStr = document.getElementById('dateTo').value;
+                    if (dateToStr) {
+                        const toDate = new Date(dateToStr);
+                        // Adjust toDate to the end of the day for inclusive filtering
+                        toDate.setHours(23, 59, 59, 999); 
+                        this.filteredVideos = this.filteredVideos.filter(v => v.firstTimestamp && v.firstTimestamp <= toDate);
+                    }
+                    
+                    const channelFilter = document.getElementById('channelFilter').value.toLowerCase();
+                    if (channelFilter) {
+                        this.filteredVideos = this.filteredVideos.filter(v => v.channel.toLowerCase().includes(channelFilter));
+                    }
+                    
+                    this.sortVideosForTable(); // Sort the filtered videos for the table
+                    
+                    const topN = parseInt(document.getElementById('topN').value) || 250;
+                    const displayVideosInTable = this.filteredVideos.slice(0, topN);
+                    
+                    this.displayResultsTable(displayVideosInTable); // Update the table display
+                    this.generateWatchStatistics(); // Generate and display the main statistics section
+                },
+
+                sortVideosForTable: function() { 
+                    const sortBy = document.getElementById('sortBy').value;
+                    // Sort the filteredVideos array (used for the table)
+                    this.filteredVideos.sort((a, b) => {
+                        switch(sortBy) {
+                            case 'plays': return b.plays - a.plays;
+                            case 'title': return a.title.localeCompare(b.title);
+                            case 'channel': return a.channel.localeCompare(b.channel);
+                            case 'date':
+                                // Ensure valid Date objects for comparison, fallback for safety
+                                const aDate = a.firstTimestamp || new Date(0); 
+                                const bDate = b.firstTimestamp || new Date(0); 
+                                return bDate - aDate; // Sort by most recent first
+                            default: return b.plays - a.plays; // Default sort by plays
+                        }
+                    });
+                },
+
+                generateWatchStatistics: function() {
+                    const statsContainer = document.getElementById('watchStatisticsContent');
+                    statsContainer.innerHTML = ''; // Clear previous stats
+                    let statsHtml = '';
+                    const AVG_VIDEO_DURATION_MINUTES = 10; // Assumption for estimated hours
+
+                    // If no watch events were parsed at all, show a simple message.
+                    if (this.allWatches.length === 0) {
+                        statsContainer.innerHTML = '<p style="text-align:center; color:#909090;">No watch data processed to display statistics.</p>';
+                        document.getElementById('statsSection').style.display = 'block';
+                        return;
+                    }
+
+                    // 1. Data Period (based on valid timestamps from allWatches)
+                    const validTimestamps = this.allWatches.filter(w => w.timestamp instanceof Date && !isNaN(w.timestamp)).map(w => w.timestamp);
+                    let startDateStr = "N/A", endDateStr = "N/A";
+                    let firstDayForCalc = null, lastDayForCalc = null;
+
+                    if (validTimestamps.length > 0) {
+                        // Get min and max timestamps
+                        const minTs = Math.min(...validTimestamps.map(d => d.getTime()));
+                        const maxTs = Math.max(...validTimestamps.map(d => d.getTime()));
+                        firstDayForCalc = new Date(minTs);
+                        lastDayForCalc = new Date(maxTs);
+                        startDateStr = firstDayForCalc.toLocaleDateString();
+                        endDateStr = lastDayForCalc.toLocaleDateString();
+                    }
+                    statsHtml += `<div class="stat-item"><span class="stat-item-label">Data Period:</span> <span class="stat-item-value">${startDateStr} to ${endDateStr}</span></div>`;
+
+                    // 2. Total Watch Events
+                    statsHtml += `<div class="stat-item"><span class="stat-item-label">Total Watch Events Logged:</span> <span class="stat-item-value">${this.allWatches.length.toLocaleString()}</span></div>`;
+
+                    // 3. Total Unique Videos Watched (from allVideos, which are videos with valid timestamps)
+                    statsHtml += `<div class="stat-item"><span class="stat-item-label">Total Unique Videos Watched:</span> <span class="stat-item-value">${this.allVideos.length.toLocaleString()}</span></div>`;
+
+                    // 4. Total Unique Channels Watched (from allVideos to ensure they are associated with valid video entries)
+                    const uniqueChannelsFromVideos = new Set(this.allVideos.filter(v => v.channel !== 'Unknown Channel').map(v => v.channel));
+                    statsHtml += `<div class="stat-item"><span class="stat-item-label">Total Unique Channels Watched:</span> <span class="stat-item-value">${uniqueChannelsFromVideos.size.toLocaleString()}</span></div>`;
+                    
+                    // 5. Estimated Hours Watched (based on all watch events)
+                    const estimatedHours = (this.allWatches.length * AVG_VIDEO_DURATION_MINUTES / 60).toFixed(1);
+                    statsHtml += `<div class="stat-item"><span class="stat-item-label">Estimated Hours Watched (approx.):</span> <span class="stat-item-value">${estimatedHours.toLocaleString()} hours</span></div>`;
+
+                    // 6. Average Videos Watched Per Day
+                    let avgDaily = "0.0";
+                    if (firstDayForCalc && lastDayForCalc && validTimestamps.length > 0) {
+                        // Calculate the number of days in the range
+                        const first = new Date(firstDayForCalc.getFullYear(), firstDayForCalc.getMonth(), firstDayForCalc.getDate());
+                        const last = new Date(lastDayForCalc.getFullYear(), lastDayForCalc.getMonth(), lastDayForCalc.getDate());
+                        const diffMillis = last.getTime() - first.getTime();
+                        const daysInRange = Math.max(1, Math.ceil(diffMillis / (1000 * 60 * 60 * 24)) +1); // +1 to include both start and end day
+                        avgDaily = (this.allWatches.length / daysInRange).toFixed(1);
+                    }
+                    statsHtml += `<div class="stat-item"><span class="stat-item-label">Average Videos Watched Per Day:</span> <span class="stat-item-value">${avgDaily}</span></div>`;
+                    
+                    // 7. Favorite Channel (based on plays from allVideos)
+                    const channelPlays = {};
+                    this.allVideos.filter(v => v.channel !== 'Unknown Channel').forEach(video => {
+                        channelPlays[video.channel] = (channelPlays[video.channel] || 0) + video.plays;
+                    });
+                    const sortedChannelsByPlays = Object.entries(channelPlays).sort((a, b) => b[1] - a[1]);
+                    if (sortedChannelsByPlays.length > 0) {
+                        const topChannel = sortedChannelsByPlays[0];
+                        statsHtml += `<div class="stat-item"><span class="stat-item-label">Favorite Channel (by plays):</span> <span class="stat-item-value">${this.escapeHtml(topChannel[0])}</span> <span class="stat-item-subvalue">(${topChannel[1].toLocaleString()} total plays)</span></div>`;
+                    } else {
+                        statsHtml += `<div class="stat-item"><span class="stat-item-label">Favorite Channel (by plays):</span> <span class="stat-item-value">N/A</span></div>`;
+                    }
+
+                    // 8. Most Rewatched Video (from allVideos)
+                    if (this.allVideos.length > 0) {
+                        // Filter for videos played more than once, then sort by plays
+                        const rewatchedVideos = this.allVideos.filter(v => v.plays > 1).sort((a,b) => b.plays - a.plays);
+                        if (rewatchedVideos.length > 0) {
+                            const mostRewatchedVideo = rewatchedVideos[0];
+                            statsHtml += `<div class="stat-item"><span class="stat-item-label">Most Rewatched Video:</span> <span class="stat-item-value">${this.escapeHtml(mostRewatchedVideo.title)}</span> <span class="stat-item-subvalue">(${mostRewatchedVideo.plays} plays)</span></div>`;
+                        } else {
+                             statsHtml += `<div class="stat-item"><span class="stat-item-label">Most Rewatched Video:</span> <span class="stat-item-value">N/A (no videos rewatched)</span></div>`;
+                        }
+                    } else {
+                         statsHtml += `<div class="stat-item"><span class="stat-item-label">Most Rewatched Video:</span> <span class="stat-item-value">N/A</span></div>`;
+                    }
+
+                    // 9. Peak Viewing Time (based on valid timestamps from allWatches)
+                    const hourData = new Array(24).fill(0);
+                    validTimestamps.forEach(ts => { // Use already filtered validTimestamps
+                        hourData[ts.getHours()]++;
+                    });
+                    if (validTimestamps.length > 0) {
+                        const peakHour = hourData.indexOf(Math.max(...hourData));
+                        const peakHourCount = hourData[peakHour];
+                        statsHtml += `<div class="stat-item"><span class="stat-item-label">Peak Viewing Time:</span> <span class="stat-item-value">${peakHour}:00 - ${(peakHour + 1) % 24}:00</span> <span class="stat-item-subvalue">(${peakHourCount.toLocaleString()} watches)</span></div>`;
+                    } else {
+                        statsHtml += `<div class="stat-item"><span class="stat-item-label">Peak Viewing Time:</span> <span class="stat-item-value">N/A</span></div>`;
+                    }
+
+
+                    // 10. Longest Binge Day (most videos watched on a single day, from valid timestamps)
+                    const dailyCounts = {};
+                    validTimestamps.forEach(ts => { // Use already filtered validTimestamps
+                        const dateKey = ts.toLocaleDateString();
+                        dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
+                    });
+                    let longestBingeDateStr = "N/A";
+                    let longestBingeCount = 0;
+                    if (Object.keys(dailyCounts).length > 0) {
+                        for (const date in dailyCounts) {
+                            if (dailyCounts[date] > longestBingeCount) {
+                                longestBingeCount = dailyCounts[date];
+                                longestBingeDateStr = date;
+                            }
+                        }
+                        statsHtml += `<div class="stat-item"><span class="stat-item-label">Busiest Watch Day:</span> <span class="stat-item-value">${longestBingeDateStr}</span> <span class="stat-item-subvalue">(${longestBingeCount.toLocaleString()} videos)</span></div>`;
+                    } else {
+                        statsHtml += `<div class="stat-item"><span class="stat-item-label">Busiest Watch Day:</span> <span class="stat-item-value">N/A</span></div>`;
+                    }
+
+                    statsContainer.innerHTML = statsHtml; // Populate the stats section
+                    document.getElementById('statsSection').style.display = 'block'; // Make it visible
+                },
+
+                displayResultsTable: function(videosForTable) { 
+                    const tbody = document.getElementById('resultsBody');
+                    tbody.innerHTML = ''; // Clear previous table rows
+                    
+                    if (videosForTable.length === 0) {
+                        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color:#909090;">No videos match the current filters for the table.</td></tr>';
+                        document.getElementById('resultsSection').style.display = 'block';
+                        return;
+                    }
+
+                    videosForTable.forEach((video, index) => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="text-align: center;">${index + 1}</td>
+                            <td class="video-info">
+                                <div class="video-title" title="${this.escapeHtml(video.title)}">${this.escapeHtml(video.title)}</div>
+                                <a href="${video.url}" target="_blank" class="video-url">Watch on YouTube</a>
+                            </td>
+                            <td class="channel-name" title="${this.escapeHtml(video.channel)}">${this.escapeHtml(video.channel)}</td>
+                            <td class="play-count">${video.plays.toLocaleString()}</td>
+                            <td class="date-cell">${video.firstWatchedString || 'N/A'}</td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                    
+                    document.getElementById('resultsSection').style.display = 'block'; // Show the results table section
+                },
+
+                escapeHtml: function(text) {
+                    // Utility function to escape HTML special characters to prevent XSS
+                    if (text === null || typeof text === 'undefined') return '';
+                    return String(text)
+                        .replace(/&/g, '&amp;')
+                        .replace(/</g, '&lt;')
+                        .replace(/>/g, '&gt;')
+                        .replace(/"/g, '&quot;')
+                        .replace(/'/g, '&#039;');
+                },
+
+                sortTable: function(field) {
+                    // Determine new sort field and direction
+                    if (this.currentSort.field === field) {
+                        this.currentSort.ascending = !this.currentSort.ascending; 
+                    } else {
+                        this.currentSort.field = field;
+                        // Default to ascending for text fields, descending for numeric/date
+                        this.currentSort.ascending = (field === 'title' || field === 'channel'); 
+                    }
+                    // Update the sortBy dropdown to reflect the change (optional, but good for UX)
+                    document.getElementById('sortBy').value = field === 'rank' ? 'plays' : field; 
+                    // Re-apply filters and display, which will use the new sort order
+                    this.applyFiltersAndDisplay(); 
+                },
+
+                exportToCSV: function() {
+                    const topN = parseInt(document.getElementById('topN').value) || this.filteredVideos.length; // Export all filtered if topN is large
+                    const videosToExport = this.filteredVideos.slice(0, topN); 
+                    
+                    let csvContent = 'Rank,Title,Channel,Plays,URL,First Watched (String),Last Watched (String)\n';
+                    videosToExport.forEach((video, index) => {
+                        const lastWatchedStr = video.lastTimestamp ? new Date(video.lastTimestamp).toLocaleDateString() : 'N/A';
+                        const firstWatchedStr = video.firstWatchedString || (video.firstTimestamp ? new Date(video.firstTimestamp).toLocaleDateString() : 'N/A');
+                        // Ensure values are properly quoted and escaped for CSV
+                        const title = `"${(video.title || "").replace(/"/g, '""')}"`;
+                        const channel = `"${(video.channel || "").replace(/"/g, '""')}"`;
+                        const url = `"${video.url || ""}"`;
+
+                        csvContent += `${index + 1},${title},${channel},${video.plays || 0},${url},"${firstWatchedStr}","${lastWatchedStr}"\n`;
+                    });
+                    
+                    this.downloadFile(csvContent, `youtube-watch-history-export-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv;charset=utf-8;');
+                },
+
+                exportToJSON: function() {
+                    const topN = parseInt(document.getElementById('topN').value) || this.filteredVideos.length;
+                    const videosToExport = this.filteredVideos.slice(0, topN).map((video, index) => ({
+                        rank: index + 1,
+                        title: video.title,
+                        channel: video.channel,
+                        plays: video.plays,
+                        url: video.url,
+                        firstWatchedString: video.firstWatchedString, 
+                        firstTimestampISO: video.firstTimestamp ? new Date(video.firstTimestamp).toISOString() : null,
+                        lastTimestampISO: video.lastTimestamp ? new Date(video.lastTimestamp).toISOString() : null,
+                        watchDatesISO: video.watchDates.filter(d => d instanceof Date && !isNaN(d)).map(d => d.toISOString()) 
+                    }));
+                    
+                    let dataPeriodFromISO = null, dataPeriodToISO = null;
+                    const validTimestamps = this.allWatches.filter(w => w.timestamp instanceof Date && !isNaN(w.timestamp)).map(w => w.timestamp);
+                    if (validTimestamps.length > 0) {
+                        dataPeriodFromISO = new Date(Math.min(...validTimestamps.map(d => d.getTime()))).toISOString();
+                        dataPeriodToISO = new Date(Math.max(...validTimestamps.map(d => d.getTime()))).toISOString();
+                    }
+
+                    const exportData = {
+                        exportDate: new Date().toISOString(),
+                        sourceFileName: this.uploadedFile ? this.uploadedFile.name : "N/A",
+                        totalUniqueVideosParsed: this.allVideos.length,
+                        totalWatchEventsParsed: this.allWatches.length,
+                        overallDataPeriodISO: { from: dataPeriodFromISO, to: dataPeriodToISO },
+                        tableFiltersApplied: {
+                            topNLimit: document.getElementById('topN').value,
+                            minPlays: document.getElementById('minPlays').value,
+                            dateFrom: document.getElementById('dateFrom').value,
+                            dateTo: document.getElementById('dateTo').value,
+                            channelFilter: document.getElementById('channelFilter').value,
+                            sortBy: document.getElementById('sortBy').value,
+                            musicExcluded: document.getElementById('excludeMusic').checked
+                        },
+                        countOfVideosInFilteredTable: this.filteredVideos.length,
+                        countOfVideosInExport: videosToExport.length,
+                        videos: videosToExport
+                    };
+                    
+                    const jsonString = JSON.stringify(exportData, null, 2); // Pretty print JSON
+                    this.downloadFile(jsonString, `youtube-watch-history-export-${new Date().toISOString().split('T')[0]}.json`, 'application/json;charset=utf-8;');
+                },
+
+                downloadFile: function(content, filename, type) {
+                    const blob = new Blob([content], { type: type });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = filename;
+                    document.body.appendChild(a); // Append to body to ensure click works in all browsers
+                    a.click();
+                    document.body.removeChild(a); // Clean up
+                    URL.revokeObjectURL(url);
+                },
+
+                resetAnalysis: function() {
+                    this.resetPreviousResults(); 
+                    this.uploadedFile = null; 
+                                        
+                    document.getElementById('fileInput').value = ''; // Clear the file input element
+                    document.getElementById('parameters').style.display = 'none'; // Hide parameters section
+                    
+                    // Reset parameter input fields to their default values
+                    document.getElementById('topN').value = "250";
+                    document.getElementById('minPlays').value = "1";
+                    document.getElementById('dateFrom').value = "";
+                    document.getElementById('dateTo').value = "";
+                    document.getElementById('channelFilter').value = "";
+                    document.getElementById('sortBy').value = "plays";
+                    document.getElementById('excludeMusic').checked = true;
+
+                    this.showSuccess('Analysis has been reset. Upload a new file to start again.');
+                }
+            };
+            // Call init to set up event listeners etc.
+            window.ytAnalyzer.init();
+        }
+
+        // Ensure the analyzer is initialized after the DOM is fully loaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initializeAnalyzer);
+        } else {
+            // DOMContentLoaded has already fired
+            initializeAnalyzer();
+        }
+    </script>
+</div>

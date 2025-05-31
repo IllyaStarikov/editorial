@@ -1,4 +1,6 @@
 # About ⭐
+> My unapologetic self.
+
 <p>¶ <b><font color=#65C4FF>Illya Starikov</font></b> <img src="https://starikov.co/content/images/size/w1600/2024/02/illya-starikov-about-square.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%; transition: transform 0.3s ease-in-out;" onmouseover="this.style.transform='scale(10) rotate(-10deg)';" onmouseout="this.style.transform='scale(1) rotate(0deg)';"/> is a Software Engineer established in San Francisco, California. 🌉
 <b><font color=#65C4FF>Illya</font></b> currently works at Google, applying AI & ML to build the future of <del>digital</del> communication. <font color=#FFD500>★</font>
 <b><font color=#65C4FF>Illya</font></b> spends his free time with his partner <b><font color="#FFD500">Taylor</font></b> 🐝 🐻 and their two cats <font color="#FFA500"><a href="https://starikov.co/bodie"><b>Bodie 🐈</b></a></font> and <font color="#A52A2A"><a href="https://starikov.co/mallory"><b>Mallory 🐈‍⬛</b></a></font> .

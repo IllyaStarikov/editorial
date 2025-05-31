@@ -18,6 +18,8 @@ Every day, I hope for a Ukrainian victory.
 
 **Slava Ukraini. 🇺🇦**
 
+![](https://starikov.co/content/images/size/w1600/2025/05/ukraine_flags_sf.jpeg)
+
 
 ## Links 
 - **[📰 Posts](https://starikov.co/tag/ukraine)**
@@ -25,6 +27,8 @@ Every day, I hope for a Ukrainian victory.
 - **[👕 Clothing](https://starikov.co/ukrainian-clothing)**
 - **[📺 Movies & Shows](https://starikov.co/ukrainian-movies-shows)**
 - **[🥚 Holidays](https://starikov.co/ukrainian-holidays)**
+- **[🔤 Alphabet](https://starikov.co/ukrainian-alphabet)**
+- **[🎼 Anthem](https://starikov.co/ukrainian-anthem)**
 
 
 ## Salutes

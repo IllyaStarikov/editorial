@@ -1,0 +1,1202 @@
+<div id="pomodoro-widget-embed">
+    <style>
+        /* General body styles for the page HAVE BEEN REMOVED to prevent conflicts with Ghost site styles */
+
+        /* Container styles */
+        .pomodoro-widget-container {
+            background: #000000; /* Pure black for depth */
+            color: white;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 30px 20px;
+            border-radius: 32px; /* Slightly more rounded */
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8), 
+                        0 0 0 1px rgba(255,255,255,0.07) inset,
+                        0 0 120px rgba(255, 107, 107, 0.1); /* Added a subtle glow */
+            margin: 20px auto;
+            max-width: 60ch; /* MODIFIED: Adjusted for text width (was 450px) */
+            position: relative;
+            overflow: hidden; 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .pomodoro-widget-container::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: radial-gradient(circle at 10% 20%, rgba(255,100,100,0.05), transparent 50%),
+                        radial-gradient(circle at 80% 90%, rgba(70,180,170,0.05), transparent 50%);
+            animation: pomodoro-bg-subtle-shift 40s ease-in-out infinite alternate;
+            z-index: 0;
+            border-radius: 32px;
+        }
+
+        @keyframes pomodoro-bg-subtle-shift {
+            0% { transform: translate(0,0) rotate(0deg); opacity: 0.7; }
+            100% { transform: translate(5px, -5px) rotate(10deg); opacity: 1; }
+        }
+
+        .pomodoro-widget-container * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Tomato Timer Display Styles */
+        .timer-container {
+            width: 220px; 
+            height: 220px; 
+            margin: 10px auto 25px; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            /* CSS Variables for rest mode colors */
+            --rest-fill-color: #66BB6A; /* Green for short break */
+            --rest-glow-color: #66BB6A;
+            --rest-stem-leaf-fill: #4CAF50;
+            --rest-stem-leaf-stroke: #388E3C;
+            --rest-highlight-fill: rgba(165, 214, 167, 0.4);
+            --rest-indicator-dot-fill: #C8E6C9;
+            --rest-track-stroke: rgba(102, 187, 106, 0.15);
+        }
+         .timer-container.long-break-mode {
+            --rest-fill-color: #42A5F5; /* Blue for long break */
+            --rest-glow-color: #42A5F5;
+            --rest-stem-leaf-fill: #2196F3;
+            --rest-stem-leaf-stroke: #1976D2;
+            --rest-highlight-fill: rgba(144, 202, 249, 0.4);
+            --rest-indicator-dot-fill: #BBDEFB;
+            --rest-track-stroke: rgba(66, 165, 245, 0.15);
+        }
+
+        .timer-tomato-svg {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            overflow: visible; 
+        }
+        
+        .tomato-path-track {
+            fill: none;
+            stroke: rgba(255, 255, 255, 0.08); 
+            stroke-width: 20; 
+            stroke-linecap: round;
+        }
+        .timer-container.rest-mode .tomato-path-track {
+            stroke: var(--rest-track-stroke);
+        }
+
+        .tomato-path-fill {
+            fill: none;
+            stroke: #F44336; 
+            stroke-width: 20; 
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.25s linear, stroke 0.4s ease;
+            filter: drop-shadow(0 0 10px #F44336);
+        }
+        .timer-container.rest-mode .tomato-path-fill {
+            stroke: var(--rest-fill-color); 
+            filter: drop-shadow(0 0 10px var(--rest-glow-color));
+        }
+        .timer-container.active .tomato-path-fill {
+             animation: tomato-glow-pulse 2s infinite ease-in-out;
+        }
+        @keyframes tomato-glow-pulse {
+            0%, 100% { filter: drop-shadow(0 0 10px var(--tomato-glow-color, #F44336)); opacity: 1;}
+            50% { filter: drop-shadow(0 0 20px var(--tomato-glow-color, #F44336)); opacity: 0.9;}
+        }
+        .timer-container.work-mode .tomato-path-fill { --tomato-glow-color: #F44336; }
+        /* Rest mode glow color is set by JS via --rest-glow-color then assigned to --tomato-glow-color */
+
+        #tomatoStemGroupNew .stem-leaf-new {
+            fill: #4CAF50; 
+            stroke: #388E3C; 
+            stroke-width: 1px;
+            transition: fill 0.4s ease, stroke 0.4s ease;
+        }
+         .timer-container.rest-mode #tomatoStemGroupNew .stem-leaf-new {
+            fill: var(--rest-stem-leaf-fill); 
+            stroke: var(--rest-stem-leaf-stroke); 
+        }
+        
+        .tomato-highlight {
+            fill: rgba(255, 255, 255, 0.4);
+            stroke: none;
+             transition: fill 0.4s ease;
+        }
+         .timer-container.rest-mode .tomato-highlight {
+             fill: var(--rest-highlight-fill); 
+         }
+
+        .tomato-indicator-dot-svg {
+            fill: white;
+            stroke: rgba(0,0,0,0.4);
+            stroke-width: 0.75px;
+            r: 5; 
+            transition: cx 0.25s linear, cy 0.25s linear, fill 0.4s ease;
+            filter: drop-shadow(0px 1px 2px rgba(0,0,0,0.6));
+        }
+        .timer-container.rest-mode .tomato-indicator-dot-svg {
+            fill: var(--rest-indicator-dot-fill); 
+        }
+
+        .digital-time-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            z-index: 10;
+            margin-top: 0px; 
+        }
+
+        .digital-time {
+            font-size: 2.8rem; 
+            font-weight: 700;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
+        }
+        .timer-container.active .digital-time {
+            text-shadow: 0 0 15px rgba(255,255,255,0.5);
+        }
+
+        .timer-mode-label {
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            opacity: 0.6;
+            margin-top: 5px;
+        }
+
+        /* Congratulatory Message */
+        .congrats-message-container {
+            position: absolute;
+            top: -30px; /* Position above the timer */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 100;
+            pointer-events: none;
+        }
+        .congrats-message {
+            background: linear-gradient(135deg, #FFD700, #FFA500); /* Gold gradient */
+            color: #4A3B00; /* Dark gold text */
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.5);
+            opacity: 0;
+            transform: translateY(10px) scale(0.8);
+            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        }
+        .congrats-message.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        @keyframes timer-pulse-congrats { /* For timer container on work completion */
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* Session Counters */
+        .session-counters-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 10px;
+            margin: 20px auto 15px; /* Reduced bottom margin for task input */
+            background: rgba(255, 255, 255, 0.035);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+            max-width: 90%; /* Max width relative to .pomodoro-widget-container */
+        }
+        .counter-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            color: rgba(255,255,255,0.8);
+            flex: 1; 
+        }
+        .counter-icon {
+            font-size: 1.6rem;
+            margin-bottom: 4px;
+            filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));
+        }
+        .counter-value {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+        }
+        .counter-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.6;
+            margin-top: 3px;
+        }
+        .counter-item.work .counter-value { color: #F44336; }
+        .counter-item.short-break .counter-value { color: #66BB6A; } 
+        .counter-item.long-break .counter-value { color: #42A5F5; } 
+
+        /* Task Input Section */
+        .task-input-container {
+            margin: 0 auto 20px; /* Spacing */
+            max-width: 90%; /* Max width relative to .pomodoro-widget-container */
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.035);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.09);
+        }
+        .task-input-container label {
+            display: block;
+            font-size: 0.75rem;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        #currentTaskInput {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.08);
+            color: white;
+            font-size: 0.9rem;
+        }
+        #currentTaskInput:focus {
+            outline: none;
+            border-color: #F44336;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Session Visual */
+        .session-visual { display: flex; justify-content: center; align-items: center; margin-bottom: 25px; gap: 12px; padding: 18px; background: rgba(255, 255, 255, 0.025); border-radius: 18px; border: 1px solid rgba(255, 255, 255, 0.07); }
+        .session-pattern { display: flex; gap: 7px; align-items: center; flex-wrap: wrap; justify-content: center; }
+        .session-block { width: 18px; height: 36px; border-radius: 9px; position: relative; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3), inset 0 -1px 3px rgba(0,0,0,0.2); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .session-block::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 65%); opacity: 0; transition: opacity 0.3s ease; }
+        .session-block:hover::before { opacity: 1; }
+        .session-block.work { background: linear-gradient(135deg, #F44336, #C62828); }
+        .session-block.short-break { background: linear-gradient(135deg, #66BB6A, #388E3C); height: 22px; } 
+        .session-block.long-break { background: linear-gradient(135deg, #42A5F5, #1E88E5); height: 45px; } 
+        .session-block.empty { background: rgba(255, 255, 255, 0.04); opacity: 0.35; box-shadow: 0 1px 4px rgba(0,0,0,0.2), inset 0 1px 1px rgba(255,255,255,0.04); }
+        .session-block:hover { transform: translateY(-2px) scale(1.04); box-shadow: 0 5px 18px rgba(0,0,0,0.3), inset 0 -1px 3px rgba(0,0,0,0.2); }
+        .session-block.active { animation: pomodoro-session-pulse 1.5s ease-in-out infinite; }
+        @keyframes pomodoro-session-pulse {
+            0%, 100% { transform: translateY(0) scale(1); box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 12px var(--glow-color-session, rgba(244,67,54,0.3)), inset 0 -1px 3px rgba(0,0,0,0.2); }
+            50% { transform: translateY(-2px) scale(1.05); box-shadow: 0 4px 14px rgba(0,0,0,0.35), 0 0 22px var(--glow-color-session, rgba(244,67,54,0.5)), inset 0 -1px 3px rgba(0,0,0,0.2); }
+        }
+        .session-block.work.active { --glow-color-session: rgba(244,67,54,0.4); }
+        .session-block.short-break.active { --glow-color-session: rgba(102,187,106,0.4); } 
+        .session-block.long-break.active { --glow-color-session: rgba(66,165,245,0.4); } 
+
+        /* Control Buttons - Updated Layout */
+        .controls { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); /* 2 columns for more vertical stacking */
+            gap: 12px; 
+            margin-bottom: 20px; 
+        }
+        .btn { 
+            padding: 18px 12px; /* Increased padding for larger buttons */
+            font-size: 1.05rem; /* Increased font size */
+            border: none; 
+            border-radius: 16px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            font-weight: 600; 
+            position: relative; 
+            overflow: hidden; 
+            background: rgba(255, 255, 255, 0.07); 
+            color: white; 
+            border: 1px solid rgba(255, 255, 255, 0.12); 
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); 
+            transform: translateZ(0); 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.25); 
+        }
+        .btn::before { content: ''; position: absolute; top: 50%; left: 50%; width: 0; height: 0; border-radius: 50%; background: rgba(255, 255, 255, 0.12); transform: translate(-50%, -50%); transition: width 0.35s ease, height 0.35s ease; opacity: 0; }
+        .btn:hover::before { width: 230px; height: 230px; opacity: 1; transition-duration: 0.5s;}
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 7px 18px rgba(0, 0, 0, 0.2), inset 0 0.5px 0 rgba(255, 255, 255, 0.08); border-color: rgba(255, 255, 255, 0.2); }
+        .btn:active { transform: translateY(0px) scale(0.97); box-shadow: 0 1px 4px rgba(0,0,0,0.25); }
+        .btn-primary { background: linear-gradient(135deg, #F44336, #D32F2F); border: none; box-shadow: 0 3px 12px rgba(244,67,54, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.1); }
+        .btn-primary:hover { box-shadow: 0 5px 22px rgba(244,67,54, 0.45), inset 0 0.5px 0 rgba(255, 255, 255, 0.15); }
+        
+        .btn-large { /* Start/Pause button */
+            grid-column: span 2; 
+            font-size: 1.2rem; /* Slightly larger for primary action */
+            padding: 20px 15px;
+        }
+        .btn-settings { 
+            grid-column: span 2; 
+            background: rgba(255, 255, 255, 0.04); 
+        }
+        .btn .emoji { font-size: 1.25em; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.25)); }
+        
+        .btn#pomodoroMuteBtn.muted {
+            background: rgba(255, 255, 255, 0.04);
+        }
+        .btn#pomodoroMuteBtn.muted .emoji {
+            opacity: 0.5;
+        }
+
+        .controls.state-playing .btn-pause { transform: scale(1.03); background: linear-gradient(135deg, #FFC107, #FFA000); box-shadow: 0 3px 12px rgba(255, 193, 7, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.1); }
+        .controls.state-paused .btn-start { transform: scale(1.03); animation: btn-attention 1.7s ease-in-out infinite; }
+        @keyframes btn-attention {
+            0%, 100% { box-shadow: 0 3px 12px rgba(244,67,54, 0.35), inset 0 0.5px 0 rgba(255, 255, 255, 0.1); }
+            50% { box-shadow: 0 6px 22px rgba(244,67,54, 0.55), inset 0 0.5px 0 rgba(255, 255, 255, 0.15); }
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .btn:disabled:hover {
+            transform: none;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .btn:disabled::before {
+            display: none;
+        }
+
+        /* Settings Panel */
+        .settings-panel { display: none; background: rgba(30, 30, 30, 0.95); backdrop-filter: blur(8px); border-radius: 18px; padding: 25px; margin-bottom: 20px; border: 1px solid rgba(255, 255, 255, 0.08); animation: settings-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .settings-panel.active { display: block; }
+        @keyframes settings-slide-in { from { opacity: 0; transform: translateY(-12px); } to { opacity: 1; transform: translateY(0); } }
+        .setting-group { margin-bottom: 18px; }
+        .setting-group label { display: block; margin-bottom: 8px; font-weight: 500; color: rgba(255, 255, 255, 0.75); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.4px; }
+        .setting-group input { width: 100%; padding: 10px 12px; border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 9px; background: rgba(255, 255, 255, 0.07); color: white; font-size: 0.95rem; transition: all 0.2s ease; font-weight: 500; }
+        .setting-group input:focus { outline: none; border-color: rgba(244,67,54, 0.5); background: rgba(255, 255, 255, 0.09); box-shadow: 0 0 12px rgba(244,67,54, 0.12); }
+        .settings-apply-button-container { margin-top: 25px; text-align: right; }
+
+        /* Totals Section - Updated for + and = signs */
+        .totals-section {
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            gap: 10px; 
+            margin-bottom: 20px;
+            padding: 18px 10px; 
+            background: rgba(255, 255, 255, 0.025);
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.07);
+        }
+        .total-item { text-align: center; position: relative; padding: 0 5px; } 
+        .total-label { font-size: 0.75rem; opacity: 0.55; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 1px; font-weight: 500; }
+        .total-value { font-size: 1.45rem; font-weight: 700; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px currentColor; }
+        
+        .total-item.work .total-value { color: #F44336; } 
+        .total-item.rest .total-value { color: #66BB6A; } 
+        .total-item.total .total-value { color: #FFD700; } 
+
+        .totals-operator {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: rgba(255,255,255,0.5);
+            padding: 0 5px;
+        }
+
+        /* Log Container */
+        .log-container { max-height: 180px; overflow-y: auto; background: rgba(255, 255, 255, 0.025); border-radius: 18px; padding: 18px; border: 1px solid rgba(255, 255, 255, 0.07); }
+        .log-container::-webkit-scrollbar { width: 5px; }
+        .log-container::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.02); border-radius: 2.5px; }
+        .log-container::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 2.5px; }
+        .log-container::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.2); }
+        .log-entry { padding: 10px 12px; margin-bottom: 8px; background: rgba(255, 255, 255, 0.04); border-radius: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 2.5px solid transparent; transition: all 0.2s ease; animation: log-slide-in 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        @keyframes log-slide-in { from { opacity: 0; transform: translateX(-15px); } to { opacity: 1; transform: translateX(0); } }
+        .log-entry:hover { background: rgba(255, 255, 255, 0.06); transform: translateX(2px); }
+        .log-entry.work { border-left-color: #F44336; }
+        .log-entry.short-break { border-left-color: #66BB6A; } 
+        .log-entry.long-break { border-left-color: #42A5F5; } 
+        .log-entry .log-icon { font-size: 1.2rem; margin-right: 8px; }
+        .log-entry .log-time { font-size: 0.8rem; opacity: 0.55; font-variant-numeric: tabular-nums; }
+
+        /* Stem Explosion Particle */
+        /* These styles are for elements appended to document.body, so they are globally scoped by necessity but specifically named. */
+        .stem-particle { position: fixed; font-size: 18px; pointer-events: none; z-index: 10001; opacity: 1; will-change: transform, opacity; }
+        .sparkle-particle {
+            position: fixed;
+            width: 8px;
+            height: 8px;
+            background-color: #FFD700; /* Gold sparkle */
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 10002; /* Above tomato particles */
+            opacity: 1;
+            will-change: transform, opacity;
+            box-shadow: 0 0 8px #FFD700, 0 0 12px #FFFACD;
+        }
+
+        @keyframes stem-explode-animate {
+            0% { transform: translate(0,0) scale(1); opacity: 1; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(var(--r)); opacity: 0; }
+        }
+        @keyframes sparkle-fade-out {
+            0% { transform: translate(0,0) scale(1); opacity: 0.9; }
+            100% { transform: translate(var(--tx), var(--ty)) scale(0.1); opacity: 0; }
+        }
+        
+        /* Modal Styles */
+        /* This is also for an element appended to document.body or meant to overlay the whole screen. */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 10000; opacity: 0; pointer-events: none; transition: opacity 0.25s ease; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
+        .modal-content { background: #1a1a1a; padding: 30px; border-radius: 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.7); text-align: center; color: white; width: 90%; max-width: 360px; transform: scale(0.92); opacity: 0; transition: transform 0.25s ease, opacity 0.25s ease; border: 1px solid rgba(255,255,255,0.1); }
+        .modal-overlay.active .modal-content { transform: scale(1); opacity: 1; }
+        .modal-content p { margin-bottom: 22px; font-size: 1.1rem; line-height: 1.55; }
+        .modal-buttons button { margin: 0 7px; min-width: 90px; }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            /* On smaller screens, max-width: 95% takes precedence if 60ch is wider */
+            .pomodoro-widget-container { padding: 20px 15px; max-width: 95%; }
+            .timer-container { width: 180px; height: 180px; margin-bottom: 20px; } 
+            .digital-time { font-size: 2.5rem; }
+            .timer-mode-label { font-size: 0.6rem; }
+            .session-counters-container { padding: 10px 8px; margin: 15px auto 20px; gap: 10px; }
+            .counter-icon { font-size: 1.4rem; }
+            .counter-value { font-size: 1.1rem; }
+            .counter-label { font-size: 0.55rem; }
+
+            .controls { grid-template-columns: repeat(2, 1fr); gap: 10px; } 
+            .btn-large { grid-column: span 2; } 
+            .btn-settings { grid-column: span 2; }
+
+            .session-block { width: 16px; height: 32px; border-radius: 7px; }
+            .session-block.short-break { height: 20px; }
+            .session-block.long-break { height: 40px; }
+            .totals-section { flex-direction: column; gap: 8px; padding: 15px; } 
+            .totals-operator { display: none; } 
+            .log-container { max-height: 140px; padding: 15px; }
+        }
+        @media (max-width: 380px) {
+             .timer-container { width: 160px; height: 160px; }
+             .digital-time { font-size: 2rem; }
+             .session-counters-container { flex-direction: column; gap: 12px; } 
+             .counter-item { min-width: 80px; } 
+             .btn { font-size: 0.85rem; gap: 5px; padding: 10px 8px; border-radius:12px; }
+             .btn .emoji { font-size: 1em; }
+             .controls { grid-template-columns: 1fr 1fr; } 
+             /* Individual button spanning might be needed if some buttons look too cramped */
+        }
+    </style>
+
+    <div class="pomodoro-widget-container">
+        <div class="congrats-message-container">
+            <div id="congratsMessage" class="congrats-message" aria-live="polite"></div>
+        </div>
+
+        <div class="timer-container" id="pomodoroTimerContainer">
+            <svg class="timer-tomato-svg" viewBox="0 0 200 200">
+                <path id="newPomodoroTomatoTrack" class="tomato-path-track"
+                      d="M100,30 C45,30 10,70 10,120 C10,170 45,190 100,190 S190,170 190,120 S155,30 100,30 Z" />
+                <path id="newPomodoroTomatoPathFill" class="tomato-path-fill"
+                      d="M100,30 C45,30 10,70 10,120 C10,170 45,190 100,190 S190,170 190,120 S155,30 100,30 Z" />
+                
+                <g id="tomatoStemGroupNew" transform="translate(0 -2)"> <path class="stem-leaf-new" d="M100,32 L90,5 L100,20 L110,5 Z" /> <path class="stem-leaf-new" d="M100,32 L75,15 L90,28 Z" transform="rotate(-20 100 32)" /> 
+                    <path class="stem-leaf-new" d="M100,32 L125,15 L110,28 Z" transform="rotate(20 100 32)" />
+                    <path class="stem-leaf-new" d="M100,32 L70,30 L88,38 Z" transform="rotate(-50 100 32)" />
+                    <path class="stem-leaf-new" d="M100,32 L130,30 L112,38 Z" transform="rotate(50 100 32)" />
+                </g>
+                
+                <path class="tomato-highlight" 
+                      d="M155,80 A40,40 0 0,0 140,140 Q130,110 155,80 Z" />
+
+                <circle id="newPomodoroTimerIndicatorSVG" class="tomato-indicator-dot-svg" cx="100" cy="30" r="5"/>
+            </svg>
+            <div class="digital-time-container">
+                <div class="digital-time" id="pomodoroTimerDigital" aria-live="polite">25:00</div>
+                <div class="timer-mode-label" id="pomodoroTimerModeLabel">WORK</div>
+            </div>
+        </div>
+
+        <div class="session-counters-container">
+            <div class="counter-item work">
+                <span class="counter-icon">🍅</span>
+                <span class="counter-value" id="completedWorkSessionsDisplay">0</span>
+                <span class="counter-label">Work</span>
+            </div>
+            <div class="counter-item short-break">
+                <span class="counter-icon">🌴</span>
+                <span class="counter-value" id="completedShortBreaksDisplay">0</span>
+                <span class="counter-label">Short Breaks</span>
+            </div>
+            <div class="counter-item long-break">
+                <span class="counter-icon">💤</span>
+                <span class="counter-value" id="completedLongBreaksDisplay">0</span>
+                <span class="counter-label">Long Breaks</span>
+            </div>
+        </div>
+        
+        <div class="task-input-container">
+            <label for="currentTaskInput">Current Task:</label>
+            <input type="text" id="currentTaskInput" placeholder="What's your focus?">
+        </div>
+
+        <div class="session-visual">
+            <div class="session-pattern" id="pomodoroSessionPattern"></div>
+        </div>
+        <div class="controls" id="pomodoroControls">
+            <button class="btn btn-primary btn-large" id="pomodoroStartBtn" onclick="pomodoroToggleTimer()">
+                <span class="emoji">▶️</span> Start
+            </button>
+            <button class="btn" id="pomodoroPauseBtn" onclick="pomodoroToggleTimer()" style="display: none;">
+                <span class="emoji">⏸️</span> Pause
+            </button>
+            <button class="btn" id="pomodoroRepeatBtn" onclick="pomodoroRepeatCycle()">
+                <span class="emoji">🔁</span> Repeat
+            </button>
+            <button class="btn" id="pomodoroSkipBtn" onclick="pomodoroSkipCycle()">
+                <span class="emoji">⏭️</span> Skip
+            </button>
+            <button class="btn" id="pomodoroDoneBtn" onclick="pomodoroCompleteCycle()">
+                <span class="emoji">✅</span> Done
+            </button>
+            <button class="btn" id="pomodoroResetBtn" onclick="pomodoroShowResetConfirmation()">
+                <span class="emoji">🔄</span> Reset
+            </button>
+             <button class="btn" id="pomodoroMuteBtn" onclick="pomodoroToggleMute()" aria-label="Mute sounds">
+                <span class="emoji" id="muteEmoji">🔊</span> Mute
+            </button>
+            <button class="btn btn-settings" id="pomodoroSettingsBtn" onclick="pomodoroToggleSettings()">
+                <span class="emoji">⚙️</span> Settings
+            </button>
+        </div>
+        <div class="settings-panel" id="pomodoroSettingsPanel">
+            <div class="setting-group">
+                <label for="pomodoroWorkDuration">Work Duration (minutes)</label>
+                <input type="number" id="pomodoroWorkDuration" value="25" min="1" max="90">
+            </div>
+            <div class="setting-group">
+                <label for="pomodoroShortBreak">Short Break (minutes)</label>
+                <input type="number" id="pomodoroShortBreak" value="5" min="1" max="30">
+            </div>
+            <div class="setting-group">
+                <label for="pomodoroLongBreak">Long Break (minutes)</label>
+                <input type="number" id="pomodoroLongBreak" value="15" min="1" max="60">
+            </div>
+            <div class="setting-group">
+                <label for="pomodoroCyclesBeforeLong">Cycles Before Long Break</label>
+                <input type="number" id="pomodoroCyclesBeforeLong" value="4" min="1" max="8">
+            </div>
+            <div class="settings-apply-button-container">
+                <button id="pomodoroApplySettingsBtn" class="btn btn-primary" disabled>Apply Changes</button>
+            </div>
+        </div>
+        <div class="totals-section">
+            <div class="total-item work"><div class="total-label">Work Time</div><div class="total-value" id="pomodoroTotalWork">00:00:00</div></div>
+            <span class="totals-operator">+</span>
+            <div class="total-item rest"><div class="total-label">Break Time</div><div class="total-value" id="pomodoroTotalBreak">00:00:00</div></div>
+            <span class="totals-operator">=</span>
+            <div class="total-item total"><div class="total-label">Total Time</div><div class="total-value" id="pomodoroTotalTime">00:00:00</div></div>
+        </div>
+        <div class="log-container" id="pomodoroLogContainer">
+            <div style="text-align: center; opacity: 0.5;">Session log will appear here...</div>
+        </div>
+        <div id="pomodoroConfirmationModal" class="modal-overlay">
+            <div class="modal-content">
+                <p id="modalMessageText">Are you sure?</p>
+                <div class="modal-buttons">
+                    <button id="modalConfirmBtn" class="btn btn-primary">Confirm</button>
+                    <button id="modalCancelBtn" class="btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // Pomodoro Timer Script
+    (function() {
+        'use strict';
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioContext;
+        const DEFAULT_TITLE = "Pomodoro Timer"; // Store default title
+
+        function initAudioContext() {
+            if (!audioContext && AudioContext) {
+                audioContext = new AudioContext();
+            }
+        }
+        function playSound(frequency, duration, type = 'sine', volume = 0.18, delay = 0) {
+            if (!audioContext || state.isMuted) return; // Check mute state
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            oscillator.frequency.value = frequency;
+            oscillator.type = type;
+            const now = audioContext.currentTime + delay;
+            gainNode.gain.setValueAtTime(0, now);
+            gainNode.gain.linearRampToValueAtTime(volume, now + 0.01);
+            gainNode.gain.setValueAtTime(volume, now + 0.01);
+            gainNode.gain.exponentialRampToValueAtTime(0.0001, now + duration);
+            oscillator.start(now);
+            oscillator.stop(now + duration + 0.05);
+        }
+
+        const timerContainer = document.getElementById('pomodoroTimerContainer');
+        const digitalTimeEl = document.getElementById('pomodoroTimerDigital');
+        const modeLabelEl = document.getElementById('pomodoroTimerModeLabel');
+        const congratsMessageEl = document.getElementById('congratsMessage');
+        
+        const tomatoPathFillEl = document.getElementById('newPomodoroTomatoPathFill');
+        const tomatoIndicatorSVGDot = document.getElementById('newPomodoroTimerIndicatorSVG');
+        const tomatoStemGroup = document.getElementById('tomatoStemGroupNew'); 
+        
+        const sessionPatternEl = document.getElementById('pomodoroSessionPattern');
+        const controlsEl = document.getElementById('pomodoroControls');
+        const startBtn = document.getElementById('pomodoroStartBtn');
+        const pauseBtn = document.getElementById('pomodoroPauseBtn');
+        const settingsPanel = document.getElementById('pomodoroSettingsPanel');
+        const logContainer = document.getElementById('pomodoroLogContainer');
+        const currentTaskInput = document.getElementById('currentTaskInput');
+        const muteBtn = document.getElementById('pomodoroMuteBtn');
+        const muteEmoji = document.getElementById('muteEmoji');
+
+        const workDurationInput = document.getElementById('pomodoroWorkDuration');
+        const shortBreakInput = document.getElementById('pomodoroShortBreak');
+        const longBreakInput = document.getElementById('pomodoroLongBreak');
+        const cyclesBeforeLongInput = document.getElementById('pomodoroCyclesBeforeLong');
+        const applySettingsBtn = document.getElementById('pomodoroApplySettingsBtn');
+
+        const totalWorkEl = document.getElementById('pomodoroTotalWork');
+        const totalBreakEl = document.getElementById('pomodoroTotalBreak');
+        const totalTimeEl = document.getElementById('pomodoroTotalTime');
+
+        const completedWorkDisplay = document.getElementById('completedWorkSessionsDisplay');
+        const completedShortBreaksDisplay = document.getElementById('completedShortBreaksDisplay');
+        const completedLongBreaksDisplay = document.getElementById('completedLongBreaksDisplay');
+
+        const confirmationModal = document.getElementById('pomodoroConfirmationModal');
+        const modalMessageText = document.getElementById('modalMessageText');
+        const modalConfirmBtn = document.getElementById('modalConfirmBtn');
+        const modalCancelBtn = document.getElementById('modalCancelBtn');
+        let confirmAction = null;
+
+        let state = {
+            isRunning: false, isPaused: false, currentTime: 25 * 60, totalSessionTime: 25 * 60,
+            mode: 'work', 
+            completedWorkSessions: 0, 
+            completedShortBreaks: 0, 
+            completedLongBreaks: 0, 
+            currentCycleInSet: 1, intervalId: null,
+            sessionsLog: [], totalWorkTimeAccumulated: 0, totalBreakTimeAccumulated: 0,
+            currentTask: '',
+            isMuted: false,
+        };
+        let settings = { workDuration: 25, shortBreak: 5, longBreak: 15, cyclesBeforeLong: 4 };
+        let lastAppliedSettings = { ...settings }; 
+
+        let cachedTomatoPathLength = 0; 
+
+        function updateDocumentTitle() {
+            if (state.isRunning || state.isPaused) {
+                document.title = `${formatTimeMMSS(state.currentTime)} - ${state.mode.replace('-', ' ')} | ${DEFAULT_TITLE}`;
+            } else {
+                document.title = DEFAULT_TITLE;
+            }
+        }
+
+        function loadSettingsFromUI() {
+            settings.workDuration = parseInt(workDurationInput.value) || 25;
+            settings.shortBreak = parseInt(shortBreakInput.value) || 5;
+            settings.longBreak = parseInt(longBreakInput.value) || 15;
+            settings.cyclesBeforeLong = parseInt(cyclesBeforeLongInput.value) || 4;
+        }
+        function applySettingsToUI() { 
+            workDurationInput.value = settings.workDuration;
+            shortBreakInput.value = settings.shortBreak;
+            longBreakInput.value = settings.longBreak;
+            cyclesBeforeLongInput.value = settings.cyclesBeforeLong;
+        }
+        function formatTimeMMSS(s) { const m=Math.floor(s/60); return `${m.toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+        function formatTimeHHMMSS(s) { const h=Math.floor(s/3600); const m=Math.floor((s%3600)/60); return `${h.toString().padStart(2,'0')}:${m.toString().padStart(2,'0')}:${(s%60).toString().padStart(2,'0')}`; }
+
+        function updateDisplay() {
+            digitalTimeEl.textContent = formatTimeMMSS(state.currentTime);
+            modeLabelEl.textContent = state.mode.replace('-', ' ');
+            updateDocumentTitle(); // Update browser tab title
+
+            if (cachedTomatoPathLength === 0 && tomatoPathFillEl.getTotalLength) {
+                cachedTomatoPathLength = tomatoPathFillEl.getTotalLength();
+                tomatoPathFillEl.style.strokeDasharray = cachedTomatoPathLength;
+            }
+            if (cachedTomatoPathLength > 0) {
+                const progressRatio = state.currentTime / state.totalSessionTime; 
+                const offsetValue = cachedTomatoPathLength * (1 - progressRatio); 
+                tomatoPathFillEl.style.strokeDashoffset = offsetValue;
+                const dotPositionLength = cachedTomatoPathLength * progressRatio;
+                const point = tomatoPathFillEl.getPointAtLength(Math.max(0, Math.min(cachedTomatoPathLength, dotPositionLength)));
+                tomatoIndicatorSVGDot.setAttribute('cx', point.x);
+                tomatoIndicatorSVGDot.setAttribute('cy', point.y);
+            }
+            
+            updateSessionPatternVisual();
+            updateButtonAndContainerStates();
+            updateSessionCountersDisplay(); 
+        }
+
+        function updateButtonAndContainerStates() {
+            controlsEl.classList.toggle('state-playing', state.isRunning);
+            controlsEl.classList.toggle('state-paused', !state.isRunning && state.isPaused);
+            timerContainer.classList.toggle('active', state.isRunning);
+            timerContainer.classList.toggle('work-mode', state.mode === 'work');
+            timerContainer.classList.remove('long-break-mode'); 
+            timerContainer.classList.toggle('rest-mode', state.mode !== 'work');
+            
+            if (state.mode === 'work') {
+                timerContainer.style.setProperty('--tomato-glow-color', '#F44336');
+            } else if (state.mode === 'short-break') {
+                timerContainer.style.setProperty('--rest-fill-color', '#66BB6A'); 
+                timerContainer.style.setProperty('--rest-glow-color', '#66BB6A');
+                timerContainer.style.setProperty('--tomato-glow-color', '#66BB6A');
+                timerContainer.style.setProperty('--rest-stem-leaf-fill', '#4CAF50');
+                timerContainer.style.setProperty('--rest-stem-leaf-stroke', '#388E3C');
+                timerContainer.style.setProperty('--rest-highlight-fill', 'rgba(165, 214, 167, 0.4)');
+                timerContainer.style.setProperty('--rest-indicator-dot-fill', '#C8E6C9');
+                timerContainer.style.setProperty('--rest-track-stroke', 'rgba(102, 187, 106, 0.15)');
+            } else if (state.mode === 'long-break') {
+                timerContainer.classList.add('long-break-mode'); 
+                timerContainer.style.setProperty('--rest-fill-color', '#42A5F5'); 
+                timerContainer.style.setProperty('--rest-glow-color', '#42A5F5');
+                timerContainer.style.setProperty('--tomato-glow-color', '#42A5F5');
+                timerContainer.style.setProperty('--rest-stem-leaf-fill', '#2196F3');
+                timerContainer.style.setProperty('--rest-stem-leaf-stroke', '#1976D2');
+                timerContainer.style.setProperty('--rest-highlight-fill', 'rgba(144, 202, 249, 0.4)');
+                timerContainer.style.setProperty('--rest-indicator-dot-fill', '#BBDEFB');
+                timerContainer.style.setProperty('--rest-track-stroke', 'rgba(66, 165, 245, 0.15)');
+            }
+
+            startBtn.style.display = state.isRunning ? 'none' : 'flex';
+            pauseBtn.style.display = state.isRunning ? 'flex' : 'none';
+            if (state.isRunning) { pauseBtn.classList.add('btn-primary','btn-large'); startBtn.classList.remove('btn-primary','btn-large'); }
+            else { startBtn.classList.add('btn-primary','btn-large'); pauseBtn.classList.remove('btn-primary','btn-large'); }
+            
+            muteEmoji.textContent = state.isMuted ? '🔇' : '🔊';
+            muteBtn.setAttribute('aria-label', state.isMuted ? 'Unmute sounds' : 'Mute sounds');
+            muteBtn.classList.toggle('muted', state.isMuted);
+        }
+
+        function updateSessionPatternVisual() { 
+            sessionPatternEl.innerHTML = '';
+            state.sessionsLog.forEach(sessionType => {
+                const block = document.createElement('div');
+                block.className = `session-block ${sessionType}`;
+                sessionPatternEl.appendChild(block);
+            });
+            if (state.isRunning || state.isPaused || state.currentTime < state.totalSessionTime || 
+                (state.currentTime === state.totalSessionTime && !state.isRunning && !state.isPaused) ) { 
+                 const currentBlock = document.createElement('div');
+                 currentBlock.className = `session-block ${state.mode} active`;
+                 sessionPatternEl.appendChild(currentBlock);
+            }
+            let futureSessionsToShow = settings.cyclesBeforeLong * 2; 
+            let currentModeForPrediction = state.mode;
+            let effectiveCompletedWork = state.completedWorkSessions;
+
+            if (state.isRunning || state.isPaused || state.currentTime < state.totalSessionTime || 
+                (state.currentTime === state.totalSessionTime && !state.isRunning && !state.isPaused) ) {
+                if (currentModeForPrediction === 'work') {
+                    effectiveCompletedWork++; 
+                    currentModeForPrediction = (effectiveCompletedWork % settings.cyclesBeforeLong === 0 && effectiveCompletedWork > 0 && settings.cyclesBeforeLong > 0) ? 'long-break' : 'short-break';
+                } else { currentModeForPrediction = 'work'; }
+            } else { currentModeForPrediction = 'work'; }
+
+            for (let i = 0; i < futureSessionsToShow && sessionPatternEl.children.length < 10; i++) {
+                const block = document.createElement('div');
+                block.className = `session-block ${currentModeForPrediction} empty`;
+                sessionPatternEl.appendChild(block);
+                if (currentModeForPrediction === 'work') {
+                    effectiveCompletedWork++;
+                    currentModeForPrediction = (effectiveCompletedWork % settings.cyclesBeforeLong === 0 && effectiveCompletedWork > 0 && settings.cyclesBeforeLong > 0) ? 'long-break' : 'short-break';
+                } else { currentModeForPrediction = 'work';}
+            }
+        }
+
+        function updateSessionCountersDisplay() {
+            completedWorkDisplay.textContent = state.completedWorkSessions;
+            completedShortBreaksDisplay.textContent = state.completedShortBreaks;
+            completedLongBreaksDisplay.textContent = state.completedLongBreaks;
+        }
+
+        function showCongratsMessage(messageText) {
+            congratsMessageEl.textContent = messageText;
+            congratsMessageEl.classList.add('show');
+            setTimeout(() => {
+                congratsMessageEl.classList.remove('show');
+            }, 2500); 
+        }
+
+        window.pomodoroToggleMute = function() {
+            initAudioContext();
+            state.isMuted = !state.isMuted;
+            muteEmoji.textContent = state.isMuted ? '🔇' : '🔊';
+            muteBtn.setAttribute('aria-label', state.isMuted ? 'Unmute sounds' : 'Mute sounds');
+            muteBtn.classList.toggle('muted', state.isMuted);
+            playSound(state.isMuted ? 200 : 600, 0.05, 'square', 0.1); // Feedback click
+            saveStateToLocalStorage();
+        }
+
+        window.pomodoroToggleTimer = function() { 
+            initAudioContext(); 
+            if (state.isRunning) {
+                pauseTimer();
+            } else {
+                state.currentTask = currentTaskInput.value.trim(); // Capture task name on start
+                startTimer();
+            }
+        }
+        function startTimer() {
+            if (state.isRunning) return;
+            state.isRunning = true; state.isPaused = false;
+            playSound(state.mode === 'work' ? 523.25 : 622.25, 0.08, 'triangle', 0.15);
+            if (tomatoStemGroup) tomatoStemGroup.style.opacity = '1'; 
+            
+            let logMessage = `${state.mode.replace('-', ' ')} session started`;
+            if (state.mode === 'work' && state.currentTask) {
+                logMessage += ` (Task: ${state.currentTask})`;
+            }
+            addToLog(logMessage, state.mode);
+
+            state.intervalId = setInterval(() => {
+                if (state.currentTime > 0) {
+                    state.currentTime--;
+                    if (state.mode === 'work') state.totalWorkTimeAccumulated++; else state.totalBreakTimeAccumulated++;
+                    updateDisplay(); updateTotals();
+                    if (state.currentTime === 60 || state.currentTime === 30) playSound(440, 0.04, 'sine', 0.08);
+                    if (state.currentTime <= 5 && state.currentTime > 0) playSound(880, 0.07, 'square', 0.12);
+                } else { completeCurrentSession(true); }
+            }, 1000);
+            updateButtonAndContainerStates(); updateDisplay();
+        }
+        function pauseTimer() {
+            if (!state.isRunning) return;
+            state.isRunning = false; state.isPaused = true; clearInterval(state.intervalId);
+            playSound(349.23, 0.1, 'sawtooth', 0.15); 
+            updateButtonAndContainerStates();
+            updateDocumentTitle(); // Update title on pause
+        }
+        function completeCurrentSession(earned = true) {
+            clearInterval(state.intervalId);
+            state.isRunning = false; state.isPaused = false;
+            const completedMode = state.mode;
+            let taskInfoForLog = (completedMode === 'work' && state.currentTask) ? ` (Task: ${state.currentTask})` : '';
+
+            if (earned) {
+                state.sessionsLog.push(completedMode);
+                addToLog(`${completedMode.replace('-', ' ')} session completed${taskInfoForLog}`, completedMode);
+                
+                if (completedMode === 'work') { 
+                    state.completedWorkSessions++;
+                    playSound(698.46,0.10,'triangle',0.20); 
+                    playSound(880.00,0.10,'triangle',0.20,0.10); 
+                    playSound(1046.50,0.15,'triangle',0.20,0.20); 
+                    playSound(1396.92,0.25,'sine',0.18,0.35); 
+                    showCongratsMessage("Great Focus!");
+                    timerContainer.style.animation = 'timer-pulse-congrats 0.5s ease-out';
+                    setTimeout(()=> timerContainer.style.animation = '', 500);
+                    state.currentTask = ''; 
+                    currentTaskInput.value = '';
+                } else if (completedMode === 'short-break') {
+                    state.completedShortBreaks++;
+                    playSound(523.25,0.08,'sine',0.2); playSound(659.25,0.08,'sine',0.2,0.08); 
+                } else if (completedMode === 'long-break') {
+                    state.completedLongBreaks++;
+                    playSound(523.25,0.1,'sine',0.22); playSound(783.99,0.1,'sine',0.22,0.1); playSound(659.25,0.12,'sine',0.22,0.2);
+                }
+                createStemExplosionEffect(completedMode); 
+            } else { 
+                 addToLog(`${completedMode.replace('-',' ')} session skipped${taskInfoForLog}`, completedMode);
+                 playSound(261.63, 0.12, 'square', 0.15);
+                 if (completedMode === 'work') { 
+                    state.currentTask = '';
+                    currentTaskInput.value = '';
+                 }
+            }
+            updateSessionCountersDisplay(); 
+
+            if (completedMode === 'work') {
+                state.currentCycleInSet++;
+                if (state.currentCycleInSet > settings.cyclesBeforeLong && settings.cyclesBeforeLong > 0) { 
+                    startNewSession('long-break'); 
+                    state.currentCycleInSet = 1; 
+                } else { 
+                    startNewSession('short-break'); 
+                }
+            } else { 
+                startNewSession('work'); 
+            }
+            updateDisplay(); updateTotals(); // updateDisplay will also call updateDocumentTitle
+        }
+
+        function startNewSession(type) {
+            state.mode = type;
+            switch (type) {
+                case 'work': state.currentTime = settings.workDuration * 60; break;
+                case 'short-break': state.currentTime = settings.shortBreak * 60; break;
+                case 'long-break': state.currentTime = settings.longBreak * 60; break;
+            }
+            state.totalSessionTime = state.currentTime;
+            state.isRunning = false; state.isPaused = false;
+            if (tomatoStemGroup) tomatoStemGroup.style.opacity = '1'; 
+            updateDisplay(); updateButtonAndContainerStates(); 
+        }
+
+        window.pomodoroSkipCycle = function() {
+            initAudioContext();
+            if (state.mode) { 
+                completeCurrentSession(false); 
+            }
+        }
+        window.pomodoroCompleteCycle = function() { 
+            initAudioContext();
+            if (state.mode) {
+                if(state.isRunning){
+                    if(state.mode==='work') state.totalWorkTimeAccumulated += state.currentTime;
+                    else state.totalBreakTimeAccumulated += state.currentTime;
+                }
+                state.currentTime = 0; 
+                completeCurrentSession(true); 
+            }
+        }
+        window.pomodoroRepeatCycle = function() {
+            initAudioContext(); 
+            clearInterval(state.intervalId); 
+            state.isRunning = false; state.isPaused = false;
+            switch (state.mode) {
+                case 'work': state.currentTime = settings.workDuration * 60; break;
+                case 'short-break': state.currentTime = settings.shortBreak * 60; break;
+                case 'long-break': state.currentTime = settings.longBreak * 60; break;
+            }
+            state.totalSessionTime = state.currentTime;
+            addToLog(`Repeating ${state.mode.replace('-',' ')} session`, state.mode);
+            playSound(415.30, 0.1, 'triangle', 0.15); 
+            if (tomatoStemGroup) tomatoStemGroup.style.opacity = '1';
+            updateDisplay(); updateButtonAndContainerStates();
+        }
+
+        function actualResetTimer() {
+            clearInterval(state.intervalId);
+            state = {...state, isRunning:false, isPaused:false, currentTime:settings.workDuration*60, totalSessionTime:settings.workDuration*60, mode:'work', 
+                     completedWorkSessions:0, completedShortBreaks:0, completedLongBreaks:0, 
+                     currentCycleInSet:1, intervalId:null, sessionsLog:[], totalWorkTimeAccumulated:0, totalBreakTimeAccumulated:0, currentTask: '' };
+            currentTaskInput.value = '';
+            logContainer.innerHTML = '<div style="text-align: center; opacity: 0.5;">Session log will appear here...</div>';
+            playSound(293.66, 0.18, 'sawtooth', 0.15); 
+            if (tomatoStemGroup) tomatoStemGroup.style.opacity = '1';
+            updateDisplay(); updateButtonAndContainerStates(); updateTotals(); updateSessionCountersDisplay(); saveStateToLocalStorage();
+            document.title = DEFAULT_TITLE; // Reset title on full reset
+        }
+        window.pomodoroShowResetConfirmation = function() { initAudioContext(); modalMessageText.textContent = "Reset all progress and logs?"; confirmationModal.classList.add('active'); confirmAction = actualResetTimer; }
+        modalConfirmBtn.addEventListener('click', () => { if (typeof confirmAction === 'function') confirmAction(); confirmationModal.classList.remove('active'); confirmAction = null; });
+        modalCancelBtn.addEventListener('click', () => { confirmationModal.classList.remove('active'); confirmAction = null; });
+        
+        function checkSettingsChanged() {
+            const wdChanged = parseInt(workDurationInput.value) !== lastAppliedSettings.workDuration;
+            const sbChanged = parseInt(shortBreakInput.value) !== lastAppliedSettings.shortBreak;
+            const lbChanged = parseInt(longBreakInput.value) !== lastAppliedSettings.longBreak;
+            const cyChanged = parseInt(cyclesBeforeLongInput.value) !== lastAppliedSettings.cyclesBeforeLong;
+            applySettingsBtn.disabled = !(wdChanged || sbChanged || lbChanged || cyChanged);
+        }
+
+        applySettingsBtn.addEventListener('click', () => {
+            initAudioContext();
+            loadSettingsFromUI(); 
+            lastAppliedSettings = { ...settings }; 
+            applySettingsBtn.disabled = true; 
+            playSound(622.25, 0.12, 'sine', 0.15); // D#5 for apply settings
+
+            if (!state.isRunning && !state.isPaused) { 
+                if (state.mode === 'work') {
+                    state.currentTime = settings.workDuration * 60;
+                } else if (state.mode === 'short-break') {
+                    state.currentTime = settings.shortBreak * 60;
+                } else if (state.mode === 'long-break') {
+                    state.currentTime = settings.longBreak * 60;
+                }
+                state.totalSessionTime = state.currentTime;
+                updateDisplay();
+            }
+            updateSessionPatternVisual(); 
+            saveStateToLocalStorage();
+        });
+
+        window.pomodoroToggleSettings = function() {
+            initAudioContext();
+            const isActive = settingsPanel.classList.toggle('active');
+            playSound(isActive ? 493.88 : 466.16, 0.07, 'square', 0.12); 
+            
+            if (isActive) { 
+                applySettingsToUI(); 
+                lastAppliedSettings = { ...settings }; 
+                checkSettingsChanged(); 
+            } else { 
+                workDurationInput.value = lastAppliedSettings.workDuration;
+                shortBreakInput.value = lastAppliedSettings.shortBreak;
+                longBreakInput.value = lastAppliedSettings.longBreak;
+                cyclesBeforeLongInput.value = lastAppliedSettings.cyclesBeforeLong;
+                applySettingsBtn.disabled = true; 
+            }
+        }
+
+        function updateTotals() { totalWorkEl.textContent=formatTimeHHMMSS(state.totalWorkTimeAccumulated); totalBreakEl.textContent=formatTimeHHMMSS(state.totalBreakTimeAccumulated); totalTimeEl.textContent=formatTimeHHMMSS(state.totalWorkTimeAccumulated+state.totalBreakTimeAccumulated); }
+        function addToLog(message, type) {
+            if (logContainer.querySelector('div[style]')) logContainer.innerHTML = '';
+            const entry = document.createElement('div'); entry.className = `log-entry ${type}`;
+            const icon = type === 'work' ? '🍅' : 
+                         type === 'short-break' ? '🌴' : 
+                         type === 'long-break' ? '💤' : 
+                         '📝';
+            entry.innerHTML = `<div style="display:flex;align-items:center;"><span class="log-icon">${icon}</span><span>${message}</span></div><span class="log-time">${new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</span>`;
+            logContainer.insertBefore(entry, logContainer.firstChild);
+            if (logContainer.children.length > 20) logContainer.removeChild(logContainer.lastChild);
+        }
+        
+        function createStemExplosionEffect(completedMode) {
+            if (!tomatoStemGroup) return;
+            const stemRect = tomatoStemGroup.getBoundingClientRect();
+            const svgRect = timerContainer.querySelector('.timer-tomato-svg').getBoundingClientRect();
+            const startX = (stemRect.width > 0 ? stemRect.left + stemRect.width / 2 : svgRect.left + svgRect.width / 2);
+            const startY = (stemRect.height > 0 ? stemRect.top + stemRect.height / 2 - 15 : svgRect.top + 30); 
+
+            tomatoStemGroup.style.transition = 'opacity 0.1s ease-out';
+            tomatoStemGroup.style.opacity = '0'; 
+
+            const tomatoParticleCount = (completedMode === 'work') ? 15 : 8;
+            const sparkleParticleCount = (completedMode === 'work') ? 12 : 0; // Increased sparkles
+
+            for (let i = 0; i < tomatoParticleCount; i++) { 
+                const particle = document.createElement('div');
+                particle.className = 'stem-particle';
+                particle.textContent = '🍅'; 
+                document.body.appendChild(particle);
+                const angle = Math.random() * Math.PI * 2;
+                const force = (completedMode === 'work' ? 60 : 40) + Math.random() * (completedMode === 'work' ? 100 : 70); 
+                const tx = Math.cos(angle) * force;
+                const ty = Math.sin(angle) * force - Math.random() * (completedMode === 'work' ? 35 : 25); 
+                const r = (Math.random() - 0.5) * (completedMode === 'work' ? 720 : 680); 
+                particle.style.left = `${startX - 9}px`; 
+                particle.style.top = `${startY - 9}px`;
+                particle.style.setProperty('--tx', `${tx}px`);
+                particle.style.setProperty('--ty', `${ty}px`);
+                particle.style.setProperty('--r', `${r}deg`);
+                particle.style.animation = `stem-explode-animate ${0.8 + Math.random() * (completedMode === 'work' ? 0.9 : 0.6)}s cubic-bezier(0.1, 0.7, 0.3, 1) forwards`;
+                setTimeout(() => particle.remove(), (completedMode === 'work' ? 1700 : 1300));
+            }
+
+            if (completedMode === 'work') {
+                for (let i = 0; i < sparkleParticleCount; i++) {
+                    const sparkle = document.createElement('div');
+                    sparkle.className = 'sparkle-particle'; 
+                    sparkle.textContent = '✨'; 
+                    document.body.appendChild(sparkle);
+                    const angle = Math.random() * Math.PI * 2;
+                    const force = 40 + Math.random() * 70;
+                    const tx = Math.cos(angle) * force;
+                    const ty = Math.sin(angle) * force - Math.random() * 25;
+                    sparkle.style.left = `${startX - 4}px`; 
+                    sparkle.style.top = `${startY - 4}px`;
+                    sparkle.style.setProperty('--tx', `${tx}px`);
+                    sparkle.style.setProperty('--ty', `${ty}px`);
+                    sparkle.style.fontSize = `${0.7 + Math.random() * 0.6}rem`; 
+                    sparkle.style.animation = `sparkle-fade-out ${0.6 + Math.random() * 0.6}s ease-out forwards`;
+                    setTimeout(() => sparkle.remove(), 1200);
+                }
+            }
+        }
+
+        [workDurationInput, shortBreakInput, longBreakInput, cyclesBeforeLongInput].forEach(input => {
+            input.addEventListener('input', checkSettingsChanged); 
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || confirmationModal.classList.contains('active')) return;
+            const keyActions = {'Space':pomodoroToggleTimer, 'KeyR':pomodoroRepeatCycle, 'KeyS':pomodoroSkipCycle, 'KeyD':pomodoroCompleteCycle};
+            if (keyActions[e.code] && (e.code !== 'Space' ? (e.ctrlKey || e.metaKey) : true)) { e.preventDefault(); keyActions[e.code](); }
+            if (e.code === 'Escape' && settingsPanel.classList.contains('active')) pomodoroToggleSettings();
+        });
+        document.addEventListener('visibilitychange', () => { if (!document.hidden && state.isRunning) updateDisplay(); });
+        let resizeTimeout;
+        window.addEventListener('resize', () => { clearTimeout(resizeTimeout); resizeTimeout = setTimeout(() => { if (tomatoPathFillEl.getTotalLength) { cachedTomatoPathLength = tomatoPathFillEl.getTotalLength(); tomatoPathFillEl.style.strokeDasharray = cachedTomatoPathLength; } if (state.isRunning || state.isPaused || state.currentTime !== state.totalSessionTime || !state.isRunning && !state.isPaused) updateDisplay(); }, 150); }); 
+
+        function saveStateToLocalStorage() { 
+            try {
+                const s={
+                    totalWorkTimeAccumulated:state.totalWorkTimeAccumulated, totalBreakTimeAccumulated:state.totalBreakTimeAccumulated,
+                    sessionsLog:state.sessionsLog, completedWorkSessions:state.completedWorkSessions, 
+                    completedShortBreaks: state.completedShortBreaks, completedLongBreaks: state.completedLongBreaks, 
+                    currentCycleInSet:state.currentCycleInSet, settings:settings, isMuted: state.isMuted,
+                    lastTask: state.currentTask 
+                }; 
+                localStorage.setItem('pomodoroAppStateV5', JSON.stringify(s)); 
+            } catch (e) {
+                console.warn("Could not save state to localStorage:", e);
+            }
+        }
+        function loadStateFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('pomodoroAppStateV5');
+                if (saved) {
+                    const ls = JSON.parse(saved);
+                    state.totalWorkTimeAccumulated = ls.totalWorkTimeAccumulated||0; state.totalBreakTimeAccumulated = ls.totalBreakTimeAccumulated||0;
+                    state.sessionsLog = ls.sessionsLog||[]; state.completedWorkSessions = ls.completedWorkSessions||0; 
+                    state.completedShortBreaks = ls.completedShortBreaks || 0; 
+                    state.completedLongBreaks = ls.completedLongBreaks || 0;  
+                    state.currentCycleInSet = ls.currentCycleInSet||1;
+                    state.isMuted = ls.isMuted || false;
+                    state.currentTask = ls.lastTask || ''; 
+                    currentTaskInput.value = state.currentTask;
+
+                    if (ls.settings) { 
+                        settings = {...settings, ...ls.settings}; 
+                        lastAppliedSettings = { ...settings }; 
+                        applySettingsToUI(); 
+                    }
+                }
+            } catch (e) { 
+                console.warn("Could not load state from localStorage:", e); 
+                localStorage.removeItem('pomodoroAppStateV5'); // Clear potentially corrupted state
+            }
+        }
+        function init() {
+            loadStateFromLocalStorage(); 
+            loadSettingsFromUI(); 
+            lastAppliedSettings = { ...settings }; 
+
+            state.currentTime = settings.workDuration * 60; state.totalSessionTime = settings.workDuration * 60;
+            
+            setTimeout(() => {
+                if (tomatoPathFillEl.getTotalLength) {
+                    cachedTomatoPathLength = tomatoPathFillEl.getTotalLength();
+                    if (cachedTomatoPathLength > 0) { 
+                        tomatoPathFillEl.style.strokeDasharray = cachedTomatoPathLength;
+                        tomatoPathFillEl.style.strokeDashoffset = 0; 
+                    }
+                }
+                updateDisplay(); 
+            }, 50); 
+            
+            updateButtonAndContainerStates(); updateTotals(); updateSessionPatternVisual(); updateSessionCountersDisplay();
+            checkSettingsChanged(); 
+            setInterval(saveStateToLocalStorage, 10000);
+            document.title = DEFAULT_TITLE; // Set initial title
+        }
+        document.body.addEventListener('click', initAudioContext, { once: true });
+        document.body.addEventListener('touchstart', initAudioContext, { once: true });
+        init();
+    })();
+    </script>
+</div>

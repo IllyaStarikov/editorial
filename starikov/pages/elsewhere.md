@@ -1,10 +1,15 @@
 # Elsewhere 🔗
 > Elsewhere is where you'll find the else of my digital self.
 
-- [`starikov.co`](https://starikov.co)
-- [`starikov.io`](https://starikov.io)
+
 - **[Github](http://github.com/IllyaStarikov/)** `IllyaStarikov`
 - **[LinkedIn](https://linkedin.com/in/illyastarikov/)** `illyastarikov`
+- **[BlueSky](illya@starikov.co)**
+
+---
+
+- [`starikov.co`](https://starikov.co)
+- [`starikov.io`](https://starikov.io)
 - **[Goodreads](https://goodreads.com/user/show/137314885-illya-starikov)**
 - **[Duolingo](https://duolingo.com/profile/illyastarikov)** `illyastarikov`
 - **[Duome](https://duome.eu/illyastarikov/)** `illyastarikov`
@@ -16,10 +21,30 @@
 - **[Spotify](https://open.spotify.com/user/ows1bq75fpsu8jc6to7swizs7)**
 - **[Tesla Referral](https://ts.la/illya39523)**
 
+---
 
-## Buy Me Boba Tea
+
+## Buy Me a Boba Tea?
 - **[Venmo](https://account.venmo.com/u/starikov)** `starikov`
 - **[Cash App](https://cash.app/$illyastarikov)** `$illyastarikov`
 - **[Paypal](https://paypal.me/IllyaStarikov)** `IllyaStarikov`
 - **Zelle** Phone Number
 - **Apple Pay Cash** Phone Number
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,2 @@
+# Avoiding `eqnarray`
+Since reading about its faults in [The Not So Short Introduction to LaTeX](https://tobi.oetiker.ch/lshort/lshort.pdf) (highly recommended read), I have avidly stayed away form `eqnarray`. However, I feel as if the book didn’t covey the ideas as well as it should; also, it suggestion was `IEEEeqnarray`, apposed to the classically recommended `align`. [This article](http://www.tug.org/pracjourn/2006-4/madsen/madsen.pdf) on TeX User Groups conveys ideas more eloquently and provides better alternatives. 
