@@ -4,7 +4,7 @@ After using a fairly large, matured language for a reasonable period of time, fi
 ## Ternaries Returning lvalues
 You might be familiar with ternaries as `condition ? do something : do something else`, and they become quite useful in comparison to the standard if-else. However, if you’ve dealt with ternaries a lot, you might have noticed that ternaries also return [lvalues/rvalues](http://stackoverflow.com/questions/3601602/what-are-rvalues-lvalues-xvalues-glvalues-and-prvalues). Now, as the name suggests suggests, you can assign to lvalues (lvalues are often referred to as locator values). So something like so is possible:
 
-```
+```cpp
 std::string x = "foo", y = "bar";
 
 std::cout << "Before Ternary! ";
@@ -38,7 +38,7 @@ std::cout << "42 is the " << array[42] << ".";
 ## Zero Width Space Identifiers
 This one has the least to say, and could cause the most damage. The C++ standard allows for [hidden white space](https://en.wikipedia.org/wiki/Whitespace\_character) in identifiers (i.e. variable names, method/property names, class names, etc.). So this makes the following possible.
 
-```
+```cpp
 int n​umber = 1;
 int nu​mber = 2;
 int num​ber = 3;
@@ -50,7 +50,7 @@ std::cout << num​ber << std::endl; // prints 3
 
 Using `\u` as a proxy for hidden whitespace character, the above code can be re-written as such:
 
-```
+```cpp
 int n\uumber = 1;
 int nu\umber = 2;
 int num\uber = 3;

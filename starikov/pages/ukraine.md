@@ -1,5 +1,5 @@
 # Ukraine 🇺🇦
-> Ukraine is an eternity, not only the present but above all the future and the past.
+> You thought Ukraine was that simple? Ukraine is super. Ukraine is unique. It has endured the steamrollers of history.
 
 * **[United24](https://u24.gov.ua)** — an official fundraising platform launched by President Zelenskyy that routes donations straight to government accounts supporting defense, medical aid, and reconstruction. Highly recommended.
 * **[Nova Ukraine](http://novaukraine.org)** — a U.S.-based nonprofit delivering humanitarian aid to civilians.

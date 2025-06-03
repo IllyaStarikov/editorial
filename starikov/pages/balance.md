@@ -1,14 +1,15 @@
 # Balance 💼/🏡
-> Balance doesn't mean doing everything; it means doing the right thing.
+> Balancing work and life to focus on what matters.
 
-**The following are my work-life balance preferences. They are subject to change and may be out of date.**
+<h2><center><i>Template Version:</i> <b><code>2.1</code></b> | <i>Last Updated:</i> <b><code>2025-06-01</b></code></center></h2>
 
-**⚖️ TL;DR** Message me anytime, anywhere, anyhow. Don’t use send laters with me, I’ll check and message back appropriately. Please avoid meetings. My reply times can vary, especially in crunch time. I have a unique work style — such as sending emails/messages at all times of the day — but I can accommodate anyone. I appreciate directness and candor, I value honesty over diplomacy. 
+**The following are my work-life balance preferences. They may evolve over time, so check back occasionally.**
 
+**⚖️ TL;DR:** Message me anytime, anywhere—no need to use delayed sending. I'll respond appropriately. Please minimize meetings. My response times vary, especially during crunch periods. I have an unconventional working style, often sending messages and emails at all hours, but I'm adaptable to anyone's communication style. I value directness, candor, and honesty over diplomacy.
 
 ## Communication
 
-My preferred communication channels are as follows.
+My preferred communication channels, in order:
 
 1. 💬 Chat
 2. 📩 Email
@@ -16,84 +17,145 @@ My preferred communication channels are as follows.
 
 ### 💬 Chat
 
-- It’s **okay to message** me during a meeting, PTO, or outside working hour
-- It’s **okay to not use send later services**, I prefer lower ping times and I manage messages accordingly
-	- I will use send later for anything non-work relevant, but **I will opt to not use send later services** to reduce ping times
-- Unless critical, I **don’t expect a reply for a week**
-	- I usually **expect to reply within a week**
-	- If I am in focus mode, my reply time can wain into two weeks-one month
-	- I will leave messages marked as unread if there is an action item
-- [I prefer messages that don’t just say “hello”](https://nohello.net/).
+* **Message anytime**—during meetings, PTO, or outside typical work hours is completely fine.
+* **Avoid using delayed sending services**; I prefer quick pings and will manage responses appropriately.
 
-### 📩 Email 
+  * However, I'll use delayed sending for non-work-related topics.
+* **I don't expect immediate replies** unless it's critical.
 
-- I **don’t check email** outside working hours
-	- I **do send emails** outside working hours
-- I **prefer a TL;DR**
+  * Generally, I reply within a week, though this might extend to two weeks or a month if I'm in deep-focus mode.
+  * I keep messages marked unread when they contain action items.
+* [Please avoid messages that only say "hello"](https://nohello.net/).
+
+### 📩 Email
+
+* I typically **don't check emails outside of working hours**, but **do send emails anytime**.
+* I greatly appreciate a clear **TL;DR** at the top.
 
 ### 📅 Calendar
 
-Core working hours as follows (**PST**).
+Core hours represent my standard availability window when you can reliably expect me to be online and responsive. These are the designated times during which:
 
-|               | From | To     |
-|---------------|-------|-------|
-| **Monday**    | 10:00 | 17:00 |
-| **Tuesday**   | 10:00 | 17:00 |
-| **Wednesday** | 10:00 | 17:00 |
-| **Thursday**  | 10:00 | 17:00 |
-| **Friday**    | 10:00 | 17:00 |
+* I’m consistently available for meetings * I maintain regular communication and respond promptly * My work schedule is most predictable
 
-- a *5 minute* break between meetings
-- a *12-hour notice* before scheduling a meeting
-- please include *permission to modify the event*
-- prefer walking meetings
-- encouraged to use \#hashtags for metadata:
-	- `#moveable` for meetings that can easily be moved (i.e., 1:1s)
+*Please note*: While I may occasionally be available outside of core hours, availability during these times is less guaranteed and subject to variability. For time-sensitive matters or scheduled meetings, I recommend booking within core hours to ensure reliable connectivity.
 
+My core working hours (**PST**):
+
+| Day           | From        | To          |
+| ------------- |:-----------:|:-----------:|
+| **Monday**    | **`10:00`** | **`16:00`** |
+| **Tuesday**   | **`10:00`** | **`16:00`** |
+| **Wednesday** | **`10:00`** | **`16:00`** |
+| **Thursday**  | **`10:00`** | **`16:00`** |
+| **Friday**    | **`10:00`** | **`16:00`** |
+
+
+Preferences:
+
+* Schedule at least a *5-minute break* between meetings.
+* Provide at least *12 hours’ notice* before scheduling meetings.
+* Always include *permission to modify the event*.
+* I prefer walking meetings whenever possible.
+* I use metadata for the following:
+	* `#moveable` for meetings easily rescheduled (e.g., 1:1s).
+	* 🔄 for recurring meetings
 
 ## Working
 
-- **I prefer plain, direct communication.** I sometimes have a tendency to speak too plainly about things, which may be course but it’s just my nature. *I don’t always pick up on context cues and subtlety.* Don’t hesitate to use plain language around me, I think it’ll ensure everyone is on the same page.
-	- **I value honesty over diplomacy.** Don’t worry about how to talk to me, focus on what to talk about.
+* **I typically...**
+	* complete **code reviews** within `24 hours`.
+	* review **tickets** within `24 hours`.
+		* respond to **tickets** within `8-24 hours`.
 
-- **I have a short attention span.** This doesn’t mean I can’t code for prolonged periods of time. I have learned to harness it and it makes me a great engineer. It does mean some considerations in topics such as:
-	- *communicating*, such as going off on tangents and sometimes trouble sticking to original points
-	- *writing*, where you will see me write half-complete sentences and paragraphs when creating a doc, but it will slowly grow into a full body
-	- *coding*, where if I know I have a bit of time on a project I may dive deeper into a stack to break up mundane coding
+* **Plain, direct communication suits me best.** I tend to speak very straightforwardly, which can occasionally come across bluntly—this isn't intentional, just my natural style. If subtlety or context cues are unclear, be direct. It helps everyone stay aligned.
 
-- **I prefer high-fidelity world models.** Unfortunately this usually means I probe on technical topics.
+  * **Honesty over diplomacy**—clarity and truthfulness lead to better outcomes.
 
-- **I have irregular work hours from time to time.** If the timing of my chats or emails isn’t working for please let me know!
+* **I prefer detailed and accurate world models.** Expect me to ask probing questions about technical topics to ensure full understanding.
+
+* **I occasionally have irregular working hours.** If my schedule or timing is problematic, please let me know—I’m flexible.
 
 ## Interviewing
 
-- I expect to **complete initial interview ratings within 24 hours, full feedback within 48 hours**.
-	
-- I use TC as an acronym for The Candidate, to not include names and any bias.
+* **I complete initial interview ratings within 24 hours and provide full feedback within 48 hours.**
 
-- The bullet points I use for grading a candidate:
-	- `+` positive trait
-	- `-` negative trait
-	- `-+` mixture of negative and positive
-	- `*` generate comment/note
-	- Example would be:
+* I use "TC" (The Candidate) to anonymize feedback and minimize bias.
+
+* My rating system uses the following markers:
+
+  * `+` Positive trait
+  * `-` Negative trait
+  * `-+` Mixed (positive and negative)
+  * `*` Additional comment or context
+
+Example rating could be:
 
 ```
-+ Correctly identified the correct data structure 
-	and algorithm
-+ Was able to weight pros and cons of algorithm X.
++ Correctly identified the optimal data structure [XOR Linked List]
++ Choose optimal algorithm [Bogosort],
+  + weighted pros [Ω(1) runtime] and cons [O(∞)] of algorithm
 
-- Got the runtime incorrect,
-	+ but was to get the memory complexity correct
-	
+- Got the average Θ(n × n!) runtime incorrect,
+	+ but TC got the memory complexity correct O(1),
+	+ and correctly explained why constant space: sorts in-place
+
 -+ Got 75% of the unit tests cases correct, 
-	which is average for this problem
+   which is average for this problem
 
-* We had internet issues for 5 minutes in the
-	beginning, granted candidate 5 extra minutes
-	for problem (with their permisson)
+* TC had internet issues for 5 minutes in the beginning,
+  granted them 5 extra minutes for problem (with TC's permisson)
 ```
 
-## Miscellaneous
 
-- I expect to **complete code reviews finished 24 hours**.
+**Interview Feedback Template:**
+
+```txt
+# ---------------------------------------------- Boilerplate
+You can find more info about this template at 
+starikov.co/balance#interviewing
+
+<SCRIPT>
+Hi, my name is Illya! Is this <TC>? Excellent! 
+Today we'll be conducting a 
+<INTERVIEW TYPE: programming, leadership, system design> interview.
+
+- Confirm programming language.
+- Are you comfortable? Water, break?
+- Any questions?
+</SCRIPT>
+
+# ---------------------------------------------- Question Asked
+<Fizz-buzz>
+
+# ---------------------------------------------- Interview Notes
+- 00:00 Interview start:
+-
+
+# ---------------------------------------------- Candidate Code
+// Candidate's code below verbatim
+
+
+# ---------------------------------------------- Candidate's Questions
+<SCRIPT>
+I'm going to complete the interview.
+We have a couple of minutes left,
+I'd be happy to answer any questions you may have.
+
+<CANDIDATE'S QUESTIONS>
+- 
+
+Thank you for your time today, 
+your recruiter will be in touch with next steps.
+Take care!
+</SCRIPT>
+
+# ---------------------------------------------- Additional Notes
+- [Context, special conditions, or other comments]
+```
+
+## Changelog
+
+- **2.0** | STAR🌻KOV implementation
+	- **2.1** | Proofreading via ChatGPT `GPT-4.5`. Added interview template.
+- **1.0** | Google implemenation

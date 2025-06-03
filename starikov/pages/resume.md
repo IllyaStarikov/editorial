@@ -12,7 +12,30 @@ If you understand LaTeX, feel free to use the template freely.
 ---
 
 ```
-<embed style="border: 1px solid black; max-width: 100%; min-height: 400px; max-height: 1200px;" src="https://resume.starikov.io/illya-starikov-resume.pdf" type="application/pdf"></embed>
+<div class="pdf-fullscreen">
+<!-- Put this anywhere in <code injection → Header> or just above the iframe -->
+<style>
+  /* iOS 15+ honors 100dvh = 100 % of the *visible* viewport, not the page */
+  .pdf-fullscreen {
+    width: 100%;
+    height: 100dvh;          /* iOS‑safe “dynamic vh” */
+    max-height: 100dvh;
+    margin: 0;
+    border: 1px solid #ccc;  /* optional */
+  }
+  .pdf-fullscreen iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+</style>
+  
+  <iframe
+    src="https://resume.starikov.io/illya-starikov-resume.pdf#view=FitH"
+    title="Illya Starikov – Resume"
+    scrolling="auto"
+  ></iframe>
+</div>
 ```
 
 ---

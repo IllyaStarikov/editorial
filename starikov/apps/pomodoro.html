@@ -624,7 +624,8 @@
         'use strict';
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         let audioContext;
-        const DEFAULT_TITLE = "Pomodoro Timer"; // Store default title
+        const DEFAULT_TITLE = "Pomodoro Timer"; // Store default title, though not used for active timer title
+        let originalTitleBeforeTimerRan = null; // Stores the original document title
 
         function initAudioContext() {
             if (!audioContext && AudioContext) {
@@ -697,6 +698,7 @@
             sessionsLog: [], totalWorkTimeAccumulated: 0, totalBreakTimeAccumulated: 0,
             currentTask: '',
             isMuted: false,
+            lastTickTime: 0, // Added for timer accuracy
         };
         let settings = { workDuration: 25, shortBreak: 5, longBreak: 15, cyclesBeforeLong: 4 };
         let lastAppliedSettings = { ...settings }; 
@@ -704,10 +706,29 @@
         let cachedTomatoPathLength = 0; 
 
         function updateDocumentTitle() {
-            if (state.isRunning || state.isPaused) {
-                document.title = `${formatTimeMMSS(state.currentTime)} - ${state.mode.replace('-', ' ')} | ${DEFAULT_TITLE}`;
+            if (state.isRunning) {
+                // Timer is currently running
+                if (originalTitleBeforeTimerRan === null) {
+                    // This is the moment the timer starts running, store the current document title
+                    originalTitleBeforeTimerRan = document.title;
+                }
+                // Format the title as "XX:XX | Mode"
+                let modeText = state.mode.replace('-', ' ');
+                // Capitalize the first letter of the mode
+                modeText = modeText.charAt(0).toUpperCase() + modeText.slice(1);
+                document.title = `${formatTimeMMSS(state.currentTime)} | ${modeText}`; // Changed separator to |
             } else {
-                document.title = DEFAULT_TITLE;
+                // Timer is not running (e.g., paused, stopped, reset, or script just loaded)
+                if (originalTitleBeforeTimerRan !== null) {
+                    // We had previously changed the title, so restore it to what it was
+                    document.title = originalTitleBeforeTimerRan;
+                    // Reset the stored title so it's freshly captured next time the timer starts
+                    originalTitleBeforeTimerRan = null;
+                }
+                // If originalTitleBeforeTimerRan is null, it means:
+                // 1. The script just loaded and the timer hasn't run yet.
+                // 2. The timer was stopped/paused, and the title has already been restored.
+                // In these cases, we do nothing, leaving the document title as is.
             }
         }
 
@@ -863,6 +884,7 @@
         function startTimer() {
             if (state.isRunning) return;
             state.isRunning = true; state.isPaused = false;
+            state.lastTickTime = Date.now(); // Initialize lastTickTime
             playSound(state.mode === 'work' ? 523.25 : 622.25, 0.08, 'triangle', 0.15);
             if (tomatoStemGroup) tomatoStemGroup.style.opacity = '1'; 
             
@@ -871,17 +893,49 @@
                 logMessage += ` (Task: ${state.currentTask})`;
             }
             addToLog(logMessage, state.mode);
+            updateDocumentTitle(); // Call this to set title when timer starts
 
             state.intervalId = setInterval(() => {
-                if (state.currentTime > 0) {
-                    state.currentTime--;
-                    if (state.mode === 'work') state.totalWorkTimeAccumulated++; else state.totalBreakTimeAccumulated++;
-                    updateDisplay(); updateTotals();
-                    if (state.currentTime === 60 || state.currentTime === 30) playSound(440, 0.04, 'sine', 0.08);
-                    if (state.currentTime <= 5 && state.currentTime > 0) playSound(880, 0.07, 'square', 0.12);
-                } else { completeCurrentSession(true); }
-            }, 1000);
-            updateButtonAndContainerStates(); updateDisplay();
+                const now = Date.now();
+                const elapsedMilliseconds = now - state.lastTickTime;
+                const elapsedSeconds = Math.floor(elapsedMilliseconds / 1000);
+
+                if (elapsedSeconds > 0) {
+                    if (state.currentTime > 0) {
+                        const previousTimeForSoundCues = state.currentTime;
+                        state.currentTime -= elapsedSeconds;
+
+                        if (state.mode === 'work') {
+                            state.totalWorkTimeAccumulated += elapsedSeconds;
+                        } else {
+                            state.totalBreakTimeAccumulated += elapsedSeconds;
+                        }
+                        
+                        // Sound cues logic
+                        for (let t = previousTimeForSoundCues; t > state.currentTime && t > 0; t--) {
+                            if (t === 60 || t === 30) playSound(440, 0.04, 'sine', 0.08);
+                            if (t <= 5 && t >= 1) playSound(880, 0.07, 'square', 0.12);
+                        }
+
+                        if (state.currentTime <= 0) {
+                            state.currentTime = 0; // Clamp to zero
+                            updateDisplay(); 
+                            updateTotals();
+                            completeCurrentSession(true);
+                        } else {
+                            updateDisplay();
+                            updateTotals();
+                        }
+                    }
+                    state.lastTickTime += elapsedSeconds * 1000; // Adjust lastTickTime by processed seconds
+                }
+                // If currentTime is already 0 and interval somehow still running (should be cleared by completeCurrentSession)
+                else if (state.currentTime <= 0) {
+                     completeCurrentSession(true); // Ensure cleanup if somehow missed
+                }
+            }, 1000); // Interval remains 1000ms, logic handles actual elapsed time
+            updateButtonAndContainerStates(); 
+            updateDisplay(); // Initial display update
         }
         function pauseTimer() {
             if (!state.isRunning) return;
@@ -940,7 +994,7 @@
             } else { 
                 startNewSession('work'); 
             }
-            updateDisplay(); updateTotals(); // updateDisplay will also call updateDocumentTitle
+            updateDisplay(); updateTotals(); 
         }
 
         function startNewSession(type) {
@@ -993,13 +1047,14 @@
             clearInterval(state.intervalId);
             state = {...state, isRunning:false, isPaused:false, currentTime:settings.workDuration*60, totalSessionTime:settings.workDuration*60, mode:'work', 
                      completedWorkSessions:0, completedShortBreaks:0, completedLongBreaks:0, 
-                     currentCycleInSet:1, intervalId:null, sessionsLog:[], totalWorkTimeAccumulated:0, totalBreakTimeAccumulated:0, currentTask: '' };
+                     currentCycleInSet:1, intervalId:null, sessionsLog:[], totalWorkTimeAccumulated:0, totalBreakTimeAccumulated:0, currentTask: '',
+                     lastTickTime: 0 }; // Reset lastTickTime as well
             currentTaskInput.value = '';
             logContainer.innerHTML = '<div style="text-align: center; opacity: 0.5;">Session log will appear here...</div>';
             playSound(293.66, 0.18, 'sawtooth', 0.15); 
             if (tomatoStemGroup) tomatoStemGroup.style.opacity = '1';
             updateDisplay(); updateButtonAndContainerStates(); updateTotals(); updateSessionCountersDisplay(); saveStateToLocalStorage();
-            document.title = DEFAULT_TITLE; // Reset title on full reset
+            updateDocumentTitle(); // Ensure title is correctly reset/restored
         }
         window.pomodoroShowResetConfirmation = function() { initAudioContext(); modalMessageText.textContent = "Reset all progress and logs?"; confirmationModal.classList.add('active'); confirmAction = actualResetTimer; }
         modalConfirmBtn.addEventListener('click', () => { if (typeof confirmAction === 'function') confirmAction(); confirmationModal.classList.remove('active'); confirmAction = null; });
@@ -1128,7 +1183,19 @@
             if (keyActions[e.code] && (e.code !== 'Space' ? (e.ctrlKey || e.metaKey) : true)) { e.preventDefault(); keyActions[e.code](); }
             if (e.code === 'Escape' && settingsPanel.classList.contains('active')) pomodoroToggleSettings();
         });
-        document.addEventListener('visibilitychange', () => { if (!document.hidden && state.isRunning) updateDisplay(); });
+        document.addEventListener('visibilitychange', () => { 
+            if (!document.hidden && state.isRunning) {
+                // When tab becomes visible, update lastTickTime to prevent a large jump if interval hasn't fired recently.
+                // The next interval will then calculate a smaller, more accurate delta.
+                // Or, we could attempt a more immediate correction here, but it might conflict with the interval.
+                // For now, just updating display. The interval should catch up.
+                state.lastTickTime = Date.now() - 1000; // Prime it as if a second just passed, for next interval.
+                                                        // Or, more accurately, we might need to calculate the drift here too.
+                                                        // Let's keep it simple: the interval's logic is the primary timekeeper.
+                                                        // The main benefit of this listener is to refresh display immediately.
+                updateDisplay(); 
+            }
+        });
         let resizeTimeout;
         window.addEventListener('resize', () => { clearTimeout(resizeTimeout); resizeTimeout = setTimeout(() => { if (tomatoPathFillEl.getTotalLength) { cachedTomatoPathLength = tomatoPathFillEl.getTotalLength(); tomatoPathFillEl.style.strokeDasharray = cachedTomatoPathLength; } if (state.isRunning || state.isPaused || state.currentTime !== state.totalSessionTime || !state.isRunning && !state.isPaused) updateDisplay(); }, 150); }); 
 
@@ -1192,7 +1259,7 @@
             updateButtonAndContainerStates(); updateTotals(); updateSessionPatternVisual(); updateSessionCountersDisplay();
             checkSettingsChanged(); 
             setInterval(saveStateToLocalStorage, 10000);
-            document.title = DEFAULT_TITLE; // Set initial title
+            updateDocumentTitle(); // Ensure title is correctly set on init (will do nothing if timer not running)
         }
         document.body.addEventListener('click', initAudioContext, { once: true });
         document.body.addEventListener('touchstart', initAudioContext, { once: true });

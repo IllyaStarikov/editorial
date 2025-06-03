@@ -16,11 +16,16 @@
 - 🏆 **[Milestones](https://starikov.co/milestones)**
 
 
-## 🏷️ Tags
+## 🏷️ [Tags](https://starikov.co/tags/)
 
+- 📱 **[Application](https://starikov.co/tag/application/)**
 - 🐛 **[Code](https://starikov.co/tag/code/)**
+- 🥚 **[Easter Egg](https://starikov.co/tag/easter-egg/)**
+- 📓 **[Fieldguide](https://starikov.co/tag/fieldguide/)**
+- 🧮 **[Mathematics](https://starikov.co/tag/fieldguide/)**
 - <img src="https://starikov.co/content/images/2025/05/missouri_s_t_logo.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> **[Missouri S&T](https://starikov.co/tag/missouri-s-t/)**
 - <img src="https://starikov.co/content/images/size/w1600/2025/04/bodie-2.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> **[Pets](https://starikov.co/tag/pets/)**
+- 🤖 **[Technology](https://starikov.co/tag/technology/)**
 - <img src="https://starikov.co/content/images/2025/05/lone_cypress.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/> **[Travel](https://starikov.co/tag/travel/)**
 - <img src="https://starikov.co/content/images/2025/05/saint_javelin.png" width="32" height="32" style="vertical-align:middle; display:inline; border-radius: 50%;"/>  **[Ukraine](https://starikov.co/tag/ukraine/)**
 
@@ -52,22 +57,25 @@
     - **[Ukrainian Alphabet](https://starikov.co/ukrainian-alphabet)**
 - 📰 **[RSS: RSS Stater Set](https://starikov.co/rss-starter-set)**
 
-### Field Guides
+---
+
+### 📱 Applications
+
+- **[Color Clipper](https://starikov.co/color-clipper/)** Drag, hover, click a pixel. Color's copied to your clipboard!
+- **[The Zero-Width Space-Place](https://starikov.co/zero-width-space/)** A zero-width space served into your clipboard, coming right up!
+- **[Pomodoro Timer](https://starikov.co/pomodoro/)** A simple kitchen timer that tricks your brain by turning marathon tasks into bite-sized 25-minute sprints; because even the biggest tomato harvest starts with picking one pomodoro at a time.
+
+### 📓 Fieldguides
 
 - **[RSS Fieldguide](https://starikov.co/rss-fieldguide)** Make RSS your everything‑app: news, social feeds, and curation in one place.
 
 
-### Applications
-
-- **[Color Clipper](https://starikov.co/color-clipper/)** Click anywhere, clip any color.
-- **[The Zero-Width Space-Place](https://starikov.co/zero-width-space/)** A zero-width space served into your clipboard, coming right up!
-
-
-### Technology
+### 🤖 Technology
 
 - **[Wordleconomics](https://starikov.co/wordleconomics/)** Hunting for the optimal starting Wordle word—what’s yours?
 
-### Travel
+
+### ✈️ Travel
 
 - **[Blackwell // 2025](https://starikov.co/blackwell-2025/)** Photos from my trip, my home growing up.
 - **[Blackwell // 2024](https://starikov.co/blackwell-2024/)** Photos from my trip and throughout time.

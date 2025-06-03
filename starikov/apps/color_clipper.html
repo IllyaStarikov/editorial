@@ -3,12 +3,12 @@
     #pixel-inspector-app * {
       box-sizing: border-box;
     }
-    
+
     #pixel-inspector-app {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       color: #ffffff;
     }
-    
+
     .pi-drop-zone {
       border: 2px dashed #666;
       border-radius: 8px;
@@ -19,21 +19,21 @@
       transition: all 0.3s ease;
       margin-bottom: 20px;
     }
-    
+
     .pi-drop-zone:hover {
       border-color: #888;
       background: rgba(255, 255, 255, 0.08);
     }
-    
+
     .pi-drop-zone.dragover {
       border-color: #4CAF50;
       background: rgba(76, 175, 80, 0.1);
     }
-    
+
     .pi-hidden {
       display: none !important;
     }
-    
+
     .pi-image-container {
       position: relative;
       display: inline-block;
@@ -41,7 +41,7 @@
       cursor: crosshair;
       max-width: 100%;
     }
-    
+
     .pi-canvas {
       max-width: 100%;
       height: auto;
@@ -49,7 +49,7 @@
       border: 1px solid #444;
       border-radius: 4px;
     }
-    
+
     .pi-magnifier {
       position: absolute;
       width: 150px;
@@ -61,14 +61,14 @@
       box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
       display: none;
     }
-    
+
     .pi-magnifier-canvas {
       position: absolute;
       image-rendering: pixelated;
       image-rendering: -moz-crisp-edges;
       image-rendering: crisp-edges;
     }
-    
+
     .pi-crosshair {
       position: absolute;
       top: 50%;
@@ -80,7 +80,7 @@
       box-shadow: 0 0 0 1px #fff;
       pointer-events: none;
     }
-    
+
     .pi-color-info {
       background: rgba(0, 0, 0, 0.8);
       border: 1px solid #444;
@@ -88,7 +88,7 @@
       padding: 20px;
       margin-top: 20px;
     }
-    
+
     .pi-color-preview {
       width: 100px;
       height: 100px;
@@ -97,13 +97,13 @@
       margin-bottom: 20px;
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
-    
+
     .pi-color-formats {
       display: grid;
       gap: 15px;
       margin-bottom: 20px;
     }
-    
+
     .pi-format-row {
       display: flex;
       justify-content: space-between;
@@ -113,13 +113,13 @@
       border-radius: 4px;
       font-family: 'Courier New', monospace;
     }
-    
+
     .pi-format-label {
       font-weight: bold;
       color: #aaa;
       min-width: 80px;
     }
-    
+
     .pi-format-value {
       flex: 1;
       text-align: right;
@@ -129,11 +129,11 @@
       border-radius: 4px;
       transition: background 0.2s;
     }
-    
+
     .pi-format-value:hover {
       background: rgba(255, 255, 255, 0.1);
     }
-    
+
     .pi-copy-button {
       background: #4CAF50;
       color: white;
@@ -146,47 +146,47 @@
       width: 100%;
       transition: all 0.3s ease;
     }
-    
+
     .pi-copy-button:hover {
       background: #45a049;
       transform: translateY(-1px);
       box-shadow: 0 2px 10px rgba(76, 175, 80, 0.3);
     }
-    
+
     .pi-copy-button:active {
       transform: translateY(0);
     }
-    
+
     .pi-copy-button.copied {
       background: #2196F3;
     }
-    
+
     .pi-instructions {
       color: #aaa;
       font-size: 14px;
       margin-top: 10px;
       text-align: center;
     }
-    
+
     @media (max-width: 600px) {
       .pi-magnifier {
         width: 100px;
         height: 100px;
       }
-      
+
       .pi-color-preview {
         width: 80px;
         height: 80px;
       }
     }
   </style>
-  
+
   <div class="pi-drop-zone" id="piDropZone">
     <h3>Drop an image here or click to select</h3>
     <p style="color: #aaa;">Supports JPG, PNG, GIF, WebP</p>
     <input type="file" id="piFileInput" accept="image/*" style="display: none;">
   </div>
-  
+
   <div id="piImageSection" class="pi-hidden">
     <div class="pi-image-container" id="piImageContainer">
       <canvas id="piCanvas" class="pi-canvas"></canvas>
@@ -195,10 +195,10 @@
         <div class="pi-crosshair"></div>
       </div>
     </div>
-    
+
     <div class="pi-color-info" id="piColorInfo">
       <div class="pi-color-preview" id="piColorPreview"></div>
-      
+
       <div class="pi-color-formats">
         <div class="pi-format-row">
           <span class="pi-format-label">HEX:</span>
@@ -221,12 +221,12 @@
           <span class="pi-format-value" id="piHsvValue">hsv(0, 0%, 0%)</span>
         </div>
       </div>
-      
+
       <button class="pi-copy-button" id="piCopyButton">Copy HEX to Clipboard</button>
       <p class="pi-instructions">Click on any color format to copy it</p>
     </div>
   </div>
-  
+
   <script>
     (function() {
       const dropZone = document.getElementById('piDropZone');
@@ -240,17 +240,17 @@
       const imageContainer = document.getElementById('piImageContainer');
       const colorPreview = document.getElementById('piColorPreview');
       const copyButton = document.getElementById('piCopyButton');
-      
+
       let currentImage = null;
       let currentColor = { r: 0, g: 0, b: 0, a: 255 };
       let scale = 1; // keeps track of logical display scale (for magnifier positioning)
-      
+
       // Magnifier settings
       const MAGNIFIER_SIZE = 150;
       const ZOOM_LEVEL = 10;
       magnifierCanvas.width = MAGNIFIER_SIZE * ZOOM_LEVEL;
       magnifierCanvas.height = MAGNIFIER_SIZE * ZOOM_LEVEL;
-      
+
       // Event listeners
       dropZone.addEventListener('click', () => fileInput.click());
       fileInput.addEventListener('change', handleFileSelect);
@@ -261,41 +261,41 @@
       canvas.addEventListener('mouseleave', handleMouseLeave);
       canvas.addEventListener('click', handleCanvasClick);
       copyButton.addEventListener('click', copyToClipboard);
-      
+
       // Add click listeners to format values
       document.querySelectorAll('.pi-format-value').forEach(el => {
         el.addEventListener('click', function() {
           copyTextToClipboard(this.textContent);
         });
       });
-      
+
       function handleFileSelect(e) {
         const file = e.target.files[0];
         if (file && file.type.startsWith('image/')) {
           loadImage(file);
         }
       }
-      
+
       function handleDragOver(e) {
         e.preventDefault();
         dropZone.classList.add('dragover');
       }
-      
+
       function handleDragLeave(e) {
         e.preventDefault();
         dropZone.classList.remove('dragover');
       }
-      
+
       function handleDrop(e) {
         e.preventDefault();
         dropZone.classList.remove('dragover');
-        
+
         const file = e.dataTransfer.files[0];
         if (file && file.type.startsWith('image/')) {
           loadImage(file);
         }
       }
-      
+
       function loadImage(file) {
         const reader = new FileReader();
         reader.onload = function(e) {
@@ -309,27 +309,27 @@
         };
         reader.readAsDataURL(file);
       }
-      
+
       function displayImage() {
         const containerWidth = imageContainer.parentElement.getBoundingClientRect().width;
         const maxWidth = containerWidth - 40; // Account for padding
         const maxHeight = window.innerHeight * 0.6;
-        
+
         scale = Math.min(maxWidth / currentImage.width, maxHeight / currentImage.height, 1);
-        
+
         // INTERNAL bitmap kept at original resolution
         canvas.width = currentImage.width;
         canvas.height = currentImage.height;
         // Visible size is scaled
         canvas.style.width = (currentImage.width * scale) + 'px';
         canvas.style.height = (currentImage.height * scale) + 'px';
-        
+
         ctx.drawImage(currentImage, 0, 0);
         requestAnimationFrame(() => ctx.drawImage(currentImage, 0, 0));
-        
+
         enableInteraction();
       }
-      
+
       /**
        * Convert a mouse/touch event into pixel‑accurate canvas coordinates
        * that take HiDPI screens (devicePixelRatio) into account.
@@ -338,37 +338,37 @@
         const rect = canvas.getBoundingClientRect();
         const scaleX = canvas.width  / rect.width;
         const scaleY = canvas.height / rect.height;
-        
+
         const x = Math.min(Math.max(0, Math.floor((evt.clientX - rect.left) * scaleX)), canvas.width  - 1);
         const y = Math.min(Math.max(0, Math.floor((evt.clientY - rect.top)  * scaleY)), canvas.height - 1);
         return { x, y, rect };
       }
-      
+
       function handleMouseMove(e) {
         if (!currentImage) return;
-        
+
         const { x, y, rect } = getCanvasCoords(e);
-        
+
         // Position magnifier (use CSS/pointer coords so it aligns with what the user sees)
         magnifier.style.display = 'block';
         magnifier.style.left = (e.clientX - rect.left - MAGNIFIER_SIZE / 2) + 'px';
         magnifier.style.top  = (e.clientY - rect.top  - MAGNIFIER_SIZE / 2) + 'px';
-        
+
         // Draw magnified area from ORIGINAL image (avoids sampling artifacts)
         magnifierCtx.imageSmoothingEnabled = false;
         magnifierCtx.clearRect(0, 0, magnifierCanvas.width, magnifierCanvas.height);
-        
+
         const sourceX = Math.max(0, x - MAGNIFIER_SIZE / (2 * ZOOM_LEVEL));
         const sourceY = Math.max(0, y - MAGNIFIER_SIZE / (2 * ZOOM_LEVEL));
         const sourceW = MAGNIFIER_SIZE / ZOOM_LEVEL;
         const sourceH = MAGNIFIER_SIZE / ZOOM_LEVEL;
-        
+
         magnifierCtx.drawImage(
           currentImage,
           sourceX, sourceY, sourceW, sourceH,
           0, 0, magnifierCanvas.width, magnifierCanvas.height
         );
-        
+
         // Grab the exact pixel from the canvas bitmap
         try {
           const pixel = ctx.getImageData(x, y, 1, 1).data;
@@ -378,22 +378,22 @@
           console.error('Error getting pixel data:', err);
         }
       }
-      
+
       function handleMouseLeave() {
         magnifier.style.display = 'none';
       }
-      
+
       function handleCanvasClick() {
         copyToClipboard();
       }
-      
+
       /* ---------- Color helpers ---------- */
       function updateColorDisplay() {
         const { r, g, b, a } = currentColor;
         const hex = rgbToHex(r, g, b);
         const hsl = rgbToHsl(r, g, b);
         const hsv = rgbToHsv(r, g, b);
-        
+
         colorPreview.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
         document.getElementById('piHexValue').textContent = hex;
         document.getElementById('piRgbValue').textContent = `rgb(${r}, ${g}, ${b})`;
@@ -401,14 +401,14 @@
         document.getElementById('piHslValue').textContent = `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`;
         document.getElementById('piHsvValue').textContent = `hsv(${hsv.h}, ${hsv.s}%, ${hsv.v}%)`;
       }
-      
+
       function rgbToHex(r, g, b) {
         return '#' + [r, g, b].map(x => {
           const hex = x.toString(16);
           return hex.length === 1 ? '0' + hex : hex;
         }).join('').toUpperCase();
       }
-      
+
       function rgbToHsl(r, g, b) {
         r /= 255; g /= 255; b /= 255;
         const max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -425,7 +425,7 @@
         }
         return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
       }
-      
+
       function rgbToHsv(r, g, b) {
         r /= 255; g /= 255; b /= 255;
         const max = Math.max(r, g, b), min = Math.min(r, g, b);
@@ -441,7 +441,7 @@
         }
         return { h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100) };
       }
-      
+
       /* ---------- Clipboard helpers ---------- */
       function copyTextToClipboard(text) {
         if (navigator.clipboard) {
@@ -450,7 +450,7 @@
           fallbackCopyTextToClipboard(text);
         }
       }
-      
+
       function fallbackCopyTextToClipboard(text) {
         const textArea = document.createElement('textarea');
         textArea.value = text;
@@ -458,24 +458,24 @@
         textArea.style.opacity = '0';
         document.body.appendChild(textArea);
         textArea.select();
-        try { document.execCommand('copy'); showCopiedFeedback(text);} catch (err) { console.error('Failed to copy:', err);}            
+        try { document.execCommand('copy'); showCopiedFeedback(text);} catch (err) { console.error('Failed to copy:', err);}
         document.body.removeChild(textArea);
       }
-      
+
       function copyToClipboard() {
         copyTextToClipboard(document.getElementById('piHexValue').textContent);
       }
-      
+
       function showCopiedFeedback(text) {
         const original = copyButton.textContent;
         copyButton.textContent = `Copied: ${text}`;
         copyButton.classList.add('copied');
         setTimeout(() => { copyButton.textContent = original; copyButton.classList.remove('copied'); }, 2000);
       }
-      
+
       /* ---------- Misc ---------- */
       window.addEventListener('resize', () => { if (currentImage) displayImage(); });
-      
+
       // Disable interaction until an image is loaded
       canvas.style.pointerEvents = 'none';
       function enableInteraction() { setTimeout(() => { canvas.style.pointerEvents = 'auto'; }, 100); }
