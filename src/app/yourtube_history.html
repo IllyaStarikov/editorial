@@ -1,0 +1,2706 @@
+<div id="youtube-analyzer-widget">
+    <style>
+        /* Scoped styles for YouTube Analyzer Widget */
+        #youtube-analyzer-widget {
+            /* Container Reset */
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            color: #ffffff;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #0a0a0a 0%, #0f0f0f 100%);
+            border-radius: 16px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            max-width: 100%;
+            margin: 0 auto;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #youtube-analyzer-widget * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* CSS Variables scoped to widget */
+        #youtube-analyzer-widget {
+            --yt-bg-primary: #0a0a0a;
+            --yt-bg-secondary: #141414;
+            --yt-bg-tertiary: #1f1f1f;
+            --yt-text-primary: #ffffff;
+            --yt-text-secondary: #a8a8a8;
+            --yt-text-muted: #666666;
+            --yt-accent-red: #ff0000;
+            --yt-accent-red-hover: #cc0000;
+            --yt-accent-green: #10b981;
+            --yt-accent-blue: #3b82f6;
+            --yt-border-color: rgba(255, 255, 255, 0.1);
+            --yt-shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.3);
+            --yt-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+            --yt-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
+            --yt-radius-sm: 6px;
+            --yt-radius-md: 12px;
+            --yt-radius-lg: 16px;
+        }
+
+        /* Background effect */
+        #youtube-analyzer-widget::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 0, 0, 0.03) 0%, transparent 70%);
+            animation: yt-pulse 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes yt-pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.3; }
+        }
+
+        /* Content wrapper */
+        #youtube-analyzer-widget .yt-content-wrapper {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        #youtube-analyzer-widget .yt-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: yt-fadeInDown 0.8s ease-out;
+        }
+
+        @keyframes yt-fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #youtube-analyzer-widget .yt-logo-wrapper {
+            display: inline-flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        #youtube-analyzer-widget .yt-youtube-logo {
+            width: 50px;
+            height: 50px;
+            background: var(--yt-accent-red);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(255, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        #youtube-analyzer-widget .yt-youtube-logo:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 6px 30px rgba(255, 0, 0, 0.5);
+        }
+
+        #youtube-analyzer-widget .yt-youtube-logo::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 12px solid white;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            left: 52%;
+            transform: translateX(-50%);
+        }
+
+        #youtube-analyzer-widget h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        #youtube-analyzer-widget h1 a {
+            background: linear-gradient(135deg, #ffffff 0%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        #youtube-analyzer-widget h1 a:hover {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ffffff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #youtube-analyzer-widget .yt-subtitle {
+            color: var(--yt-text-secondary);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        /* Upload Section */
+        #youtube-analyzer-widget .yt-upload-card {
+            background: var(--yt-bg-secondary);
+            border: 2px dashed var(--yt-border-color);
+            border-radius: var(--yt-radius-lg);
+            padding: 3rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: yt-fadeIn 0.8s ease-out 0.2s both;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        @keyframes yt-fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #youtube-analyzer-widget .yt-upload-card:hover {
+            border-color: var(--yt-accent-red);
+            transform: translateY(-2px);
+            box-shadow: var(--yt-shadow-lg);
+            background: rgba(255, 0, 0, 0.05);
+        }
+
+        #youtube-analyzer-widget .yt-upload-card.yt-dragover {
+            border-color: var(--yt-accent-red);
+            background: rgba(255, 0, 0, 0.05);
+            transform: scale(1.02);
+        }
+
+        #youtube-analyzer-widget .yt-upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: yt-bounce 2s ease-in-out infinite;
+        }
+
+        @keyframes yt-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        #youtube-analyzer-widget .yt-upload-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--yt-text-primary);
+        }
+
+        #youtube-analyzer-widget .yt-upload-card p {
+            color: var(--yt-text-secondary);
+        }
+
+        #youtube-analyzer-widget input[type="file"] {
+            display: none;
+        }
+
+        /* Parameters Section */
+        #youtube-analyzer-widget .yt-parameters-card {
+            background: var(--yt-bg-secondary);
+            border-radius: var(--yt-radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+            animation: yt-slideIn 0.5s ease-out;
+            box-shadow: var(--yt-shadow-md);
+        }
+
+        @keyframes yt-slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        #youtube-analyzer-widget .yt-parameters-header h3 {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--yt-text-primary);
+        }
+
+        #youtube-analyzer-widget .yt-param-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        #youtube-analyzer-widget .yt-param-group {
+            background: var(--yt-bg-tertiary);
+            padding: 1rem;
+            border-radius: var(--yt-radius-md);
+            border: 1px solid var(--yt-border-color);
+            transition: all 0.3s ease;
+        }
+
+        #youtube-analyzer-widget .yt-param-group:hover {
+            border-color: var(--yt-accent-red);
+            box-shadow: var(--yt-shadow-sm);
+        }
+
+        #youtube-analyzer-widget .yt-param-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--yt-text-primary);
+            font-weight: 500;
+            font-size: 0.875rem;
+        }
+
+        #youtube-analyzer-widget .yt-param-group input[type="number"],
+        #youtube-analyzer-widget .yt-param-group input[type="text"],
+        #youtube-analyzer-widget .yt-param-group input[type="date"],
+        #youtube-analyzer-widget .yt-param-group select {
+            width: 100%;
+            padding: 0.5rem;
+            background: var(--yt-bg-primary);
+            border: 1px solid var(--yt-border-color);
+            border-radius: var(--yt-radius-sm);
+            color: var(--yt-text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        #youtube-analyzer-widget .yt-param-group input:focus,
+        #youtube-analyzer-widget .yt-param-group select:focus {
+            outline: none;
+            border-color: var(--yt-accent-red);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        #youtube-analyzer-widget .yt-param-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 0.5rem;
+            vertical-align: middle;
+            accent-color: var(--yt-accent-red);
+            cursor: pointer;
+        }
+
+        #youtube-analyzer-widget .yt-checkbox-label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        /* Buttons */
+        #youtube-analyzer-widget .yt-btn {
+            background: var(--yt-accent-red);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--yt-radius-sm);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            position: relative;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
+        }
+
+        #youtube-analyzer-widget .yt-btn:hover:not(:disabled) {
+            background: var(--yt-accent-red-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--yt-shadow-md);
+        }
+
+        #youtube-analyzer-widget .yt-btn:active:not(:disabled) {
+            transform: translateY(0);
+        }
+
+        #youtube-analyzer-widget .yt-btn:disabled {
+            background: var(--yt-text-muted);
+            cursor: not-allowed;
+            transform: none;
+            opacity: 0.6;
+        }
+
+        #youtube-analyzer-widget .yt-btn-secondary {
+            background: var(--yt-accent-green);
+        }
+
+        #youtube-analyzer-widget .yt-btn-secondary:hover:not(:disabled) {
+            background: #059669;
+        }
+
+        #youtube-analyzer-widget .yt-btn-outline {
+            background: transparent;
+            border: 2px solid var(--yt-accent-red);
+            color: var(--yt-accent-red);
+        }
+
+        #youtube-analyzer-widget .yt-btn-outline:hover:not(:disabled) {
+            background: var(--yt-accent-red);
+            color: white;
+        }
+
+        #youtube-analyzer-widget .yt-button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* Stats Section */
+        #youtube-analyzer-widget .yt-stats-card {
+            background: var(--yt-bg-secondary);
+            border-radius: var(--yt-radius-lg);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+            animation: yt-fadeIn 0.5s ease-out;
+            box-shadow: var(--yt-shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Media control pattern background for stats */
+        #youtube-analyzer-widget .yt-stats-pattern {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        #youtube-analyzer-widget .yt-stats-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        #youtube-analyzer-widget .yt-stats-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        #youtube-analyzer-widget .yt-stats-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--yt-text-primary);
+        }
+
+        #youtube-analyzer-widget .yt-stats-actions {
+            margin-bottom: 1.5rem;
+        }
+
+        #youtube-analyzer-widget .yt-btn-share {
+            background: var(--yt-accent-blue);
+            font-size: 0.875rem;
+            padding: 0.5rem 1.25rem;
+            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        }
+
+        #youtube-analyzer-widget .yt-btn-share:hover:not(:disabled) {
+            background: #2563eb;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+        #youtube-analyzer-widget .yt-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        #youtube-analyzer-widget .yt-stat-item {
+            background: var(--yt-bg-tertiary);
+            border-radius: var(--yt-radius-md);
+            padding: 1.25rem;
+            border: 1px solid var(--yt-border-color);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #youtube-analyzer-widget .yt-stat-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--yt-accent-red);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        #youtube-analyzer-widget .yt-stat-item:hover::before {
+            transform: scaleY(1);
+        }
+
+        #youtube-analyzer-widget .yt-stat-item:hover {
+            transform: translateX(3px);
+            box-shadow: var(--yt-shadow-sm);
+        }
+
+        #youtube-analyzer-widget .yt-stat-label {
+            font-size: 0.8rem;
+            color: var(--yt-text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #youtube-analyzer-widget .yt-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--yt-accent-red);
+        }
+
+        #youtube-analyzer-widget .yt-stat-subvalue {
+            font-size: 0.8rem;
+            color: var(--yt-text-primary);
+            margin-top: 0.25rem;
+        }
+
+        /* Results Section */
+        #youtube-analyzer-widget .yt-results-card {
+            background: var(--yt-bg-secondary);
+            border-radius: var(--yt-radius-lg);
+            padding: 2rem;
+            display: none;
+            animation: yt-fadeIn 0.5s ease-out;
+            box-shadow: var(--yt-shadow-md);
+        }
+
+        #youtube-analyzer-widget .yt-results-header {
+            margin-bottom: 1.5rem;
+        }
+
+        #youtube-analyzer-widget .yt-results-header h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--yt-text-primary);
+        }
+
+        #youtube-analyzer-widget .yt-results-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        #youtube-analyzer-widget .yt-search-wrapper {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        #youtube-analyzer-widget .yt-search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--yt-text-secondary);
+            pointer-events: none;
+        }
+
+        #youtube-analyzer-widget .yt-search-box {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 3rem;
+            background: var(--yt-bg-tertiary);
+            border: 1px solid var(--yt-border-color);
+            border-radius: var(--yt-radius-sm);
+            color: var(--yt-text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        #youtube-analyzer-widget .yt-search-box:focus {
+            outline: none;
+            border-color: var(--yt-accent-red);
+            box-shadow: 0 0 0 3px rgba(255, 0, 0, 0.1);
+        }
+
+        /* Table */
+        #youtube-analyzer-widget .yt-table-container {
+            background: var(--yt-bg-tertiary);
+            border-radius: var(--yt-radius-md);
+            overflow: hidden;
+            margin-top: 1rem;
+            box-shadow: var(--yt-shadow-sm);
+        }
+
+        #youtube-analyzer-widget .yt-table-scroll {
+            overflow-x: auto;
+            max-height: 400px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            border-radius: var(--yt-radius-md);
+        }
+
+        #youtube-analyzer-widget table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 600px;
+            border-radius: var(--yt-radius-md);
+            overflow: hidden;
+        }
+
+        #youtube-analyzer-widget thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            background: rgba(255, 0, 0, 0.1);
+        }
+
+        #youtube-analyzer-widget th {
+            background: rgba(255, 0, 0, 0.1);
+            color: var(--yt-text-primary);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid var(--yt-accent-red);
+        }
+
+        #youtube-analyzer-widget th:hover {
+            background: rgba(255, 0, 0, 0.2);
+        }
+
+        #youtube-analyzer-widget .yt-sort-icon {
+            margin-left: 0.25rem;
+            font-size: 0.7rem;
+            color: var(--yt-text-secondary);
+        }
+
+        #youtube-analyzer-widget td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--yt-border-color);
+            font-size: 0.8rem;
+            color: var(--yt-text-primary);
+        }
+
+        #youtube-analyzer-widget tbody tr {
+            transition: all 0.3s ease;
+        }
+
+        #youtube-analyzer-widget tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        #youtube-analyzer-widget .yt-rank-cell {
+            text-align: center;
+            font-weight: 600;
+            color: var(--yt-text-secondary);
+        }
+
+        #youtube-analyzer-widget .yt-video-info {
+            min-width: 250px;
+        }
+
+        #youtube-analyzer-widget .yt-video-title {
+            font-weight: 600;
+            color: var(--yt-text-primary);
+            margin-bottom: 0.125rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 1;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            font-size: 0.8rem;
+        }
+
+        #youtube-analyzer-widget .yt-video-url {
+            color: var(--yt-accent-red);
+            text-decoration: none;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+        }
+
+        #youtube-analyzer-widget .yt-video-url:hover {
+            color: var(--yt-accent-red-hover);
+            text-decoration: underline;
+        }
+
+        #youtube-analyzer-widget .yt-channel-name {
+            color: var(--yt-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 150px;
+        }
+
+        #youtube-analyzer-widget .yt-play-count {
+            font-weight: 700;
+            color: var(--yt-accent-green);
+            text-align: center;
+        }
+
+        #youtube-analyzer-widget .yt-date-cell {
+            white-space: nowrap;
+            color: var(--yt-text-secondary);
+            font-size: 0.75rem;
+        }
+
+        /* Loading State */
+        #youtube-analyzer-widget .yt-loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        #youtube-analyzer-widget .yt-loading-content {
+            text-align: center;
+            padding: 3rem;
+        }
+
+        #youtube-analyzer-widget .yt-spinner {
+            width: 50px;
+            height: 50px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid var(--yt-accent-red);
+            border-radius: 50%;
+            animation: yt-spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+
+        @keyframes yt-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #youtube-analyzer-widget .yt-progress-wrapper {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        #youtube-analyzer-widget .yt-progress-bar {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+
+        #youtube-analyzer-widget .yt-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--yt-accent-red) 0%, #ff6b6b 100%);
+            transition: width 0.3s ease;
+            width: 0%;
+        }
+
+        #youtube-analyzer-widget .yt-progress-text {
+            color: var(--yt-text-secondary);
+            font-size: 0.8rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Alerts */
+        #youtube-analyzer-widget .yt-alert {
+            padding: 1rem 1.5rem;
+            border-radius: var(--yt-radius-md);
+            margin: 1rem 0;
+            display: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            animation: yt-slideDown 0.3s ease-out;
+            position: relative;
+            padding-right: 3rem;
+        }
+
+        @keyframes yt-slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        #youtube-analyzer-widget .yt-alert-close {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: inherit;
+            font-size: 1.2rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: opacity 0.3s ease;
+            padding: 0.5rem;
+            line-height: 1;
+        }
+
+        #youtube-analyzer-widget .yt-alert-close:hover {
+            opacity: 1;
+        }
+
+        #youtube-analyzer-widget .yt-alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        #youtube-analyzer-widget .yt-alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--yt-accent-green);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        /* Empty State */
+        #youtube-analyzer-widget .yt-empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: var(--yt-text-secondary);
+        }
+
+        #youtube-analyzer-widget .yt-empty-state-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #youtube-analyzer-widget {
+                padding: 1rem;
+            }
+
+            #youtube-analyzer-widget h1 {
+                font-size: 1.8rem;
+            }
+
+            #youtube-analyzer-widget .yt-upload-card {
+                padding: 2rem 1rem;
+            }
+
+            #youtube-analyzer-widget .yt-param-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #youtube-analyzer-widget .yt-stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            #youtube-analyzer-widget .yt-results-controls {
+                flex-direction: column;
+            }
+
+            #youtube-analyzer-widget .yt-search-wrapper {
+                min-width: 100%;
+            }
+
+            #youtube-analyzer-widget .yt-table-scroll {
+                max-height: 300px;
+            }
+
+            #youtube-analyzer-widget .yt-video-info {
+                min-width: 200px;
+            }
+
+            #youtube-analyzer-widget .yt-channel-name {
+                max-width: 120px;
+            }
+
+            #youtube-analyzer-widget td,
+            #youtube-analyzer-widget th {
+                padding: 0.4rem 0.5rem;
+                font-size: 0.75rem;
+            }
+
+            #youtube-analyzer-widget .yt-stats-actions > div {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            #youtube-analyzer-widget .yt-btn-share {
+                width: 100%;
+            }
+        }
+
+        /* iOS Safari Specific Fixes */
+        @supports (-webkit-touch-callout: none) {
+            #youtube-analyzer-widget .yt-upload-card {
+                cursor: pointer;
+                -webkit-user-select: none;
+            }
+        }
+
+        /* Additional mobile fixes */
+        @media (hover: none) and (pointer: coarse) {
+            #youtube-analyzer-widget .yt-upload-card:hover {
+                transform: none;
+                box-shadow: var(--yt-shadow-md);
+            }
+
+            #youtube-analyzer-widget .yt-btn:hover {
+                transform: none;
+            }
+        }
+
+        /* Screen reader only content */
+        #youtube-analyzer-widget .yt-sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        /* Focus visible for accessibility */
+        #youtube-analyzer-widget *:focus-visible {
+            outline: 2px solid var(--yt-accent-red);
+            outline-offset: 2px;
+        }
+    </style>
+
+    <div class="yt-content-wrapper">
+        <!-- Header -->
+        <header class="yt-header">
+            <div class="yt-logo-wrapper">
+                <div class="yt-youtube-logo" role="img" aria-label="YouTube logo"></div>
+                <h1><a href="https://starikov.co/yourtube-history/">YourTube History</a></h1>
+            </div>
+            <p class="yt-subtitle">Like and subscribe to find out what you've subscribed to!</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="yt-upload-card" id="yt-uploadSection" role="button" tabindex="0" aria-label="Upload your YouTube watch history file">
+            <div class="yt-upload-icon" aria-hidden="true">📂</div>
+            <h3>Drop your watch-history.html file here</h3>
+            <p>or click to browse from your device</p>
+            <input type="file" id="yt-fileInput" accept=".html,.htm" aria-label="Choose file">
+        </div>
+
+        <!-- Alerts -->
+        <div class="yt-alert yt-alert-error" id="yt-errorAlert" role="alert" aria-live="assertive">
+            <span id="yt-errorMessage"></span>
+            <button class="yt-alert-close" onclick="window.ytAnalyzer && window.ytAnalyzer.closeAlert('error')" aria-label="Close error message">&times;</button>
+        </div>
+        <div class="yt-alert yt-alert-success" id="yt-successAlert" role="status" aria-live="polite">
+            <span id="yt-successMessage"></span>
+            <button class="yt-alert-close" onclick="window.ytAnalyzer && window.ytAnalyzer.closeAlert('success')" aria-label="Close success message">&times;</button>
+        </div>
+
+        <!-- Parameters Section -->
+        <div class="yt-parameters-card" id="yt-parametersCard">
+            <div class="yt-parameters-header">
+                <h3>⚙️ Parameters</h3>
+            </div>
+            <div class="yt-param-grid">
+                <div class="yt-param-group">
+                    <label for="yt-topN">Number of Top Videos</label>
+                    <input type="number" id="yt-topN" value="100" min="1" max="10000" aria-describedby="yt-topN-help">
+                    <span id="yt-topN-help" class="yt-sr-only">Number of top videos to display in results</span>
+                </div>
+
+                <div class="yt-param-group">
+                    <label for="yt-minPlays">Minimum Play Count</label>
+                    <input type="number" id="yt-minPlays" value="1" min="1" aria-describedby="yt-minPlays-help">
+                    <span id="yt-minPlays-help" class="yt-sr-only">Filter videos with minimum number of plays</span>
+                </div>
+
+                <div class="yt-param-group">
+                    <label for="yt-dateFrom">From Date (optional)</label>
+                    <input type="date" id="yt-dateFrom" aria-describedby="yt-dateFrom-help">
+                    <span id="yt-dateFrom-help" class="yt-sr-only">Filter videos watched after this date</span>
+                </div>
+
+                <div class="yt-param-group">
+                    <label for="yt-dateTo">To Date (optional)</label>
+                    <input type="date" id="yt-dateTo" aria-describedby="yt-dateTo-help">
+                    <span id="yt-dateTo-help" class="yt-sr-only">Filter videos watched before this date</span>
+                </div>
+
+                <div class="yt-param-group">
+                    <label for="yt-channelFilter">Channel Filter</label>
+                    <input type="text" id="yt-channelFilter" placeholder="e.g., TechChannel" aria-describedby="yt-channelFilter-help">
+                    <span id="yt-channelFilter-help" class="yt-sr-only">Filter videos by channel name</span>
+                </div>
+
+                <div class="yt-param-group">
+                    <label for="yt-sortBy">Sort By</label>
+                    <select id="yt-sortBy" aria-describedby="yt-sortBy-help">
+                        <option value="plays">Play Count</option>
+                        <option value="title">Video Title</option>
+                        <option value="channel">Channel Name</option>
+                        <option value="recent">Most Recent</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                    <span id="yt-sortBy-help" class="yt-sr-only">Choose how to sort the results</span>
+                </div>
+
+                <div class="yt-param-group">
+                    <label class="yt-checkbox-label">
+                        <input type="checkbox" id="yt-excludeMusic" checked aria-describedby="yt-excludeMusic-help">
+                        Exclude YouTube Music
+                    </label>
+                    <span id="yt-excludeMusic-help" class="yt-sr-only">Filter out YouTube Music entries from results</span>
+                </div>
+            </div>
+
+            <div class="yt-button-group">
+                <button class="yt-btn" onclick="window.ytAnalyzer && window.ytAnalyzer.processFile()" aria-label="Analyze your YouTube watch history">
+                    <span>🚀 Analyze History</span>
+                </button>
+                <button class="yt-btn yt-btn-secondary" onclick="window.ytAnalyzer && window.ytAnalyzer.reset()" aria-label="Reset all data and start over">
+                    <span>🔄 Reset</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Statistics Section -->
+        <div class="yt-stats-card" id="yt-statsCard">
+            <canvas class="yt-stats-pattern" id="yt-statsPattern" aria-hidden="true"></canvas>
+            <div class="yt-stats-content">
+                <div class="yt-stats-header">
+                    <h3>📈 Watch Statistics</h3>
+                    <p class="yt-subtitle">Your YouTube journey at a glance</p>
+                </div>
+                <div class="yt-stats-actions" id="yt-statsActions" style="display: none;">
+                    <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
+                        <button class="yt-btn yt-btn-share" onclick="window.ytAnalyzer && window.ytAnalyzer.shareStats('landscape')" title="1200x630px - Perfect for Twitter/LinkedIn">
+                            <span>📸 Share Stats (Landscape)</span>
+                        </button>
+                        <button class="yt-btn yt-btn-share" onclick="window.ytAnalyzer && window.ytAnalyzer.shareStats('square')" title="1080x1080px - Perfect for Instagram/Facebook">
+                            <span>📷 Share Stats (Square)</span>
+                        </button>
+                    </div>
+                    <p style="text-align: center; font-size: 0.75rem; color: var(--yt-text-secondary); margin-top: 0.75rem; margin-bottom: 0; opacity: 0.7;">Download your stats as an image to share on social media</p>
+                </div>
+                <div class="yt-stats-grid" id="yt-statsGrid" role="region" aria-label="YouTube watch statistics"></div>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="yt-results-card" id="yt-resultsCard">
+            <div class="yt-results-header">
+                <h3>🎬 Top Videos</h3>
+                <div class="yt-results-controls">
+                    <div class="yt-search-wrapper">
+                        <span class="yt-search-icon" aria-hidden="true">🔍</span>
+                        <input type="text" class="yt-search-box" id="yt-searchBox" placeholder="Search videos, channels..." aria-label="Search results">
+                    </div>
+                    <div class="yt-button-group">
+                        <button class="yt-btn yt-btn-outline" onclick="window.ytAnalyzer && window.ytAnalyzer.exportCSV()" aria-label="Export results as CSV file">
+                            <span>📊 Export CSV</span>
+                        </button>
+                        <button class="yt-btn yt-btn-outline" onclick="window.ytAnalyzer && window.ytAnalyzer.exportJSON()" aria-label="Export results as JSON file">
+                            <span>📄 Export JSON</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="yt-table-container">
+                <div class="yt-table-scroll" role="region" aria-label="Top videos table" tabindex="0">
+                    <table id="yt-resultsTable" aria-label="Your top watched YouTube videos">
+                        <thead>
+                            <tr>
+                                <th onclick="window.ytAnalyzer && window.ytAnalyzer.sortTable('rank')" style="width: 60px;" scope="col" tabindex="0" role="button" aria-label="Sort by rank">
+                                    Rank <span class="yt-sort-icon" aria-hidden="true">↕</span>
+                                </th>
+                                <th onclick="window.ytAnalyzer && window.ytAnalyzer.sortTable('title')" scope="col" tabindex="0" role="button" aria-label="Sort by video title">
+                                    Video Title <span class="yt-sort-icon" aria-hidden="true">↕</span>
+                                </th>
+                                <th onclick="window.ytAnalyzer && window.ytAnalyzer.sortTable('channel')" scope="col" tabindex="0" role="button" aria-label="Sort by channel name">
+                                    Channel <span class="yt-sort-icon" aria-hidden="true">↕</span>
+                                </th>
+                                <th onclick="window.ytAnalyzer && window.ytAnalyzer.sortTable('plays')" style="width: 80px;" scope="col" tabindex="0" role="button" aria-label="Sort by play count">
+                                    Plays <span class="yt-sort-icon" aria-hidden="true">↕</span>
+                                </th>
+                                <th onclick="window.ytAnalyzer && window.ytAnalyzer.sortTable('date')" style="width: 140px;" scope="col" tabindex="0" role="button" aria-label="Sort by first watched date">
+                                    First Watched <span class="yt-sort-icon" aria-hidden="true">↕</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody id="yt-resultsBody">
+                            <tr>
+                                <td colspan="5" class="yt-empty-state">
+                                    <div class="yt-empty-state-icon" aria-hidden="true">📂</div>
+                                    <p>Upload your watch history to see your top videos</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div class="yt-loading-overlay" id="yt-loadingOverlay" role="dialog" aria-modal="true" aria-labelledby="yt-loading-title" aria-describedby="yt-progressText">
+        <div class="yt-loading-content">
+            <div class="yt-spinner" aria-hidden="true"></div>
+            <h3 id="yt-loading-title" style="color: white; margin-bottom: 1rem;">Processing Your Watch History</h3>
+            <div class="yt-progress-wrapper">
+                <div class="yt-progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                    <div class="yt-progress-fill" id="yt-progressBar"></div>
+                </div>
+                <p class="yt-progress-text" id="yt-progressText">Initializing...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // YouTube Watch History Analyzer - Production Ready
+        (function() {
+            'use strict';
+
+            // Feature detection
+            const FEATURES = {
+                fileAPI: !!(window.File && window.FileReader && window.FileList && window.Blob),
+                canvas: !!document.createElement('canvas').getContext,
+                localStorage: (function() {
+                    try {
+                        const test = '__yt_test__';
+                        localStorage.setItem(test, test);
+                        localStorage.removeItem(test);
+                        return true;
+                    } catch(e) {
+                        return false;
+                    }
+                })()
+            };
+
+            class YouTubeAnalyzer {
+                constructor() {
+                    // Data structures
+                    this.videos = new Map();
+                    this.watchEvents = [];
+                    this.filteredVideos = [];
+                    this.currentSort = { field: 'plays', ascending: false };
+                    this.file = null;
+                    this.processing = false;
+
+                    // UI state
+                    this.alertTimeouts = {
+                        error: null,
+                        success: null
+                    };
+
+                    // Performance limits
+                    this.BATCH_SIZE = 100;
+                    this.MAX_FILE_SIZE = 1024 * 1024 * 1024; // 1GB
+                    this.DEBOUNCE_DELAY = 300;
+
+                    // Event handlers (stored for cleanup)
+                    this.eventHandlers = new Map();
+                    this.resizeHandler = null;
+
+                    this.init();
+                }
+
+                init() {
+                    // Check browser compatibility
+                    if (!this.checkCompatibility()) {
+                        this.showError('Your browser is not fully compatible. Please use a modern browser for the best experience.');
+                        return;
+                    }
+
+                    // Initialize after DOM is ready
+                    if (document.readyState === 'loading') {
+                        document.addEventListener('DOMContentLoaded', () => this.initializeWidget());
+                    } else {
+                        this.initializeWidget();
+                    }
+                }
+
+                checkCompatibility() {
+                    if (!FEATURES.fileAPI) {
+                        console.error('File API not supported');
+                        return false;
+                    }
+                    return true;
+                }
+
+                initializeWidget() {
+                    try {
+                        this.setupEventListeners();
+                        this.drawStatsPattern();
+                        this.setupKeyboardNavigation();
+                        console.log('%cYourTube History Analyzer initialized successfully!',
+                            'color: #ff0000; font-weight: bold; font-size: 14px;');
+                    } catch (error) {
+                        console.error('Initialization error:', error);
+                        this.showError('Failed to initialize the analyzer. Please refresh the page.');
+                    }
+                }
+
+                setupEventListeners() {
+                    const uploadSection = document.getElementById('yt-uploadSection');
+                    const fileInput = document.getElementById('yt-fileInput');
+
+                    if (!uploadSection || !fileInput) {
+                        throw new Error('Required DOM elements not found');
+                    }
+
+                    // File input handler
+                    this.addEventHandler(fileInput, 'change', (e) => this.handleFileSelect(e));
+
+                    // Upload section click
+                    this.addEventHandler(uploadSection, 'click', (e) => {
+                        if (!fileInput.contains(e.target)) {
+                            fileInput.click();
+                        }
+                    });
+
+                    // Keyboard support for upload section
+                    this.addEventHandler(uploadSection, 'keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            fileInput.click();
+                        }
+                    });
+
+                    // Drag and drop
+                    this.setupDragAndDrop(uploadSection);
+
+                    // Search functionality with debouncing
+                    const searchBox = document.getElementById('yt-searchBox');
+                    if (searchBox) {
+                        let searchTimeout;
+                        this.addEventHandler(searchBox, 'input', (e) => {
+                            clearTimeout(searchTimeout);
+                            searchTimeout = setTimeout(() => {
+                                this.handleSearch(e.target.value);
+                            }, this.DEBOUNCE_DELAY);
+                        });
+                    }
+
+                    // Parameter changes
+                    this.setupParameterListeners();
+
+                    // Window resize for canvas pattern
+                    this.resizeHandler = this.debounce(() => this.drawStatsPattern(), 250);
+                    window.addEventListener('resize', this.resizeHandler);
+                }
+
+                setupDragAndDrop(element) {
+                    let dragCounter = 0;
+
+                    this.addEventHandler(element, 'dragenter', (e) => {
+                        e.preventDefault();
+                        dragCounter++;
+                        element.classList.add('yt-dragover');
+                    });
+
+                    this.addEventHandler(element, 'dragover', (e) => {
+                        e.preventDefault();
+                    });
+
+                    this.addEventHandler(element, 'dragleave', (e) => {
+                        dragCounter--;
+                        if (dragCounter === 0) {
+                            element.classList.remove('yt-dragover');
+                        }
+                    });
+
+                    this.addEventHandler(element, 'drop', (e) => {
+                        e.preventDefault();
+                        dragCounter = 0;
+                        element.classList.remove('yt-dragover');
+
+                        const files = e.dataTransfer?.files;
+                        if (files && files.length > 0) {
+                            this.handleFile(files[0]);
+                        }
+                    });
+                }
+
+                setupParameterListeners() {
+                    const params = ['topN', 'minPlays', 'dateFrom', 'dateTo', 'channelFilter', 'sortBy', 'excludeMusic'];
+                    params.forEach(param => {
+                        const element = document.getElementById('yt-' + param);
+                        if (element) {
+                            this.addEventHandler(element, 'change', () => {
+                                if (this.videos.size > 0) {
+                                    this.applyFiltersAndDisplay();
+                                }
+                            });
+                        }
+                    });
+                }
+
+                setupKeyboardNavigation() {
+                    // Add keyboard navigation for table headers
+                    const headers = document.querySelectorAll('#youtube-analyzer-widget th[tabindex="0"]');
+                    headers.forEach(header => {
+                        this.addEventHandler(header, 'keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                header.click();
+                            }
+                        });
+                    });
+                }
+
+                addEventHandler(element, event, handler) {
+                    if (!element) return;
+
+                    element.addEventListener(event, handler);
+
+                    // Store for cleanup
+                    if (!this.eventHandlers.has(element)) {
+                        this.eventHandlers.set(element, []);
+                    }
+                    this.eventHandlers.get(element).push({ event, handler });
+                }
+
+                drawStatsPattern() {
+                    const canvas = document.getElementById('yt-statsPattern');
+                    if (!canvas || !FEATURES.canvas) return;
+
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) return;
+
+                    requestAnimationFrame(() => {
+                        const rect = canvas.parentElement?.getBoundingClientRect();
+                        if (!rect) return;
+
+                        // Set canvas size
+                        const dpr = Math.min(window.devicePixelRatio || 1, 2); // Limit DPR for performance
+                        canvas.width = rect.width * dpr;
+                        canvas.height = rect.height * dpr;
+                        canvas.style.width = rect.width + 'px';
+                        canvas.style.height = rect.height + 'px';
+                        ctx.scale(dpr, dpr);
+
+                        // Clear canvas
+                        ctx.clearRect(0, 0, rect.width, rect.height);
+
+                        // Draw pattern
+                        ctx.fillStyle = 'rgba(255, 0, 0, 0.03)';
+                        ctx.strokeStyle = 'rgba(255, 0, 0, 0.03)';
+                        ctx.lineWidth = 1.5;
+
+                        const patternSize = 60;
+                        for (let x = 0; x < rect.width + patternSize; x += patternSize) {
+                            for (let y = 0; y < rect.height + patternSize; y += patternSize) {
+                                this.drawMediaIcon(ctx, x + patternSize/2, y + patternSize/2, ((x + y) / patternSize) % 3);
+                            }
+                        }
+                    });
+                }
+
+                drawMediaIcon(ctx, x, y, type) {
+                    ctx.save();
+                    ctx.translate(x, y);
+
+                    const iconIndex = Math.floor(type) % 3; // Only 3 types now
+                    switch(iconIndex) {
+                        case 0: // Play button
+                            ctx.beginPath();
+                            ctx.moveTo(-8, -10);
+                            ctx.lineTo(-8, 10);
+                            ctx.lineTo(8, 0);
+                            ctx.closePath();
+                            ctx.fill();
+                            break;
+                        case 1: // Pause button
+                            ctx.fillRect(-8, -10, 5, 20);
+                            ctx.fillRect(3, -10, 5, 20);
+                            break;
+                        case 2: // Skip button
+                            ctx.beginPath();
+                            ctx.moveTo(-7, -8);
+                            ctx.lineTo(-7, 8);
+                            ctx.lineTo(1, 0);
+                            ctx.closePath();
+                            ctx.fill();
+                            ctx.beginPath();
+                            ctx.moveTo(3, -8);
+                            ctx.lineTo(3, 8);
+                            ctx.lineTo(11, 0);
+                            ctx.closePath();
+                            ctx.fill();
+                            break;
+                    }
+
+                    ctx.restore();
+                }
+
+                handleFileSelect(event) {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                        this.handleFile(file);
+                    }
+                }
+
+                handleFile(file) {
+                    try {
+                        if (!file) {
+                            throw new Error('No file selected');
+                        }
+
+                        // Validate file type
+                        if (!file.name.match(/\.html?$/i)) {
+                            throw new Error('Please upload an HTML file (watch-history.html)');
+                        }
+
+                        // Validate file size
+                        if (file.size > this.MAX_FILE_SIZE) {
+                            throw new Error(`File is too large. Maximum size is ${Math.round(this.MAX_FILE_SIZE / 1024 / 1024)} MB`);
+                        }
+
+                        // Store file reference
+                        this.file = file;
+
+                        this.showSuccess(`File loaded: ${this.escapeHtml(file.name)} (${(file.size / 1024 / 1024).toFixed(2)} MB)`);
+
+                        // Show parameters section
+                        const parametersCard = document.getElementById('yt-parametersCard');
+                        if (parametersCard) {
+                            parametersCard.style.display = 'block';
+                            // Focus on first parameter for accessibility
+                            document.getElementById('yt-topN')?.focus();
+                        }
+                    } catch (error) {
+                        this.showError(error.message);
+                    }
+                }
+
+                async processFile() {
+                    if (!this.file) {
+                        this.showError('Please upload a file first');
+                        return;
+                    }
+
+                    if (this.processing) {
+                        this.showError('Already processing a file');
+                        return;
+                    }
+
+                    this.processing = true;
+                    this.showLoading(true);
+
+                    try {
+                        // Clear old data but keep file reference
+                        this.videos.clear();
+                        this.watchEvents = [];
+                        this.filteredVideos = [];
+
+                        const content = await this.readFile(this.file);
+                        await this.parseHistory(content);
+                    } catch (error) {
+                        console.error('Processing error:', error);
+                        this.showError(`Error processing file: ${error.message}`);
+                    } finally {
+                        this.processing = false;
+                        this.showLoading(false);
+                    }
+                }
+
+                readFile(file) {
+                    return new Promise((resolve, reject) => {
+                        if (!file) {
+                            reject(new Error('No file provided'));
+                            return;
+                        }
+
+                        const reader = new FileReader();
+
+                        const timeout = setTimeout(() => {
+                            reader.abort();
+                            reject(new Error('File reading timed out'));
+                        }, 60000); // 60 second timeout
+
+                        reader.onload = (e) => {
+                            clearTimeout(timeout);
+                            const result = e.target?.result;
+                            if (typeof result === 'string') {
+                                resolve(result);
+                            } else {
+                                reject(new Error('Failed to read file as text'));
+                            }
+                        };
+
+                        reader.onerror = () => {
+                            clearTimeout(timeout);
+                            reject(new Error('Failed to read file'));
+                        };
+
+                        reader.onabort = () => {
+                            clearTimeout(timeout);
+                            reject(new Error('File reading was aborted'));
+                        };
+
+                        reader.readAsText(file, 'UTF-8');
+                    });
+                }
+
+                async parseHistory(htmlContent) {
+                    if (!htmlContent || typeof htmlContent !== 'string') {
+                        throw new Error('Invalid file content');
+                    }
+
+                    // Check for minimum content length
+                    if (htmlContent.length < 100) {
+                        throw new Error('File appears to be empty or corrupted');
+                    }
+
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(htmlContent, 'text/html');
+
+                    // Try multiple selectors to find entries
+                    const selectors = [
+                        '.outer-cell .content-cell',
+                        '.mdl-grid .content-cell',
+                        '.content-cell',
+                        'div[class*="content-cell"]'
+                    ];
+
+                    let entries = null;
+                    for (const selector of selectors) {
+                        entries = doc.querySelectorAll(selector);
+                        if (entries.length > 0) break;
+                    }
+
+                    if (!entries || entries.length === 0) {
+                        throw new Error('No watch history entries found. Please ensure this is the correct watch-history.html file from Google Takeout.');
+                    }
+
+                    const totalEntries = entries.length;
+                    const excludeMusic = document.getElementById('yt-excludeMusic')?.checked ?? true;
+
+                    let processed = 0;
+                    let errors = 0;
+
+                    // Process in batches for better performance
+                    for (let i = 0; i < entries.length; i += this.BATCH_SIZE) {
+                        const batch = Array.from(entries).slice(i, i + this.BATCH_SIZE);
+
+                        await new Promise(resolve => {
+                            requestAnimationFrame(() => {
+                                batch.forEach(entry => {
+                                    try {
+                                        this.parseEntry(entry, excludeMusic);
+                                    } catch (error) {
+                                        errors++;
+                                        if (errors < 10) { // Log first 10 errors
+                                            console.warn('Error parsing entry:', error);
+                                        }
+                                    }
+                                });
+
+                                processed += batch.length;
+                                this.updateProgress(processed, totalEntries);
+                                resolve();
+                            });
+                        });
+
+                        // Allow UI to breathe
+                        if (processed % 1000 === 0) {
+                            await new Promise(resolve => setTimeout(resolve, 0));
+                        }
+                    }
+
+                    this.finalizeProcessing(errors);
+                }
+
+                parseEntry(contentCell, excludeMusic) {
+                    const text = contentCell.textContent || '';
+
+                    // Check if it's a watch event (support multiple languages)
+                    const watchKeywords = ['Watched', 'Gesehen', 'Regardé', 'Visto', 'Assistido',
+                                         '視聴しました', 'Просмотрено', 'Guardato', 'Mirado', 'Bekeken'];
+                    const isWatchEvent = watchKeywords.some(keyword => text.includes(keyword));
+                    if (!isWatchEvent) return;
+
+                    // Skip music if needed
+                    if (excludeMusic && (text.includes('YouTube Music') ||
+                        contentCell.querySelector('a[href*="music.youtube.com"]'))) {
+                        return;
+                    }
+
+                    const videoLink = contentCell.querySelector('a[href*="youtube.com"], a[href*="youtu.be"]');
+                    if (!videoLink?.href) return;
+
+                    const videoUrl = videoLink.href;
+                    if (!videoUrl.includes('watch?v=') && !videoUrl.includes('youtu.be/')) return;
+
+                    const videoId = this.extractVideoId(videoUrl);
+                    if (!videoId) return;
+
+                    const videoTitle = this.sanitizeText(videoLink.textContent?.trim()) || 'Unknown Title';
+                    const { channelName, channelUrl } = this.extractChannelInfo(contentCell, videoUrl);
+                    const { dateString, timestamp } = this.extractDate(contentCell);
+
+                    const watchEvent = {
+                        videoId,
+                        url: this.sanitizeUrl(videoUrl),
+                        title: videoTitle,
+                        channel: channelName,
+                        channelUrl: this.sanitizeUrl(channelUrl),
+                        dateString,
+                        timestamp
+                    };
+
+                    this.watchEvents.push(watchEvent);
+
+                    // Aggregate video data
+                    if (!this.videos.has(videoId)) {
+                        this.videos.set(videoId, {
+                            id: videoId,
+                            title: videoTitle,
+                            url: this.sanitizeUrl(videoUrl),
+                            channel: channelName,
+                            channelUrl: this.sanitizeUrl(channelUrl),
+                            plays: 0,
+                            firstWatched: timestamp,
+                            lastWatched: timestamp,
+                            watchDates: []
+                        });
+                    }
+
+                    const video = this.videos.get(videoId);
+                    video.plays++;
+
+                    if (timestamp && timestamp instanceof Date && !isNaN(timestamp.getTime())) {
+                        video.watchDates.push(timestamp);
+
+                        if (!video.firstWatched || timestamp < video.firstWatched) {
+                            video.firstWatched = timestamp;
+                        }
+                        if (!video.lastWatched || timestamp > video.lastWatched) {
+                            video.lastWatched = timestamp;
+                        }
+                    }
+                }
+
+                extractVideoId(url) {
+                    if (!url || typeof url !== 'string') return null;
+
+                    try {
+                        const urlObj = new URL(url);
+
+                        // Handle youtube.com/watch?v=
+                        if (urlObj.hostname.includes('youtube.com') && urlObj.searchParams.has('v')) {
+                            return urlObj.searchParams.get('v');
+                        }
+
+                        // Handle youtu.be/
+                        if (urlObj.hostname === 'youtu.be') {
+                            return urlObj.pathname.slice(1);
+                        }
+
+                        // Fallback to regex patterns
+                        const patterns = [
+                            /(?:youtube\.com\/watch\?v=)([^&\n?#]+)/,
+                            /(?:youtu\.be\/)([^&\n?#]+)/,
+                            /(?:youtube\.com\/embed\/)([^&\n?#]+)/,
+                            /(?:youtube\.com\/v\/)([^&\n?#]+)/
+                        ];
+
+                        for (const pattern of patterns) {
+                            const match = url.match(pattern);
+                            if (match?.[1]) {
+                                return match[1];
+                            }
+                        }
+                    } catch (e) {
+                        // URL parsing failed, continue with regex
+                    }
+
+                    return null;
+                }
+
+                extractChannelInfo(contentCell, videoUrl) {
+                    let channelName = 'Unknown Channel';
+                    let channelUrl = '';
+
+                    try {
+                        const links = Array.from(contentCell.querySelectorAll('a[href]'));
+                        const channelLink = links.find(link =>
+                            link.href !== videoUrl &&
+                            (link.href.includes('/@') ||
+                             link.href.includes('/channel/') ||
+                             link.href.includes('/c/') ||
+                             link.href.includes('/user/'))
+                        );
+
+                        if (channelLink) {
+                            channelName = this.sanitizeText(channelLink.textContent?.trim()) || 'Unknown Channel';
+                            channelUrl = channelLink.href;
+                        }
+                    } catch (error) {
+                        console.warn('Error extracting channel info:', error);
+                    }
+
+                    return { channelName, channelUrl };
+                }
+
+                extractDate(contentCell) {
+                    const datePatterns = [
+                        // Common formats
+                        /([A-Za-z]{3,9}\s\d{1,2},\s\d{4},\s\d{1,2}:\d{2}:\d{2}\s[AP]M(?:\s[A-Z]{2,4})?)/i,
+                        /(\d{1,2}\s[A-Za-z]{3,9}\s\d{4}\s\d{1,2}:\d{2}:\d{2})/i,
+                        /(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?Z?)/i,
+                        /(\d{1,2}\/\d{1,2}\/\d{4}\s\d{1,2}:\d{2}:\d{2}\s[AP]M)/i,
+                        /(\d{2}\.\d{2}\.\d{4}\s\d{2}:\d{2}:\d{2})/,
+                        // Additional international formats
+                        /(\d{2}\/\d{2}\/\d{4}\s\d{2}:\d{2}:\d{2})/,
+                        /(\d{4}年\d{1,2}月\d{1,2}日\s\d{2}:\d{2}:\d{2})/
+                    ];
+
+                    try {
+                        const html = contentCell.innerHTML;
+                        const textParts = html.split(/<br\s*\/?>/i);
+
+                        for (let i = textParts.length - 1; i >= 0; i--) {
+                            const parser = new DOMParser();
+                            const tempDoc = parser.parseFromString(textParts[i], 'text/html');
+                            const text = tempDoc.body.textContent?.trim();
+                            if (!text) continue;
+
+                            for (const pattern of datePatterns) {
+                                const match = text.match(pattern);
+                                if (match?.[1]) {
+                                    const dateString = match[1];
+                                    const timestamp = this.parseDate(dateString);
+
+                                    if (timestamp && !isNaN(timestamp.getTime())) {
+                                        return { dateString, timestamp };
+                                    }
+                                }
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('Error extracting date:', error);
+                    }
+
+                    return { dateString: 'Unknown Date', timestamp: null };
+                }
+
+                parseDate(dateString) {
+                    if (!dateString || typeof dateString !== 'string') return null;
+
+                    try {
+                        // Remove timezone abbreviations for better parsing
+                        const cleanedDate = dateString.replace(/\s[A-Z]{2,4}$/i, '').trim();
+
+                        // Try native Date parsing first
+                        const date = new Date(cleanedDate);
+                        if (!isNaN(date.getTime())) {
+                            return date;
+                        }
+
+                        // Manual parsing for difficult formats
+                        const manualMatch = cleanedDate.match(/([A-Za-z]+)\s(\d+),\s(\d{4}),\s(\d+):(\d{2}):(\d{2})\s([AP]M)/i);
+                        if (manualMatch) {
+                            const [_, month, day, year, hour, minute, second, ampm] = manualMatch;
+                            const monthIndex = new Date(Date.parse(month + " 1, 2000")).getMonth();
+                            let hours = parseInt(hour);
+                            if (ampm.toUpperCase() === 'PM' && hours !== 12) hours += 12;
+                            if (ampm.toUpperCase() === 'AM' && hours === 12) hours = 0;
+
+                            const parsedDate = new Date(parseInt(year), monthIndex, parseInt(day), hours, parseInt(minute), parseInt(second));
+                            if (!isNaN(parsedDate.getTime())) {
+                                return parsedDate;
+                            }
+                        }
+                    } catch (error) {
+                        console.warn('Error parsing date:', error);
+                    }
+
+                    return null;
+                }
+
+                updateProgress(processed, total) {
+                    const progress = Math.round((processed / total) * 100);
+                    const progressBar = document.getElementById('yt-progressBar');
+                    const progressText = document.getElementById('yt-progressText');
+
+                    if (progressBar) {
+                        progressBar.style.width = `${progress}%`;
+                        progressBar.parentElement?.setAttribute('aria-valuenow', progress.toString());
+                    }
+
+                    if (progressText) {
+                        progressText.textContent = `Processing: ${processed.toLocaleString()} of ${total.toLocaleString()} entries (${progress}%)`;
+                    }
+                }
+
+                finalizeProcessing(errors = 0) {
+                    const validVideos = this.videos.size;
+                    const totalEvents = this.watchEvents.length;
+
+                    if (validVideos === 0) {
+                        if (totalEvents > 0) {
+                            this.showError(`Found ${totalEvents} watch events but couldn't extract video data. This might be due to an unsupported file format.`);
+                        } else {
+                            this.showError('No watch events found in the file. Please ensure you uploaded the correct watch-history.html file from Google Takeout.');
+                        }
+                        return;
+                    }
+
+                    let successMessage = `Successfully processed ${validVideos.toLocaleString()} unique videos from ${totalEvents.toLocaleString()} watch events`;
+                    if (errors > 0) {
+                        successMessage += ` (${errors} entries had errors)`;
+                    }
+
+                    console.log('%cYourTube History: Processing complete',
+                        'color: #ff0000; font-weight: bold; font-size: 14px;');
+                    console.log(`Videos: ${validVideos}, Events: ${totalEvents}, Errors: ${errors}`);
+
+                    this.showSuccess(successMessage);
+                    this.applyFiltersAndDisplay();
+                }
+
+                applyFiltersAndDisplay() {
+                    try {
+                        // Get filter values with validation
+                        const minPlays = Math.max(1, parseInt(document.getElementById('yt-minPlays')?.value) || 1);
+                        const dateFromValue = document.getElementById('yt-dateFrom')?.value;
+                        const dateToValue = document.getElementById('yt-dateTo')?.value;
+                        const channelFilter = (document.getElementById('yt-channelFilter')?.value || '').toLowerCase().trim();
+                        const topN = Math.min(10000, Math.max(1, parseInt(document.getElementById('yt-topN')?.value) || 100));
+
+                        // Validate date range
+                        if (dateFromValue && dateToValue) {
+                            const dateFrom = new Date(dateFromValue);
+                            const dateTo = new Date(dateToValue);
+                            if (dateFrom > dateTo) {
+                                this.showError('From date cannot be after To date');
+                                return;
+                            }
+                        }
+
+                        // Apply filters
+                        this.filteredVideos = Array.from(this.videos.values()).filter(video => {
+                            if (video.plays < minPlays) return false;
+
+                            // Date filtering
+                            if (dateFromValue && video.firstWatched) {
+                                const dateFrom = new Date(dateFromValue);
+                                dateFrom.setHours(0, 0, 0, 0);
+                                if (video.firstWatched < dateFrom) return false;
+                            }
+
+                            if (dateToValue && video.firstWatched) {
+                                const dateTo = new Date(dateToValue);
+                                dateTo.setHours(23, 59, 59, 999);
+                                if (video.firstWatched > dateTo) return false;
+                            }
+
+                            // If date filters are set but video has no date, exclude it
+                            if ((dateFromValue || dateToValue) && !video.firstWatched) {
+                                return false;
+                            }
+
+                            // Channel filter
+                            if (channelFilter && !video.channel.toLowerCase().includes(channelFilter)) {
+                                return false;
+                            }
+
+                            return true;
+                        });
+
+                        // Sort videos
+                        this.sortVideos();
+
+                        // Display results
+                        this.displayStats();
+                        this.displayTable(this.filteredVideos.slice(0, topN));
+
+                        // Announce results to screen readers
+                        const announcement = `Showing ${Math.min(topN, this.filteredVideos.length)} of ${this.filteredVideos.length} filtered videos`;
+                        this.announceToScreenReaders(announcement);
+                    } catch (error) {
+                        console.error('Error applying filters:', error);
+                        this.showError('Error applying filters. Please check your settings.');
+                    }
+                }
+
+                sortVideos() {
+                    const sortBy = document.getElementById('yt-sortBy')?.value || 'plays';
+
+                    this.filteredVideos.sort((a, b) => {
+                        try {
+                            switch (sortBy) {
+                                case 'plays':
+                                    return b.plays - a.plays;
+                                case 'title':
+                                    return (a.title || '').localeCompare(b.title || '', undefined, { numeric: true });
+                                case 'channel':
+                                    return (a.channel || '').localeCompare(b.channel || '', undefined, { numeric: true });
+                                case 'recent':
+                                    return (b.lastWatched || new Date(0)) - (a.lastWatched || new Date(0));
+                                case 'oldest':
+                                    return (a.firstWatched || new Date(0)) - (b.firstWatched || new Date(0));
+                                default:
+                                    return b.plays - a.plays;
+                            }
+                        } catch (error) {
+                            console.warn('Error sorting videos:', error);
+                            return 0;
+                        }
+                    });
+                }
+
+                displayStats() {
+                    try {
+                        const statsGrid = document.getElementById('yt-statsGrid');
+                        const stats = this.calculateStats();
+
+                        if (!statsGrid || !stats) return;
+
+                        statsGrid.innerHTML = stats.map(stat => `
+                            <div class="yt-stat-item">
+                                <div class="yt-stat-label">${this.escapeHtml(stat.label)}</div>
+                                <div class="yt-stat-value">${this.escapeHtml(stat.value)}</div>
+                                ${stat.subvalue ? `<div class="yt-stat-subvalue">${this.escapeHtml(stat.subvalue)}</div>` : ''}
+                            </div>
+                        `).join('');
+
+                        // Show the stats card and share buttons
+                        const statsCard = document.getElementById('yt-statsCard');
+                        const statsActions = document.getElementById('yt-statsActions');
+                        if (statsCard) statsCard.style.display = 'block';
+                        if (statsActions && FEATURES.canvas) {
+                            statsActions.style.display = 'block';
+                        }
+                    } catch (error) {
+                        console.error('Error displaying stats:', error);
+                    }
+                }
+
+                calculateStats() {
+                    try {
+                        const allVideos = Array.from(this.videos.values());
+                        const validTimestamps = this.watchEvents
+                            .map(e => e.timestamp)
+                            .filter(t => t && t instanceof Date && !isNaN(t.getTime()));
+
+                        const stats = [];
+
+                        // Date range
+                        if (validTimestamps.length > 0) {
+                            const minDate = new Date(Math.min(...validTimestamps));
+                            const maxDate = new Date(Math.max(...validTimestamps));
+                            stats.push({
+                                label: 'Data Period',
+                                value: `${minDate.toLocaleDateString()} - ${maxDate.toLocaleDateString()}`
+                            });
+                        }
+
+                        // Total statistics
+                        stats.push({
+                            label: 'Total Watch Events',
+                            value: this.watchEvents.length.toLocaleString()
+                        });
+
+                        stats.push({
+                            label: 'Unique Videos',
+                            value: allVideos.length.toLocaleString()
+                        });
+
+                        // Unique channels
+                        const uniqueChannels = new Set(allVideos.map(v => v.channel).filter(c => c && c !== 'Unknown Channel'));
+                        stats.push({
+                            label: 'Unique Channels',
+                            value: uniqueChannels.size.toLocaleString()
+                        });
+
+                        // Estimated hours (assuming 10 min average)
+                        const estimatedMinutes = this.watchEvents.length * 10;
+                        const estimatedHours = Math.round(estimatedMinutes / 60);
+
+                        const timeBreakdown = this.formatDuration(estimatedMinutes);
+
+                        stats.push({
+                            label: 'Estimated Hours',
+                            value: estimatedHours.toLocaleString(),
+                            subvalue: timeBreakdown || 'Based on 10 min average'
+                        });
+
+                        // Average per day
+                        if (validTimestamps.length > 0) {
+                            const minDate = new Date(Math.min(...validTimestamps));
+                            const maxDate = new Date(Math.max(...validTimestamps));
+                            const daysDiff = Math.ceil((maxDate - minDate) / (1000 * 60 * 60 * 24)) || 1;
+                            const avgPerDay = (this.watchEvents.length / daysDiff).toFixed(1);
+                            stats.push({
+                                label: 'Daily Average',
+                                value: avgPerDay,
+                                subvalue: 'Videos per day'
+                            });
+                        }
+
+                        // Favorite channel
+                        const channelPlays = {};
+                        allVideos.forEach(video => {
+                            if (video.channel && video.channel !== 'Unknown Channel') {
+                                channelPlays[video.channel] = (channelPlays[video.channel] || 0) + video.plays;
+                            }
+                        });
+
+                        const topChannel = Object.entries(channelPlays)
+                            .sort(([,a], [,b]) => b - a)[0];
+
+                        if (topChannel) {
+                            stats.push({
+                                label: 'Favorite Channel',
+                                value: this.truncateText(topChannel[0], 30),
+                                subvalue: `${topChannel[1]} plays`
+                            });
+                        }
+
+                        // Most rewatched
+                        const mostRewatched = allVideos
+                            .filter(v => v.plays > 1)
+                            .sort((a, b) => b.plays - a.plays)[0];
+
+                        if (mostRewatched) {
+                            stats.push({
+                                label: 'Most Rewatched',
+                                value: this.truncateText(mostRewatched.title, 40),
+                                subvalue: `${mostRewatched.plays} plays`
+                            });
+                        }
+
+                        return stats;
+                    } catch (error) {
+                        console.error('Error calculating stats:', error);
+                        return [{ label: 'Error', value: 'Could not calculate statistics' }];
+                    }
+                }
+
+                formatDuration(minutes) {
+                    const years = Math.floor(minutes / (365 * 24 * 60));
+                    const months = Math.floor((minutes % (365 * 24 * 60)) / (30 * 24 * 60));
+                    const days = Math.floor((minutes % (30 * 24 * 60)) / (24 * 60));
+                    const hours = Math.floor((minutes % (24 * 60)) / 60);
+                    const remainingMinutes = minutes % 60;
+
+                    const parts = [];
+                    if (years > 0) parts.push(`${years} year${years !== 1 ? 's' : ''}`);
+                    if (months > 0) parts.push(`${months} month${months !== 1 ? 's' : ''}`);
+                    if (days > 0) parts.push(`${days} day${days !== 1 ? 's' : ''}`);
+                    if (hours > 0) parts.push(`${hours} hour${hours !== 1 ? 's' : ''}`);
+                    if (remainingMinutes > 0) parts.push(`${remainingMinutes} minute${remainingMinutes !== 1 ? 's' : ''}`);
+
+                    return parts.slice(0, 3).join(', ');
+                }
+
+                displayTable(videos) {
+                    try {
+                        const tbody = document.getElementById('yt-resultsBody');
+                        if (!tbody) return;
+
+                        if (!videos || videos.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="5" class="yt-empty-state">
+                                        <div class="yt-empty-state-icon" aria-hidden="true">🔍</div>
+                                        <p>No videos match your filters</p>
+                                    </td>
+                                </tr>
+                            `;
+                        } else {
+                            tbody.innerHTML = videos.map((video, index) => `
+                                <tr>
+                                    <td class="yt-rank-cell">${index + 1}</td>
+                                    <td class="yt-video-info">
+                                        <div class="yt-video-title" title="${this.escapeHtml(video.title || '')}">${this.escapeHtml(video.title || 'Unknown Title')}</div>
+                                        <a href="${this.escapeHtml(video.url || '#')}" target="_blank" rel="noopener noreferrer" class="yt-video-url">Watch →</a>
+                                    </td>
+                                    <td class="yt-channel-name" title="${this.escapeHtml(video.channel || '')}">${this.escapeHtml(video.channel || 'Unknown Channel')}</td>
+                                    <td class="yt-play-count">${video.plays || 0}</td>
+                                    <td class="yt-date-cell">${video.firstWatched ? video.firstWatched.toLocaleDateString() : 'Unknown'}</td>
+                                </tr>
+                            `).join('');
+                        }
+
+                        const resultsCard = document.getElementById('yt-resultsCard');
+                        if (resultsCard) resultsCard.style.display = 'block';
+                    } catch (error) {
+                        console.error('Error displaying table:', error);
+                    }
+                }
+
+                handleSearch(searchTerm) {
+                    try {
+                        const term = (searchTerm || '').toLowerCase().trim();
+                        const rows = document.querySelectorAll('#yt-resultsBody tr');
+                        let visibleCount = 0;
+
+                        rows.forEach(row => {
+                            if (!row.classList.contains('yt-empty-state')) {
+                                const text = (row.textContent || '').toLowerCase();
+                                const isVisible = !term || text.includes(term);
+                                row.style.display = isVisible ? '' : 'none';
+                                if (isVisible) visibleCount++;
+                            }
+                        });
+
+                        // Update empty state if needed
+                        if (visibleCount === 0 && term) {
+                            const tbody = document.getElementById('yt-resultsBody');
+                            if (tbody && tbody.querySelector('.yt-empty-state')) {
+                                tbody.querySelector('.yt-empty-state p').textContent = `No results found for "${this.escapeHtml(searchTerm)}"`;
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error in search:', error);
+                    }
+                }
+
+                sortTable(field) {
+                    try {
+                        if (this.currentSort.field === field) {
+                            this.currentSort.ascending = !this.currentSort.ascending;
+                        } else {
+                            this.currentSort.field = field;
+                            this.currentSort.ascending = field === 'title' || field === 'channel';
+                        }
+
+                        const sortMap = {
+                            rank: 'plays',
+                            date: this.currentSort.ascending ? 'oldest' : 'recent'
+                        };
+
+                        const sortBy = document.getElementById('yt-sortBy');
+                        if (sortBy) {
+                            sortBy.value = sortMap[field] || field;
+                        }
+
+                        this.applyFiltersAndDisplay();
+                    } catch (error) {
+                        console.error('Error sorting table:', error);
+                    }
+                }
+
+                exportCSV() {
+                    try {
+                        const videos = this.filteredVideos.slice(0, parseInt(document.getElementById('yt-topN')?.value) || 100);
+
+                        if (videos.length === 0) {
+                            this.showError('No data to export');
+                            return;
+                        }
+
+                        const csv = [
+                            ['Rank', 'Title', 'Channel', 'Plays', 'URL', 'First Watched', 'Last Watched'],
+                            ...videos.map((video, index) => [
+                                index + 1,
+                                `"${(video.title || '').replace(/"/g, '""')}"`,
+                                `"${(video.channel || '').replace(/"/g, '""')}"`,
+                                video.plays || 0,
+                                video.url || '',
+                                video.firstWatched ? video.firstWatched.toLocaleDateString() : 'Unknown',
+                                video.lastWatched ? video.lastWatched.toLocaleDateString() : 'Unknown'
+                            ])
+                        ].map(row => row.join(',')).join('\n');
+
+                        // Add BOM for Excel compatibility
+                        const BOM = '\uFEFF';
+                        this.downloadFile(BOM + csv, `youtube-history-${new Date().toISOString().split('T')[0]}.csv`, 'text/csv;charset=utf-8');
+                    } catch (error) {
+                        console.error('Error exporting CSV:', error);
+                        this.showError('Error exporting CSV file');
+                    }
+                }
+
+                exportJSON() {
+                    try {
+                        const videos = this.filteredVideos.slice(0, parseInt(document.getElementById('yt-topN')?.value) || 100);
+
+                        if (videos.length === 0) {
+                            this.showError('No data to export');
+                            return;
+                        }
+
+                        const data = {
+                            exportDate: new Date().toISOString(),
+                            totalVideos: this.videos.size,
+                            totalEvents: this.watchEvents.length,
+                            filters: {
+                                topN: document.getElementById('yt-topN')?.value,
+                                minPlays: document.getElementById('yt-minPlays')?.value,
+                                dateFrom: document.getElementById('yt-dateFrom')?.value,
+                                dateTo: document.getElementById('yt-dateTo')?.value,
+                                channelFilter: document.getElementById('yt-channelFilter')?.value,
+                                excludeMusic: document.getElementById('yt-excludeMusic')?.checked
+                            },
+                            videos: videos.map((video, index) => ({
+                                rank: index + 1,
+                                id: video.id,
+                                title: video.title,
+                                channel: video.channel,
+                                plays: video.plays,
+                                url: video.url,
+                                firstWatched: video.firstWatched ? video.firstWatched.toISOString() : null,
+                                lastWatched: video.lastWatched ? video.lastWatched.toISOString() : null,
+                                allWatchDates: video.watchDates.map(d => d.toISOString())
+                            }))
+                        };
+
+                        const json = JSON.stringify(data, null, 2);
+                        this.downloadFile(json, `youtube-history-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
+                    } catch (error) {
+                        console.error('Error exporting JSON:', error);
+                        this.showError('Error exporting JSON file');
+                    }
+                }
+
+                downloadFile(content, filename, type) {
+                    try {
+                        const blob = new Blob([content], { type });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = filename;
+                        a.style.display = 'none';
+                        document.body.appendChild(a);
+                        a.click();
+
+                        // Cleanup
+                        setTimeout(() => {
+                            document.body.removeChild(a);
+                            URL.revokeObjectURL(url);
+                        }, 100);
+                    } catch (error) {
+                        console.error('Error downloading file:', error);
+                        this.showError('Error downloading file. Your browser may not support this feature.');
+                    }
+                }
+
+                shareStats(format = 'landscape') {
+                    try {
+                        if (!FEATURES.canvas) {
+                            this.showError('Your browser doesn\'t support image generation.');
+                            return;
+                        }
+
+                        const stats = this.calculateStats();
+
+                        if (!stats || stats.length === 0) {
+                            this.showError('No statistics available to share yet.');
+                            return;
+                        }
+
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        if (!ctx) {
+                            this.showError('Failed to create image context.');
+                            return;
+                        }
+
+                        // Set canvas size based on format (2x for retina)
+                        const scale = 2;
+                        if (format === 'square') {
+                            canvas.width = 1080 * scale;
+                            canvas.height = 1080 * scale;
+                        } else {
+                            canvas.width = 1200 * scale;
+                            canvas.height = 630 * scale;
+                        }
+
+                        // Generate image
+                        this.generateStatsImage(ctx, canvas, stats, format, scale);
+
+                        // Convert to blob and download
+                        canvas.toBlob((blob) => {
+                            if (!blob) {
+                                this.showError('Failed to generate image. Please try again.');
+                                return;
+                            }
+
+                            const url = URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = `youtube-stats-${format}-${new Date().toISOString().split('T')[0]}.png`;
+                            a.style.display = 'none';
+                            document.body.appendChild(a);
+                            a.click();
+
+                            // Cleanup
+                            setTimeout(() => {
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                            }, 100);
+
+                            const formatText = format === 'square' ? 'Instagram/Facebook' : 'Twitter/LinkedIn';
+                            this.showSuccess(`Statistics image downloaded! Perfect for ${formatText} 📱`);
+                        }, 'image/png', 1.0);
+                    } catch (error) {
+                        console.error('Share stats error:', error);
+                        this.showError('Error generating image. Please try again.');
+                    }
+                }
+
+                generateStatsImage(ctx, canvas, stats, format, scale) {
+                    // Scale context for retina
+                    ctx.scale(scale, scale);
+
+                    // Adjust sizes for scaling
+                    const width = canvas.width / scale;
+                    const height = canvas.height / scale;
+
+                    // Background gradient
+                    const gradient = ctx.createLinearGradient(0, 0, width, height);
+                    gradient.addColorStop(0, '#0a0a0a');
+                    gradient.addColorStop(1, '#1a1a1a');
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, width, height);
+
+                    // Draw pattern background
+                    this.drawStatsImagePattern(ctx, width, height);
+
+                    // Draw header
+                    this.drawStatsImageHeader(ctx, width, format);
+
+                    // Draw stats
+                    this.drawStatsImageContent(ctx, width, height, stats, format);
+
+                    // Draw footer
+                    this.drawStatsImageFooter(ctx, width, height, format);
+                }
+
+                drawStatsImagePattern(ctx, width, height) {
+                    ctx.fillStyle = 'rgba(255, 0, 0, 0.05)';
+                    ctx.strokeStyle = 'rgba(255, 0, 0, 0.06)';
+                    ctx.lineWidth = 2;
+
+                    const patternSize = 80;
+                    for (let x = 0; x < width + patternSize; x += patternSize) {
+                        for (let y = 0; y < height + patternSize; y += patternSize) {
+                            const iconType = ((x + y) / patternSize) % 3; // Only 3 types now (no circles)
+                            const rotation = ((x - y) / patternSize) * 15;
+
+                            ctx.save();
+                            ctx.translate(x + patternSize/2, y + patternSize/2);
+                            ctx.rotate(rotation * Math.PI / 180);
+
+                            // Larger, more prominent controls
+                            if (iconType < 1) {
+                                // Play button - larger and more prominent
+                                ctx.beginPath();
+                                ctx.moveTo(-12, -16);
+                                ctx.lineTo(-12, 16);
+                                ctx.lineTo(14, 0);
+                                ctx.closePath();
+                                ctx.fill();
+                            } else if (iconType < 2) {
+                                // Pause button - larger bars
+                                ctx.fillRect(-12, -16, 8, 32);
+                                ctx.fillRect(4, -16, 8, 32);
+                            } else {
+                                // Skip button - more defined
+                                ctx.beginPath();
+                                ctx.moveTo(-10, -14);
+                                ctx.lineTo(-10, 14);
+                                ctx.lineTo(2, 0);
+                                ctx.closePath();
+                                ctx.fill();
+                                ctx.beginPath();
+                                ctx.moveTo(6, -14);
+                                ctx.lineTo(6, 14);
+                                ctx.lineTo(18, 0);
+                                ctx.closePath();
+                                ctx.fill();
+                            }
+
+                            ctx.restore();
+                        }
+                    }
+
+                    // Add multiple gradient overlays for depth
+                    const glowGradient1 = ctx.createRadialGradient(width * 0.3, height * 0.3, 0, width * 0.3, height * 0.3, width * 0.5);
+                    glowGradient1.addColorStop(0, 'rgba(255, 0, 0, 0.08)');
+                    glowGradient1.addColorStop(1, 'transparent');
+                    ctx.fillStyle = glowGradient1;
+                    ctx.fillRect(0, 0, width, height);
+
+                    const glowGradient2 = ctx.createRadialGradient(width * 0.7, height * 0.7, 0, width * 0.7, height * 0.7, width * 0.4);
+                    glowGradient2.addColorStop(0, 'rgba(255, 0, 0, 0.06)');
+                    glowGradient2.addColorStop(1, 'transparent');
+                    ctx.fillStyle = glowGradient2;
+                    ctx.fillRect(0, 0, width, height);
+
+                    // Subtle vignette effect
+                    const vignette = ctx.createRadialGradient(width/2, height/2, width * 0.3, width/2, height/2, width * 0.7);
+                    vignette.addColorStop(0, 'transparent');
+                    vignette.addColorStop(1, 'rgba(0, 0, 0, 0.3)');
+                    ctx.fillStyle = vignette;
+                    ctx.fillRect(0, 0, width, height);
+                }
+
+                drawStatsImageHeader(ctx, width, format) {
+                    const headerY = format === 'square' ? 100 : 80;
+                    const subtitleY = format === 'square' ? 140 : 125;
+
+                    // Logo
+                    const logoSize = 40;
+                    const logoX = width / 2 - 220;
+                    const logoY = headerY - 35;
+
+                    ctx.beginPath();
+                    ctx.arc(logoX, logoY, logoSize/2, 0, Math.PI * 2);
+                    ctx.fillStyle = '#ff0000';
+                    ctx.fill();
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath();
+                    ctx.moveTo(logoX - 8, logoY - 12);
+                    ctx.lineTo(logoX - 8, logoY + 12);
+                    ctx.lineTo(logoX + 10, logoY);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Header text
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('YourTube History', width / 2, headerY);
+
+                    // Subtitle
+                    ctx.fillStyle = '#a8a8a8';
+                    ctx.font = '24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+                    ctx.fillText('My YouTube Watch Statistics', width / 2, subtitleY);
+                }
+
+                drawStatsImageContent(ctx, width, height, stats, format) {
+                    let statsPerRow, maxStats, startY, statWidth, statHeight, padding;
+
+                    if (format === 'square') {
+                        statsPerRow = 2;
+                        maxStats = 8;
+                        statWidth = 450;
+                        statHeight = 150;
+                        padding = 40;
+                        startY = 200;
+                    } else {
+                        statsPerRow = 3;
+                        maxStats = 9;
+                        startY = 170;
+                        statWidth = 350;
+                        statHeight = 110;
+                        padding = 25;
+                    }
+
+                    const startX = (width - (statsPerRow * statWidth) - ((statsPerRow - 1) * padding)) / 2;
+
+                    // Prepare display stats
+                    let displayStats = stats.slice(0, maxStats);
+
+                    displayStats.forEach((stat, index) => {
+                        const row = Math.floor(index / statsPerRow);
+                        const col = index % statsPerRow;
+                        const x = startX + (col * (statWidth + padding));
+                        const y = startY + (row * (statHeight + padding));
+
+                        this.drawStatCard(ctx, x, y, statWidth, statHeight, stat, format);
+                    });
+                }
+
+                drawStatCard(ctx, x, y, width, height, stat, format) {
+                    // Background
+                    const statGradient = ctx.createLinearGradient(x, y, x + width, y + height);
+                    statGradient.addColorStop(0, 'rgba(255, 255, 255, 0.03)');
+                    statGradient.addColorStop(1, 'rgba(255, 255, 255, 0.01)');
+                    ctx.fillStyle = statGradient;
+                    ctx.fillRect(x, y, width, height);
+
+                    // Border
+                    ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(x, y, width, height);
+
+                    // Accent bar
+                    const accentGradient = ctx.createLinearGradient(x, y, x, y + height);
+                    accentGradient.addColorStop(0, '#ff0000');
+                    accentGradient.addColorStop(1, '#cc0000');
+                    ctx.fillStyle = accentGradient;
+                    ctx.fillRect(x, y, 4, height);
+
+                    // Label
+                    ctx.fillStyle = '#a8a8a8';
+                    ctx.font = format === 'square' ? '16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial' : '14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(stat.label.toUpperCase(), x + 20, y + 30);
+
+                    // Value
+                    ctx.fillStyle = '#ff0000';
+                    ctx.font = format === 'square' ? 'bold 30px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial' : 'bold 26px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+
+                    const displayValue = this.truncateText(stat.value, 30);
+                    const valueY = format === 'square' ? y + 70 : y + 60;
+                    ctx.fillText(displayValue, x + 20, valueY);
+
+                    // Subvalue
+                    if (stat.subvalue) {
+                        ctx.fillStyle = '#ffffff';
+                        ctx.font = format === 'square' ? '15px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial' : '13px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+                        const subvalueY = format === 'square' ? valueY + 30 : valueY + 25;
+                        ctx.fillText(stat.subvalue, x + 20, subvalueY);
+                    }
+                }
+
+                drawStatsImageFooter(ctx, width, height, format) {
+                    ctx.textAlign = 'center';
+
+                    // Website URL
+                    ctx.fillStyle = '#ffffff';
+                    ctx.font = 'bold 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+                    const websiteY = format === 'square' ? height - 70 : height - 55;
+                    ctx.fillText('starikov.co/yourtube-history', width / 2, websiteY);
+
+                    // Generated date
+                    ctx.fillStyle = '#a8a8a8';
+                    ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial';
+                    const now = new Date();
+                    const dateStr = `Generated on ${now.toLocaleDateString()} at ${now.toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}`;
+                    const dateY = format === 'square' ? height - 35 : height - 25;
+                    ctx.fillText(dateStr, width / 2, dateY);
+                }
+
+                // Utility functions
+                escapeHtml(text) {
+                    if (!text || typeof text !== 'string') return '';
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                }
+
+                sanitizeText(text) {
+                    if (!text || typeof text !== 'string') return '';
+                    // Remove any script tags or potential XSS
+                    return text.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                              .replace(/[<>]/g, '');
+                }
+
+                sanitizeUrl(url) {
+                    if (!url || typeof url !== 'string') return '';
+                    try {
+                        const urlObj = new URL(url);
+                        // Only allow http(s) and specific YouTube domains
+                        if ((urlObj.protocol === 'http:' || urlObj.protocol === 'https:') &&
+                            (urlObj.hostname.includes('youtube.com') || urlObj.hostname === 'youtu.be')) {
+                            return url;
+                        }
+                    } catch (e) {
+                        // Invalid URL
+                    }
+                    return '#';
+                }
+
+                truncateText(text, maxLength) {
+                    if (!text || text.length <= maxLength) return text;
+                    return text.substring(0, maxLength) + '...';
+                }
+
+                debounce(func, wait) {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            func(...args);
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                }
+
+                showLoading(show) {
+                    const loadingOverlay = document.getElementById('yt-loadingOverlay');
+                    if (loadingOverlay) {
+                        loadingOverlay.style.display = show ? 'flex' : 'none';
+
+                        if (show) {
+                            // Reset progress
+                            const progressBar = document.getElementById('yt-progressBar');
+                            const progressText = document.getElementById('yt-progressText');
+                            if (progressBar) progressBar.style.width = '0%';
+                            if (progressText) progressText.textContent = 'Initializing...';
+
+                            // Focus management for accessibility
+                            loadingOverlay.focus();
+                        }
+                    }
+                }
+
+                showError(message) {
+                    this.showAlert('error', message, 8000);
+                }
+
+                showSuccess(message) {
+                    this.showAlert('success', message, 5000);
+                }
+
+                showAlert(type, message, duration) {
+                    // Clear existing timeout
+                    if (this.alertTimeouts[type]) {
+                        clearTimeout(this.alertTimeouts[type]);
+                    }
+
+                    const messageElement = document.getElementById(`yt-${type}Message`);
+                    const alertElement = document.getElementById(`yt-${type}Alert`);
+
+                    if (messageElement && alertElement) {
+                        messageElement.textContent = message;
+                        alertElement.style.display = 'block';
+
+                        // Auto-hide after duration
+                        this.alertTimeouts[type] = setTimeout(() => this.closeAlert(type), duration);
+
+                        // Announce to screen readers
+                        this.announceToScreenReaders(message);
+                    }
+                }
+
+                closeAlert(type) {
+                    const alert = document.getElementById(`yt-${type}Alert`);
+                    if (alert) {
+                        alert.style.display = 'none';
+                    }
+
+                    if (this.alertTimeouts[type]) {
+                        clearTimeout(this.alertTimeouts[type]);
+                        this.alertTimeouts[type] = null;
+                    }
+                }
+
+                announceToScreenReaders(message) {
+                    // Create a temporary element for screen reader announcements
+                    const announcement = document.createElement('div');
+                    announcement.setAttribute('role', 'status');
+                    announcement.setAttribute('aria-live', 'polite');
+                    announcement.className = 'yt-sr-only';
+                    announcement.textContent = message;
+
+                    document.body.appendChild(announcement);
+
+                    // Remove after announcement
+                    setTimeout(() => {
+                        document.body.removeChild(announcement);
+                    }, 1000);
+                }
+
+                reset() {
+                    try {
+                        // Clear data
+                        this.videos.clear();
+                        this.watchEvents = [];
+                        this.filteredVideos = [];
+                        this.file = null;
+
+                        // Reset file input
+                        const fileInput = document.getElementById('yt-fileInput');
+                        if (fileInput) fileInput.value = '';
+
+                        // Hide sections
+                        const sections = ['yt-parametersCard', 'yt-statsCard', 'yt-resultsCard'];
+                        sections.forEach(id => {
+                            const element = document.getElementById(id);
+                            if (element) element.style.display = 'none';
+                        });
+
+                        // Hide share buttons
+                        const statsActions = document.getElementById('yt-statsActions');
+                        if (statsActions) statsActions.style.display = 'none';
+
+                        // Reset parameters to defaults
+                        const defaults = {
+                            'yt-topN': '100',
+                            'yt-minPlays': '1',
+                            'yt-channelFilter': '',
+                            'yt-sortBy': 'plays',
+                            'yt-dateFrom': '',
+                            'yt-dateTo': ''
+                        };
+
+                        Object.entries(defaults).forEach(([id, value]) => {
+                            const element = document.getElementById(id);
+                            if (element) element.value = value;
+                        });
+
+                        const excludeMusic = document.getElementById('yt-excludeMusic');
+                        if (excludeMusic) excludeMusic.checked = true;
+
+                        this.showSuccess('Analyzer reset. Upload a new file to start.');
+
+                        // Focus back to upload section
+                        document.getElementById('yt-uploadSection')?.focus();
+                    } catch (error) {
+                        console.error('Error resetting:', error);
+                        this.showError('Error resetting the analyzer');
+                    }
+                }
+
+                cleanup() {
+                    // Remove event listeners
+                    this.eventHandlers.forEach((handlers, element) => {
+                        handlers.forEach(({ event, handler }) => {
+                            element.removeEventListener(event, handler);
+                        });
+                    });
+                    this.eventHandlers.clear();
+
+                    // Remove resize handler
+                    if (this.resizeHandler) {
+                        window.removeEventListener('resize', this.resizeHandler);
+                    }
+
+                    // Clear timeouts
+                    Object.values(this.alertTimeouts).forEach(timeout => {
+                        if (timeout) clearTimeout(timeout);
+                    });
+
+                    // Clear data
+                    this.videos.clear();
+                    this.watchEvents = [];
+                    this.filteredVideos = [];
+                }
+            }
+
+            // Initialize analyzer
+            try {
+                // Cleanup any existing instance
+                if (window.ytAnalyzer && typeof window.ytAnalyzer.cleanup === 'function') {
+                    window.ytAnalyzer.cleanup();
+                }
+
+                // Create new instance
+                window.ytAnalyzer = new YouTubeAnalyzer();
+
+                // Log successful initialization
+                console.log('%cYourTube History Analyzer ready!',
+                    'color: #ff0000; font-weight: bold; font-size: 16px;');
+                console.log('%c✨ Features: Share stats as images, export data, responsive design',
+                    'color: #3b82f6; font-weight: bold; font-size: 14px;');
+            } catch (error) {
+                console.error('Failed to initialize YouTube History Analyzer:', error);
+            }
+        })();
+    </script>
+</div>

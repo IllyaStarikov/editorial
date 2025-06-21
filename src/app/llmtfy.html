@@ -1,0 +1,2735 @@
+<div id="llmtfy-container" role="application" aria-label="LLMTFY - Let Me That For You" style="position: relative; overflow: hidden;">
+    <style>
+        /* Reset and Isolation */
+        #llmtfy-container {
+            /* CSS Variables for maintainability */
+            --llmtfy-max-width: min(100%, 900px);
+            --llmtfy-pink: #FF1493;
+            --llmtfy-pink-light: #FF69B4;
+            --llmtfy-pink-glow: rgba(255, 20, 147, 0.4);
+            --llmtfy-pink-intense: rgba(255, 20, 147, 0.6);
+            --llmtfy-blue: #4285F4;
+            --llmtfy-blue-light: #66A3FF;
+            --llmtfy-blue-glow: rgba(66, 133, 244, 0.4);
+            --llmtfy-blue-intense: rgba(66, 133, 244, 0.6);
+            --llmtfy-bg: #000000;
+            --llmtfy-text: #ffffff;
+            --llmtfy-text-dim: rgba(255, 255, 255, 0.7);
+            --llmtfy-border: rgba(255, 255, 255, 0.1);
+            --llmtfy-glass: rgba(255, 255, 255, 0.05);
+
+            /* Dynamic theme colors */
+            --llmtfy-theme-primary: var(--llmtfy-pink);
+            --llmtfy-theme-light: var(--llmtfy-pink-light);
+            --llmtfy-theme-glow: var(--llmtfy-pink-glow);
+            --llmtfy-theme-intense: var(--llmtfy-pink-intense);
+
+            /* Brand Colors */
+            --llmtfy-google-blue: #4285F4;
+            --llmtfy-google-red: #EA4335;
+            --llmtfy-google-yellow: #FBBC05;
+            --llmtfy-google-green: #34A853;
+            --llmtfy-bing-blue: #00BCF2;
+            --llmtfy-duckduckgo-orange: #DE5833;
+            --llmtfy-kagi-yellow: #FFD60A;
+            --llmtfy-yahoo-purple: #5F01D1;
+            --llmtfy-chatgpt-green: #10A37F;
+            --llmtfy-claude-orange: #D97757;
+            --llmtfy-gemini-blue: #4285F4;
+            --llmtfy-perplexity-teal: #20B2AA;
+            --llmtfy-copilot-blue: #0078D4;
+
+            /* Spacing System - Made more compact */
+            --llmtfy-space-xs: 0.25rem;
+            --llmtfy-space-sm: 0.5rem;
+            --llmtfy-space-md: 0.75rem;
+            --llmtfy-space-lg: 1rem;
+            --llmtfy-space-xl: 1.5rem;
+            --llmtfy-space-2xl: 2rem;
+
+            /* Typography Scale */
+            --llmtfy-text-xs: 0.75rem;
+            --llmtfy-text-sm: 0.875rem;
+            --llmtfy-text-base: 1rem;
+            --llmtfy-text-lg: 1.125rem;
+            --llmtfy-text-xl: 1.25rem;
+            --llmtfy-text-2xl: 1.5rem;
+            --llmtfy-text-3xl: 2rem;
+            --llmtfy-text-4xl: 2.5rem;
+            --llmtfy-text-5xl: 3rem;
+            --llmtfy-text-6xl: 4rem;
+
+            /* Container Setup */
+            position: relative;
+            background: var(--llmtfy-bg);
+            color: var(--llmtfy-text);
+            padding: var(--llmtfy-space-sm) var(--llmtfy-space-sm);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            font-size: var(--llmtfy-text-base);
+            line-height: 1.6;
+            width: 100%;
+            box-sizing: border-box;
+            overflow: visible;
+            min-height: 460px;
+            margin: var(--llmtfy-space-xs) 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            z-index: 1;
+            transition: --llmtfy-theme-primary 0.5s ease,
+                        --llmtfy-theme-light 0.5s ease,
+                        --llmtfy-theme-glow 0.5s ease,
+                        --llmtfy-theme-intense 0.5s ease;
+        }
+
+        /* Theme switching */
+        #llmtfy-container.search-theme {
+            --llmtfy-theme-primary: var(--llmtfy-blue);
+            --llmtfy-theme-light: var(--llmtfy-blue-light);
+            --llmtfy-theme-glow: var(--llmtfy-blue-glow);
+            --llmtfy-theme-intense: var(--llmtfy-blue-intense);
+        }
+
+        /* Reset all children */
+        #llmtfy-container *,
+        #llmtfy-container *::before,
+        #llmtfy-container *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            border: 0;
+            font: inherit;
+            color: inherit;
+            background: transparent;
+        }
+
+        /* Background Effects - Fixed to not block clicks */
+        #llmtfy-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--llmtfy-bg);
+            z-index: -3;
+            pointer-events: none !important;
+            overflow: hidden;
+        }
+
+        /* Brain pattern background - Dynamic color */
+        #llmtfy-container::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                url('data:image/svg+xml;utf8,<svg width="800" height="800" xmlns="http://www.w3.org/2000/svg"><defs><filter id="glow"><feGaussianBlur stdDeviation="3" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter><radialGradient id="neuron-gradient" cx="50%25" cy="50%25" r="50%25"><stop offset="0%25" style="stop-color:%23FF69B4;stop-opacity:0.8"/><stop offset="100%25" style="stop-color:%23FF1493;stop-opacity:0.3"/></radialGradient></defs><g opacity="0.4"><!-- Central brain structure --><ellipse cx="400" cy="350" rx="200" ry="150" fill="none" stroke="%23FF1493" stroke-width="1" opacity="0.2"/><ellipse cx="400" cy="350" rx="180" ry="130" fill="none" stroke="%23FF69B4" stroke-width="1" opacity="0.2"/><!-- Neurons (brain cells) --><circle cx="400" cy="350" r="8" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="300" cy="300" r="6" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="500" cy="300" r="6" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="350" cy="400" r="6" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="450" cy="400" r="6" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="250" cy="350" r="5" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="550" cy="350" r="5" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="350" cy="250" r="5" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="450" cy="250" r="5" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="300" cy="450" r="5" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><circle cx="500" cy="450" r="5" fill="url(%23neuron-gradient)" filter="url(%23glow)"/><!-- Neural pathways (synapses) --><path d="M400 350 Q350 325 300 300" stroke="%23FF1493" stroke-width="2" fill="none" opacity="0.6"/><path d="M400 350 Q450 325 500 300" stroke="%23FF69B4" stroke-width="2" fill="none" opacity="0.6"/><path d="M400 350 Q375 375 350 400" stroke="%23FF1493" stroke-width="2" fill="none" opacity="0.6"/><path d="M400 350 Q425 375 450 400" stroke="%23FF69B4" stroke-width="2" fill="none" opacity="0.6"/><path d="M300 300 Q275 325 250 350" stroke="%23FF1493" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M500 300 Q525 325 550 350" stroke="%23FF69B4" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M300 300 Q325 275 350 250" stroke="%23FF1493" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M500 300 Q475 275 450 250" stroke="%23FF69B4" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M350 400 Q325 425 300 450" stroke="%23FF1493" stroke-width="1.5" fill="none" opacity="0.5"/><path d="M450 400 Q475 425 500 450" stroke="%23FF69B4" stroke-width="1.5" fill="none" opacity="0.5"/><!-- Outer connections --><path d="M250 350 Q200 300 150 250" stroke="%23FF1493" stroke-width="1" fill="none" opacity="0.3"/><path d="M550 350 Q600 300 650 250" stroke="%23FF69B4" stroke-width="1" fill="none" opacity="0.3"/><path d="M250 350 Q200 400 150 450" stroke="%23FF1493" stroke-width="1" fill="none" opacity="0.3"/><path d="M550 350 Q600 400 650 450" stroke="%23FF69B4" stroke-width="1" fill="none" opacity="0.3"/><!-- Brain lobes suggestion --><path d="M300 200 Q400 150 500 200" stroke="%23FF1493" stroke-width="1" fill="none" opacity="0.2"/><path d="M300 500 Q400 550 500 500" stroke="%23FF69B4" stroke-width="1" fill="none" opacity="0.2"/></g></svg>');
+            background-size: 800px 800px;
+            background-position: center;
+            opacity: 0.8;
+            z-index: -2;
+            animation: llmtfy-synapse-pulse 25s ease-in-out infinite;
+            pointer-events: none !important;
+            overflow: hidden;
+            transition: filter 0.5s ease;
+        }
+
+        /* Blue theme background filter */
+        #llmtfy-container.search-theme::after {
+            filter: hue-rotate(200deg) saturate(0.8);
+        }
+
+        /* Animated synapse layer - More distributed */
+        #llmtfy-container .llmtfy-synapse-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none !important;
+        }
+
+        #llmtfy-container .llmtfy-synapse {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle, var(--llmtfy-theme-primary) 0%, transparent 70%);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--llmtfy-theme-glow), 0 0 40px var(--llmtfy-theme-glow);
+            opacity: 0;
+            animation: llmtfy-neuron-fire 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        #llmtfy-container .llmtfy-synapse::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--llmtfy-theme-glow) 50%, transparent 100%);
+            transform-origin: left center;
+            animation: llmtfy-synapse-signal 8s ease-in-out infinite;
+        }
+
+        #llmtfy-container .llmtfy-synapse::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 16px;
+            height: 16px;
+            background: radial-gradient(circle, var(--llmtfy-theme-light) 0%, transparent 50%);
+            border-radius: 50%;
+            opacity: 0;
+            animation: llmtfy-neuron-pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes llmtfy-synapse-pulse {
+            0%, 100% {
+                transform: scale(1) rotate(0deg);
+                opacity: 0.8;
+            }
+            25% {
+                transform: scale(1.05) rotate(90deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(0.95) rotate(180deg);
+                opacity: 0.6;
+            }
+            75% {
+                transform: scale(1.02) rotate(270deg);
+                opacity: 0.9;
+            }
+        }
+
+        @keyframes llmtfy-neuron-fire {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0.5);
+            }
+            15% {
+                opacity: 1;
+                transform: scale(1);
+            }
+            30% {
+                opacity: 0.7;
+                transform: scale(1.2);
+            }
+            50% {
+                opacity: 0.3;
+                transform: scale(0.8);
+            }
+            70% {
+                opacity: 0.8;
+                transform: scale(1.1);
+            }
+        }
+
+        @keyframes llmtfy-synapse-signal {
+            0%, 100% {
+                transform: rotate(0deg) scaleX(0);
+                opacity: 0;
+            }
+            15% {
+                transform: rotate(var(--rotation, 45deg)) scaleX(0);
+                opacity: 1;
+            }
+            30% {
+                transform: rotate(var(--rotation, 45deg)) scaleX(1);
+                opacity: 1;
+            }
+            50% {
+                transform: rotate(var(--rotation, 45deg)) scaleX(0.5);
+                opacity: 0.5;
+            }
+            70% {
+                transform: rotate(var(--rotation, 45deg)) scaleX(0);
+                opacity: 0;
+            }
+        }
+
+        @keyframes llmtfy-neuron-pulse {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(1);
+            }
+            20% {
+                opacity: 0.8;
+                transform: scale(1.5);
+            }
+            40% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        /* Main Wrapper */
+        #llmtfy-container .llmtfy-wrapper {
+            max-width: var(--llmtfy-max-width);
+            margin: 0 auto;
+            position: relative;
+            z-index: 5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 380px;
+            gap: var(--llmtfy-space-xs);
+            padding: var(--llmtfy-space-xs) 0 var(--llmtfy-space-md);
+            overflow: visible;
+        }
+
+        /* Header - Enhanced layout */
+        #llmtfy-container .llmtfy-header {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: var(--llmtfy-space-lg);
+            margin-bottom: 0;
+            width: 100%;
+            min-height: 70px;
+            padding: 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Robot Container - Bigger */
+        #llmtfy-container .llmtfy-robot-container {
+            position: relative;
+            width: 90px;
+            height: 90px;
+            cursor: pointer;
+            flex-shrink: 0;
+            z-index: 10;
+        }
+
+        #llmtfy-container .llmtfy-robot {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+            z-index: 11;
+        }
+
+        #llmtfy-container .llmtfy-robot:hover {
+            transform: scale(1.05);
+        }
+
+        /* Robot animations - Reduced vertical movement */
+        @keyframes llmtfy-robot-think {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-2px) rotate(-2deg); }
+            75% { transform: translateY(-2px) rotate(2deg); }
+        }
+
+        /* Ukrainian dance animations - Reduced vertical movement */
+        @keyframes llmtfy-robot-hopak {
+            0% { transform: translateY(0) rotate(0deg); }
+            10% { transform: translateY(-15px) rotate(0deg); }
+            20% { transform: translateY(0) rotate(0deg) translateX(-10px); }
+            30% { transform: translateY(-15px) rotate(0deg); }
+            40% { transform: translateY(0) rotate(0deg) translateX(10px); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+            60% { transform: translateY(0) rotate(360deg); }
+            70% { transform: translateY(-10px) rotate(0deg) scaleX(-1); }
+            80% { transform: translateY(0) rotate(0deg) scaleX(1); }
+            90% { transform: translateY(-12px) rotate(-10deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        @keyframes llmtfy-robot-kazachok {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            5% { transform: translateY(-3px) rotate(0deg); }
+            10% { transform: translateY(0) rotate(0deg) translateX(-8px); }
+            15% { transform: translateY(-3px) rotate(0deg); }
+            20% { transform: translateY(0) rotate(0deg) translateX(8px); }
+            25% { transform: translateY(-3px) rotate(0deg); }
+            30% { transform: translateY(0) rotate(0deg) translateX(-8px); }
+            35% { transform: translateY(-3px) rotate(0deg); }
+            40% { transform: translateY(0) rotate(0deg) translateX(8px); }
+            50% { transform: translateY(-10px) rotate(0deg) scale(1.1); }
+            60% { transform: translateY(0) rotate(0deg) scale(0.9); }
+            70% { transform: translateY(-8px) rotate(-5deg); }
+            80% { transform: translateY(-8px) rotate(5deg); }
+            90% { transform: translateY(-5px) rotate(0deg); }
+        }
+
+        @keyframes llmtfy-robot-arkan {
+            0% { transform: translateY(0) rotate(0deg) scale(1); }
+            10% { transform: translateY(-20px) rotate(0deg) scale(1); }
+            20% { transform: translateY(0) rotate(720deg) scale(1); }
+            30% { transform: translateY(-10px) rotate(0deg) scale(1.2); }
+            40% { transform: translateY(0) rotate(0deg) scale(1); }
+            50% { transform: translateY(-15px) rotate(-360deg) scale(1); }
+            60% { transform: translateY(0) rotate(0deg) scale(0.8); }
+            70% { transform: translateY(-18px) rotate(180deg) scale(1); }
+            80% { transform: translateY(0) rotate(360deg) scale(1.1); }
+            90% { transform: translateY(-8px) rotate(0deg) scale(1); }
+            100% { transform: translateY(0) rotate(0deg) scale(1); }
+        }
+
+        @keyframes llmtfy-robot-prysiudy {
+            0%, 100% { transform: translateY(0) scale(1); }
+            10%, 30%, 50%, 70%, 90% { transform: translateY(-10px) scale(0.9); }
+            20%, 40%, 60%, 80% { transform: translateY(0) scale(1.1); }
+        }
+
+        @keyframes llmtfy-robot-kolomyika {
+            0% { transform: rotate(0deg) translateX(0); }
+            25% { transform: rotate(360deg) translateX(5px); }
+            50% { transform: rotate(720deg) translateX(-5px); }
+            75% { transform: rotate(1080deg) translateX(5px); }
+            100% { transform: rotate(1440deg) translateX(0); }
+        }
+
+        @keyframes llmtfy-robot-hutsulka {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            12.5% { transform: translateY(-8px) rotate(-10deg) translateX(-5px); }
+            25% { transform: translateY(0) rotate(0deg); }
+            37.5% { transform: translateY(-8px) rotate(10deg) translateX(5px); }
+            50% { transform: translateY(0) rotate(0deg); }
+            62.5% { transform: translateY(-10px) rotate(-15deg) translateX(-8px); }
+            75% { transform: translateY(0) rotate(0deg); }
+            87.5% { transform: translateY(-10px) rotate(15deg) translateX(8px); }
+        }
+
+        @keyframes llmtfy-robot-metelytsia {
+            0% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(720deg) scale(0.8); }
+            40% { transform: rotate(1440deg) scale(1.2); }
+            60% { transform: rotate(2160deg) scale(0.9); }
+            80% { transform: rotate(2880deg) scale(1.1); }
+            100% { transform: rotate(3600deg) scale(1); }
+        }
+
+        @keyframes llmtfy-blink {
+            0%, 90%, 100% { ry: 6; }
+            95% { ry: 0.5; }
+        }
+
+        @keyframes llmtfy-antenna-wiggle {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            75% { transform: rotate(10deg); }
+        }
+
+        @keyframes llmtfy-arm-wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-30deg); }
+            75% { transform: rotate(30deg); }
+        }
+
+        @keyframes llmtfy-leg-kick {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-45deg) translateY(-5px); }
+        }
+
+        #llmtfy-container .llmtfy-robot.thinking svg {
+            animation: llmtfy-robot-think 4s ease-in-out infinite;
+        }
+
+        #llmtfy-container .llmtfy-robot.hopak svg {
+            animation: llmtfy-robot-hopak 5s ease-in-out;
+        }
+
+        #llmtfy-container .llmtfy-robot.kazachok svg {
+            animation: llmtfy-robot-kazachok 5s ease-in-out;
+        }
+
+        #llmtfy-container .llmtfy-robot.arkan svg {
+            animation: llmtfy-robot-arkan 5s ease-in-out;
+        }
+
+        #llmtfy-container .llmtfy-robot.prysiudy svg {
+            animation: llmtfy-robot-prysiudy 5s ease-in-out;
+        }
+
+        #llmtfy-container .llmtfy-robot.kolomyika svg {
+            animation: llmtfy-robot-kolomyika 5s ease-in-out;
+        }
+
+        #llmtfy-container .llmtfy-robot.hutsulka svg {
+            animation: llmtfy-robot-hutsulka 5s ease-in-out;
+        }
+
+        #llmtfy-container .llmtfy-robot.metelytsia svg {
+            animation: llmtfy-robot-metelytsia 5s ease-in-out;
+        }
+
+        /* Speech bubble */
+        #llmtfy-container .llmtfy-speech-bubble {
+            position: absolute;
+            top: 50%;
+            right: 110%;
+            transform: translateY(-50%) scale(0);
+            background: var(--llmtfy-theme-primary);
+            color: var(--llmtfy-text);
+            padding: 10px 16px;
+            border-radius: 16px;
+            font-size: var(--llmtfy-text-base);
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            pointer-events: none;
+            z-index: 20;
+            max-width: 200px;
+            text-align: center;
+            box-shadow: 0 4px 20px var(--llmtfy-theme-glow);
+        }
+
+        #llmtfy-container .llmtfy-speech-bubble::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            right: -8px;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-left: 8px solid var(--llmtfy-theme-primary);
+        }
+
+        #llmtfy-container .llmtfy-speech-bubble.show {
+            opacity: 1;
+            transform: translateY(-50%) scale(1);
+        }
+
+        /* Brand title section - Bigger and better */
+        #llmtfy-container .llmtfy-title-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            flex: 0 1 auto;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Brand Title - Much bigger */
+        #llmtfy-container .llmtfy-brand {
+            font-size: clamp(var(--llmtfy-text-5xl), 7vw, 5rem);
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            margin-bottom: -8px;
+            display: inline-block;
+            text-transform: uppercase;
+            line-height: 0.9;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        #llmtfy-container .llmtfy-brand-llm {
+            background: linear-gradient(135deg, var(--llmtfy-theme-primary) 0%, var(--llmtfy-theme-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1em;
+            text-shadow: 0 0 40px var(--llmtfy-theme-glow);
+        }
+
+        #llmtfy-container .llmtfy-brand-tfy {
+            color: var(--llmtfy-text);
+            font-size: 0.9em;
+            font-weight: 800;
+        }
+
+        #llmtfy-container .llmtfy-title {
+            font-size: clamp(var(--llmtfy-text-sm), 1.8vw, var(--llmtfy-text-lg));
+            font-weight: 600;
+            letter-spacing: 0.01em;
+            line-height: 1.4;
+            color: var(--llmtfy-text-dim);
+            transition: all 0.3s ease;
+            margin: 0;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            white-space: nowrap;
+            padding-left: 2px;
+        }
+
+        #llmtfy-container .llmtfy-engine-name {
+            font-weight: 900;
+            color: var(--llmtfy-theme-primary);
+            display: inline-block;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        /* Main content */
+        #llmtfy-container .llmtfy-main-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: var(--llmtfy-space-xs);
+            padding: 0 var(--llmtfy-space-sm);
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Tabs - Enhanced */
+        #llmtfy-container .llmtfy-tabs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: var(--llmtfy-space-sm);
+            flex-wrap: wrap;
+            position: relative;
+            margin-bottom: 0;
+            padding: 10px 0;
+            min-height: 50px;
+            z-index: 10;
+        }
+
+        #llmtfy-container .llmtfy-tab {
+            padding: 10px 24px;
+            background: var(--llmtfy-glass);
+            background-clip: padding-box;
+            border: 2px solid var(--llmtfy-border);
+            color: var(--llmtfy-text-dim);
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: var(--llmtfy-text-sm);
+            font-weight: 700;
+            border-radius: 50px;
+            display: flex;
+            align-items: center;
+            gap: var(--llmtfy-space-xs);
+            backdrop-filter: blur(10px);
+            position: relative;
+            font-family: inherit;
+            white-space: nowrap;
+            transform-origin: center;
+            transform: scale(0.9);
+            min-width: 130px;
+            overflow: hidden;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 12;
+        }
+
+        #llmtfy-container .llmtfy-tab[data-tab="search"] {
+            border-color: rgba(66, 133, 244, 0.3);
+        }
+
+        #llmtfy-container .llmtfy-tab[data-tab="ai"] {
+            border-color: rgba(16, 163, 127, 0.3);
+        }
+
+        #llmtfy-container .llmtfy-tab:hover {
+            color: var(--llmtfy-text);
+            transform: scale(0.95);
+            box-shadow: 0 5px 20px rgba(255, 255, 255, 0.1);
+            z-index: 14;
+        }
+
+        #llmtfy-container .llmtfy-tab[data-tab="search"]:hover {
+            border-color: rgba(66, 133, 244, 0.6);
+            box-shadow: 0 5px 20px rgba(66, 133, 244, 0.3);
+        }
+
+        #llmtfy-container .llmtfy-tab[data-tab="ai"]:hover {
+            border-color: rgba(16, 163, 127, 0.6);
+            box-shadow: 0 5px 20px rgba(16, 163, 127, 0.3);
+        }
+
+        #llmtfy-container .llmtfy-tab.active {
+            color: var(--llmtfy-text);
+            background: var(--llmtfy-theme-primary);
+            border-color: var(--llmtfy-theme-primary);
+            box-shadow: 0 0 30px var(--llmtfy-theme-glow), 0 0 0 2px var(--llmtfy-theme-primary);
+            transform: scale(1.05);
+            z-index: 15;
+            padding: 10px 30px;
+        }
+
+        #llmtfy-container .llmtfy-tab svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+            z-index: 1;
+            flex-shrink: 0;
+        }
+
+        /* Engine section */
+        #llmtfy-container .llmtfy-engine-section {
+            width: 100%;
+            text-align: center;
+            min-height: 80px;
+            position: relative;
+            padding: 15px 0;
+            overflow: visible;
+            z-index: 10;
+        }
+
+        /* Engine Grid - Horizontal layout */
+        #llmtfy-container .llmtfy-engines {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 12px;
+            width: 100%;
+            margin-bottom: var(--llmtfy-space-xs);
+            padding: 15px var(--llmtfy-space-sm);
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            overflow-y: visible;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            min-height: 70px;
+            position: relative;
+            z-index: 10;
+            scroll-padding-left: var(--llmtfy-space-sm);
+        }
+
+        /* Ensure first item is visible on mobile */
+        #llmtfy-container .llmtfy-engines::before {
+            content: '';
+            display: block;
+            width: 1px;
+            height: 1px;
+            flex-shrink: 0;
+        }
+
+        #llmtfy-container .llmtfy-engines::-webkit-scrollbar {
+            display: none;
+        }
+
+        #llmtfy-container .llmtfy-engines[data-type="ai"] {
+            margin: 0 auto var(--llmtfy-space-xs);
+        }
+
+        #llmtfy-container .llmtfy-engine {
+            padding: 12px 12px;
+            background: var(--llmtfy-glass);
+            background-clip: padding-box;
+            border: 2px solid var(--llmtfy-border);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: center;
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: visible;
+            min-height: 60px;
+            width: 125px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            transform: scale(0.95);
+            opacity: 0.8;
+            flex-shrink: 0;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 12;
+        }
+
+        #llmtfy-container .llmtfy-engine::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--engine-color, transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            border-radius: 14px;
+        }
+
+        #llmtfy-container .llmtfy-engine:hover {
+            transform: scale(1);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            border-color: var(--engine-color, rgba(255, 255, 255, 0.3));
+            opacity: 1;
+            z-index: 14;
+        }
+
+        #llmtfy-container .llmtfy-engine:hover::before {
+            opacity: 0.15;
+        }
+
+        #llmtfy-container .llmtfy-engine.active {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: var(--engine-color, var(--llmtfy-theme-primary));
+            box-shadow: 0 0 25px var(--engine-glow, var(--llmtfy-theme-glow)), 0 0 0 2px var(--engine-color, var(--llmtfy-theme-primary));
+            transform: scale(1.08);
+            opacity: 1;
+            z-index: 15;
+            position: relative;
+        }
+
+        #llmtfy-container .llmtfy-engine.active::before {
+            opacity: 0.25;
+        }
+
+        /* Brand-specific colors */
+        #llmtfy-container .llmtfy-engine[data-engine="google"] {
+            --engine-color: var(--llmtfy-google-blue);
+            --engine-glow: rgba(66, 133, 244, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="bing"] {
+            --engine-color: var(--llmtfy-bing-blue);
+            --engine-glow: rgba(0, 188, 242, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="duckduckgo"] {
+            --engine-color: var(--llmtfy-duckduckgo-orange);
+            --engine-glow: rgba(222, 88, 51, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="kagi"] {
+            --engine-color: var(--llmtfy-kagi-yellow);
+            --engine-glow: rgba(255, 214, 10, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="yahoo"] {
+            --engine-color: var(--llmtfy-yahoo-purple);
+            --engine-glow: rgba(95, 1, 209, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="chatgpt"] {
+            --engine-color: var(--llmtfy-chatgpt-green);
+            --engine-glow: rgba(16, 163, 127, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="claude"] {
+            --engine-color: var(--llmtfy-claude-orange);
+            --engine-glow: rgba(217, 119, 87, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="gemini"] {
+            --engine-color: var(--llmtfy-gemini-blue);
+            --engine-glow: rgba(66, 133, 244, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="perplexity"] {
+            --engine-color: var(--llmtfy-perplexity-teal);
+            --engine-glow: rgba(32, 178, 170, 0.4);
+        }
+        #llmtfy-container .llmtfy-engine[data-engine="copilot"] {
+            --engine-color: var(--llmtfy-copilot-blue);
+            --engine-glow: rgba(0, 120, 212, 0.4);
+        }
+
+        #llmtfy-container .llmtfy-engine-main {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 700;
+            font-size: 12px;
+            z-index: 1;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        #llmtfy-container .llmtfy-engine-company {
+            font-size: 10px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 400;
+            z-index: 1;
+            margin-top: -2px;
+        }
+
+        #llmtfy-container .llmtfy-engine svg {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* Search Box - Enhanced */
+        #llmtfy-container .llmtfy-search-box {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: var(--llmtfy-space-xs);
+            z-index: 10;
+        }
+
+        #llmtfy-container .llmtfy-input {
+            width: 100%;
+            background: var(--llmtfy-glass);
+            border: 2px solid var(--llmtfy-border);
+            color: var(--llmtfy-text);
+            font-size: clamp(var(--llmtfy-text-base), 2vw, var(--llmtfy-text-lg));
+            font-weight: 600;
+            padding: 14px var(--llmtfy-space-lg);
+            border-radius: 25px;
+            outline: none;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: normal;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            min-height: 50px;
+            height: auto;
+            resize: none;
+            -webkit-appearance: none;
+            position: relative;
+            z-index: 12;
+        }
+
+        #llmtfy-container .llmtfy-input:focus {
+            border-color: var(--llmtfy-theme-primary);
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px var(--llmtfy-theme-glow);
+        }
+
+        #llmtfy-container .llmtfy-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Buttons */
+        #llmtfy-container .llmtfy-button-group {
+            display: flex;
+            gap: var(--llmtfy-space-sm);
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: var(--llmtfy-space-xs);
+            position: relative;
+            z-index: 10;
+        }
+
+        #llmtfy-container .llmtfy-btn {
+            padding: 12px 28px;
+            border-radius: 50px;
+            border: none;
+            font-size: var(--llmtfy-text-base);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 140px;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.025em;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 12;
+        }
+
+        #llmtfy-container .llmtfy-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: all 0.6s ease;
+        }
+
+        #llmtfy-container .llmtfy-btn:active::before {
+            width: 300%;
+            height: 300%;
+        }
+
+        #llmtfy-container .llmtfy-btn-primary {
+            background: linear-gradient(135deg, var(--llmtfy-theme-primary), var(--llmtfy-theme-light));
+            color: var(--llmtfy-text);
+            box-shadow: 0 5px 25px var(--llmtfy-theme-glow);
+            cursor: pointer;
+        }
+
+        #llmtfy-container .llmtfy-btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 35px var(--llmtfy-theme-glow);
+        }
+
+        #llmtfy-container .llmtfy-btn-primary.shake {
+            animation: llmtfy-btn-shake 0.5s ease-in-out;
+        }
+
+        @keyframes llmtfy-btn-shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-3px); }
+            20%, 40%, 60%, 80% { transform: translateX(3px); }
+        }
+
+        #llmtfy-container .llmtfy-btn-secondary {
+            background: var(--llmtfy-glass);
+            color: var(--llmtfy-text);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+        }
+
+        #llmtfy-container .llmtfy-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Result Container */
+        #llmtfy-container .llmtfy-result {
+            margin: var(--llmtfy-space-xs) auto var(--llmtfy-space-xs);
+            padding: var(--llmtfy-space-md);
+            background: var(--llmtfy-glass);
+            border: 2px solid var(--llmtfy-theme-glow);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            opacity: 0;
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: none;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 10px 40px rgba(255, 20, 147, 0.2);
+            position: relative;
+            z-index: 10;
+        }
+
+        #llmtfy-container .llmtfy-result.show {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        #llmtfy-container .llmtfy-result-label {
+            font-size: var(--llmtfy-text-base);
+            font-weight: 600;
+            margin-bottom: var(--llmtfy-space-sm);
+            text-align: center;
+            color: var(--llmtfy-text);
+        }
+
+        #llmtfy-container .llmtfy-result-link {
+            word-break: break-all;
+            color: var(--llmtfy-theme-light);
+            text-decoration: none;
+            display: block;
+            padding: var(--llmtfy-space-sm);
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            margin-bottom: var(--llmtfy-space-sm);
+            font-family: 'Courier New', monospace;
+            font-size: var(--llmtfy-text-sm);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        #llmtfy-container .llmtfy-result-link:hover {
+            background: rgba(0, 0, 0, 0.7);
+            border-color: var(--llmtfy-theme-glow);
+            box-shadow: 0 0 20px var(--llmtfy-theme-glow);
+        }
+
+        #llmtfy-container .llmtfy-copy {
+            display: block;
+            margin: 0 auto;
+            padding: var(--llmtfy-space-sm) var(--llmtfy-space-lg);
+            background: transparent;
+            border: 2px solid var(--llmtfy-theme-primary);
+            color: var(--llmtfy-theme-primary);
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: var(--llmtfy-text-base);
+            position: relative;
+            overflow: hidden;
+            font-family: inherit;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+            z-index: 12;
+        }
+
+        #llmtfy-container .llmtfy-copy:hover {
+            background: var(--llmtfy-theme-primary);
+            color: var(--llmtfy-text);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 25px var(--llmtfy-theme-glow);
+        }
+
+        #llmtfy-container .llmtfy-copy.copied {
+            background: rgba(76, 175, 80, 0.2);
+            border-color: #4CAF50;
+            color: #4CAF50;
+        }
+
+        /* Mouse Animation */
+        #llmtfy-container .llmtfy-mouse {
+            position: fixed;
+            width: 28px;
+            height: 36px;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0;
+            transform: translate(-12px, -2px);
+        }
+
+        #llmtfy-container .llmtfy-mouse svg {
+            filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+            width: 100%;
+            height: 100%;
+        }
+
+        #llmtfy-container .llmtfy-mouse.animating {
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Loading State */
+        #llmtfy-container .llmtfy-loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: var(--llmtfy-text);
+            animation: llmtfy-spin 1s ease-in-out infinite;
+            vertical-align: middle;
+        }
+
+        @keyframes llmtfy-spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Shake animation */
+        @keyframes llmtfy-shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Responsive Design - Enhanced mobile handling */
+        @media (max-width: 768px) {
+            #llmtfy-container {
+                padding: var(--llmtfy-space-sm);
+                min-height: auto;
+            }
+
+            #llmtfy-container .llmtfy-header {
+                flex-direction: column;
+                gap: var(--llmtfy-space-sm);
+                margin-bottom: var(--llmtfy-space-sm);
+                min-height: auto;
+            }
+
+            #llmtfy-container .llmtfy-robot-container {
+                width: 70px;
+                height: 70px;
+            }
+
+            #llmtfy-container .llmtfy-speech-bubble {
+                font-size: var(--llmtfy-text-sm);
+                padding: 6px 12px;
+            }
+
+            #llmtfy-container .llmtfy-title-section {
+                text-align: center;
+                align-items: center;
+            }
+
+            #llmtfy-container .llmtfy-brand {
+                font-size: var(--llmtfy-text-4xl);
+                margin-bottom: 0;
+            }
+
+            #llmtfy-container .llmtfy-title {
+                font-size: var(--llmtfy-text-base);
+                white-space: normal;
+                padding-left: 0;
+                margin-top: var(--llmtfy-space-xs);
+            }
+
+            #llmtfy-container .llmtfy-engines {
+                gap: 6px;
+                padding: 0 var(--llmtfy-space-sm);
+                padding-left: calc(var(--llmtfy-space-sm) + 10px);
+                justify-content: flex-start;
+                overflow-x: scroll;
+                -webkit-overflow-scrolling: touch;
+                scroll-snap-type: x proximity;
+            }
+
+            #llmtfy-container .llmtfy-engines::after {
+                content: '';
+                display: block;
+                min-width: var(--llmtfy-space-sm);
+                height: 1px;
+                flex-shrink: 0;
+            }
+
+            #llmtfy-container .llmtfy-engine {
+                width: 100px;
+                padding: 10px 6px;
+                min-height: 55px;
+                scroll-snap-align: start;
+            }
+
+            #llmtfy-container .llmtfy-engine-main {
+                font-size: 11px;
+                gap: 4px;
+                flex-direction: column;
+            }
+
+            #llmtfy-container .llmtfy-engine-company {
+                display: none;
+            }
+
+            #llmtfy-container .llmtfy-engine svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #llmtfy-container .llmtfy-header {
+                min-height: auto;
+                gap: var(--llmtfy-space-md);
+            }
+
+            #llmtfy-container .llmtfy-robot-container {
+                width: 50px;
+                height: 50px;
+            }
+
+            #llmtfy-container .llmtfy-brand {
+                font-size: var(--llmtfy-text-3xl);
+                margin-bottom: var(--llmtfy-space-xs);
+            }
+
+            #llmtfy-container .llmtfy-title {
+                font-size: var(--llmtfy-text-xs);
+                line-height: 1.6;
+            }
+
+            #llmtfy-container .llmtfy-engines {
+                gap: 4px;
+                padding: 0 var(--llmtfy-space-sm);
+                padding-left: calc(var(--llmtfy-space-sm) + 10px);
+            }
+
+            #llmtfy-container .llmtfy-engine {
+                width: 85px;
+                padding: 8px 4px;
+                min-height: 50px;
+            }
+
+            #llmtfy-container .llmtfy-engine-main {
+                font-size: 10px;
+            }
+
+            #llmtfy-container .llmtfy-engine svg {
+                width: 14px;
+                height: 14px;
+            }
+
+            #llmtfy-container .llmtfy-speech-bubble {
+                top: -40px;
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%) scale(0);
+            }
+
+            #llmtfy-container .llmtfy-speech-bubble.show {
+                transform: translateX(-50%) scale(1);
+            }
+
+            #llmtfy-container .llmtfy-speech-bubble::after {
+                top: auto;
+                bottom: -8px;
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: none;
+                border-top: 8px solid var(--llmtfy-theme-primary);
+            }
+
+            /* Ensure textarea doesn't overflow on small screens */
+            #llmtfy-container .llmtfy-input {
+                font-size: var(--llmtfy-text-base);
+                padding: 12px var(--llmtfy-space-md);
+            }
+        }
+
+        /* Focus styles for accessibility */
+        #llmtfy-container .llmtfy-tab:focus-visible,
+        #llmtfy-container .llmtfy-btn:focus-visible,
+        #llmtfy-container .llmtfy-engine:focus-visible,
+        #llmtfy-container .llmtfy-copy:focus-visible,
+        #llmtfy-container .llmtfy-input:focus-visible {
+            outline: 3px solid var(--llmtfy-theme-primary);
+            outline-offset: 3px;
+        }
+
+        /* Reduced motion */
+        @media (prefers-reduced-motion: reduce) {
+            #llmtfy-container *,
+            #llmtfy-container *::before,
+            #llmtfy-container *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+
+        /* Custom scrollbar */
+        #llmtfy-container .llmtfy-main-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #llmtfy-container .llmtfy-main-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+        }
+
+        #llmtfy-container .llmtfy-main-content::-webkit-scrollbar-thumb {
+            background: var(--llmtfy-theme-primary);
+            border-radius: 4px;
+        }
+
+        #llmtfy-container .llmtfy-main-content::-webkit-scrollbar-thumb:hover {
+            background: var(--llmtfy-theme-light);
+        }
+
+        /* Ensure child elements don't interfere with clicks */
+        #llmtfy-container .llmtfy-engine > * {
+            pointer-events: none;
+        }
+
+        #llmtfy-container .llmtfy-tab > * {
+            pointer-events: none;
+        }
+
+        #llmtfy-container .llmtfy-btn > * {
+            pointer-events: none;
+        }
+
+        #llmtfy-container .llmtfy-robot > * {
+            pointer-events: none;
+        }
+
+        /* Ensure interactive elements are clickable */
+        #llmtfy-container .llmtfy-engine,
+        #llmtfy-container .llmtfy-tab,
+        #llmtfy-container .llmtfy-btn,
+        #llmtfy-container .llmtfy-input,
+        #llmtfy-container .llmtfy-copy,
+        #llmtfy-container .llmtfy-robot-container,
+        #llmtfy-container .llmtfy-robot {
+            pointer-events: auto;
+            position: relative;
+        }
+    </style>
+
+    <div class="llmtfy-wrapper" id="llmtfy-main-content">
+        <!-- Brain synapse animation layer -->
+        <div class="llmtfy-synapse-overlay" aria-hidden="true">
+            <!-- Neural network nodes distributed like brain regions -->
+            <div class="llmtfy-synapse" style="top: 15%; left: 50%; --rotation: 45deg; animation-delay: 0s;"></div>
+            <div class="llmtfy-synapse" style="top: 25%; left: 30%; --rotation: -30deg; animation-delay: 0.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 25%; left: 70%; --rotation: 30deg; animation-delay: 1s;"></div>
+            <div class="llmtfy-synapse" style="top: 40%; left: 20%; --rotation: 120deg; animation-delay: 1.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 40%; left: 80%; --rotation: -120deg; animation-delay: 2s;"></div>
+            <div class="llmtfy-synapse" style="top: 50%; left: 50%; --rotation: 90deg; animation-delay: 2.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 60%; left: 35%; --rotation: -60deg; animation-delay: 3s;"></div>
+            <div class="llmtfy-synapse" style="top: 60%; left: 65%; --rotation: 60deg; animation-delay: 3.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 75%; left: 25%; --rotation: 180deg; animation-delay: 4s;"></div>
+            <div class="llmtfy-synapse" style="top: 75%; left: 75%; --rotation: -180deg; animation-delay: 4.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 85%; left: 50%; --rotation: 0deg; animation-delay: 5s;"></div>
+            <!-- Edge neurons -->
+            <div class="llmtfy-synapse" style="top: 10%; left: 10%; --rotation: 135deg; animation-delay: 5.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 10%; left: 90%; --rotation: -135deg; animation-delay: 6s;"></div>
+            <div class="llmtfy-synapse" style="top: 90%; left: 10%; --rotation: 45deg; animation-delay: 6.5s;"></div>
+            <div class="llmtfy-synapse" style="top: 90%; left: 90%; --rotation: -45deg; animation-delay: 7s;"></div>
+        </div>
+
+        <div class="llmtfy-header">
+            <div class="llmtfy-robot-container">
+                <div class="llmtfy-robot thinking" role="button" tabindex="0" aria-label="LLMTFY Robot - Click to make me dance!">
+                    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <defs>
+                            <linearGradient id="robot-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#FF1493"/>
+                                <stop offset="100%" style="stop-color:#FF69B4"/>
+                            </linearGradient>
+                            <filter id="robot-glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+
+                        <!-- Robot body - cute but modern -->
+                        <g filter="url(#robot-glow)">
+                            <!-- Head - rounded rectangle -->
+                            <rect x="30" y="20" width="40" height="35" rx="10" ry="10"
+                                  fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+
+                            <!-- Antenna with ball -->
+                            <g class="antenna" transform-origin="50 20">
+                                <line x1="50" y1="20" x2="50" y2="10" stroke="url(#robot-gradient)" stroke-width="2"/>
+                                <circle cx="50" cy="10" r="3" fill="#FF1493"/>
+                            </g>
+
+                            <!-- Eyes - friendly circles -->
+                            <ellipse class="eye-left" cx="40" cy="32" rx="5" ry="6" fill="#FF1493">
+                                <animate attributeName="ry" values="6;6;6;6;0.5;6" dur="4s" repeatCount="indefinite"/>
+                            </ellipse>
+                            <ellipse class="eye-right" cx="60" cy="32" rx="5" ry="6" fill="#FF69B4">
+                                <animate attributeName="ry" values="6;6;6;6;0.5;6" dur="4s" repeatCount="indefinite"/>
+                            </ellipse>
+
+                            <!-- Eye sparkles -->
+                            <circle cx="42" cy="30" r="1.5" fill="white" opacity="0.8"/>
+                            <circle cx="62" cy="30" r="1.5" fill="white" opacity="0.8"/>
+
+                            <!-- Friendly smile -->
+                            <path d="M 38 42 Q 50 46 62 42" stroke="#FF1493" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+                            <!-- Body - rounded -->
+                            <rect x="25" y="55" width="50" height="35" rx="10" ry="10"
+                                  fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+
+                            <!-- Vyshyvanka pattern lights on chest -->
+                            <g transform="translate(50, 70)">
+                                <!-- Cross pattern -->
+                                <rect x="-2" y="-8" width="4" height="16" fill="#FF69B4" opacity="0.8">
+                                    <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite"/>
+                                </rect>
+                                <rect x="-8" y="-2" width="16" height="4" fill="#FF69B4" opacity="0.8">
+                                    <animate attributeName="opacity" values="0.8;0.4;0.8" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                                </rect>
+                                <!-- Corner diamonds -->
+                                <path d="M-8,-8 L-6,-10 L-4,-8 L-6,-6 Z" fill="#FF1493" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite" begin="1s"/>
+                                </path>
+                                <path d="M8,-8 L6,-10 L4,-8 L6,-6 Z" fill="#FF1493" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+                                </path>
+                                <path d="M-8,8 L-6,6 L-4,8 L-6,10 Z" fill="#FF1493" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                                </path>
+                                <path d="M8,8 L6,6 L4,8 L6,10 Z" fill="#FF1493" opacity="0.6">
+                                    <animate attributeName="opacity" values="0.6;0.3;0.6" dur="2s" repeatCount="indefinite" begin="1s"/>
+                                </path>
+                            </g>
+
+                            <!-- Arms -->
+                            <g class="arm-left" transform-origin="25 65">
+                                <rect x="10" y="60" width="15" height="8" rx="4" ry="4"
+                                      fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+                                <circle cx="10" cy="64" r="6" fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+                            </g>
+
+                            <g class="arm-right" transform-origin="75 65">
+                                <rect x="75" y="60" width="15" height="8" rx="4" ry="4"
+                                      fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+                                <circle cx="90" cy="64" r="6" fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+                            </g>
+
+                            <!-- Feet -->
+                            <g class="leg-left" transform-origin="40 90">
+                                <rect x="35" y="90" width="12" height="8" rx="4" ry="4"
+                                      fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+                            </g>
+                            <g class="leg-right" transform-origin="60 90">
+                                <rect x="53" y="90" width="12" height="8" rx="4" ry="4"
+                                      fill="none" stroke="url(#robot-gradient)" stroke-width="3"/>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="llmtfy-speech-bubble">Click me!</div>
+            </div>
+
+            <div class="llmtfy-title-section">
+                <div class="llmtfy-brand">
+                    <span class="llmtfy-brand-llm">LLM</span><span class="llmtfy-brand-tfy">TFY</span>
+                </div>
+                <h1 class="llmtfy-title">
+                    <span class="llmtfy-title-text">Let Me <span class="llmtfy-engine-name">ChatGPT</span> That For You</span>
+                </h1>
+            </div>
+        </div>
+
+        <div class="llmtfy-main-content">
+            <nav class="llmtfy-tabs" role="tablist" aria-label="Search type selection">
+                <button type="button" class="llmtfy-tab" data-tab="search" role="tab" aria-selected="false" aria-controls="search-engines-panel">
+                    <span style="font-size: 18px; display: inline-flex; align-items: center; justify-content: center;">🔍</span>
+                    Search Engines
+                </button>
+                <button type="button" class="llmtfy-tab active" data-tab="ai" role="tab" aria-selected="true" aria-controls="ai-models-panel">
+                    <span style="font-size: 18px; display: inline-flex; align-items: center; justify-content: center;">🧠</span>
+                    AI Models
+                </button>
+            </nav>
+
+            <div class="llmtfy-engine-section">
+                <div class="llmtfy-engines" data-type="search" id="search-engines-panel" role="tabpanel" aria-labelledby="search-tab" style="display: none;">
+                    <div class="llmtfy-engine" data-engine="google" data-url="https://www.google.com/search?q=" data-display="Google" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                            </svg>
+                            Google
+                        </div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="bing" data-url="https://www.bing.com/search?q=" data-display="Bing" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M5 3v18l8.5-4 6.5-3.5L11.5 8 5 3z" fill="#00BCF2"/>
+                                <path d="M19.9 10.5L16 11.8l-2.5 1.4v4.3l5 2.9 1.5-.9V10.5z" fill="#0078D4"/>
+                                <path d="M5 3l6.5 5 2 5.5L5 18V3z" fill="#00BCF2"/>
+                            </svg>
+                            Bing
+                        </div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="duckduckgo" data-url="https://duckduckgo.com/?q=" data-display="DuckDuckGo" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main" style="font-size: 11px;">
+                            <svg viewBox="0 0 24 24" fill="#DE5833" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10"/>
+                                <circle cx="8.5" cy="8.5" r="1.5" fill="#FFF"/>
+                                <circle cx="15.5" cy="8.5" r="1.5" fill="#FFF"/>
+                                <path d="M12 17c3 0 4-1 4-2.5S15 12 12 12s-4 1-4 2.5S9 17 12 17z" fill="#FFD43B"/>
+                            </svg>
+                            DuckDuckGo
+                        </div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="kagi" data-url="https://kagi.com/search?q=" data-display="Kagi" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" fill="#FFD60A"/>
+                                <circle cx="12" cy="12" r="3" fill="#000"/>
+                            </svg>
+                            Kagi
+                        </div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="yahoo" data-url="https://search.yahoo.com/search?p=" data-display="Yahoo" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M9 2L11 7H13L15 2H17L13.5 10V13H10.5V10L7 2H9Z" fill="#5F01D1"/>
+                                <circle cx="12" cy="18" r="2" fill="#5F01D1"/>
+                            </svg>
+                            Yahoo
+                        </div>
+                    </div>
+                </div>
+
+                <div class="llmtfy-engines" data-type="ai" id="ai-models-panel" role="tabpanel" aria-labelledby="ai-tab">
+                    <div class="llmtfy-engine active" data-engine="chatgpt" data-url="https://chat.openai.com/?q=" data-display="ChatGPT" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" fill="#10A37F" aria-hidden="true">
+                                <path d="M22.282 9.821a5.985 5.985 0 0 0-.516-4.91 6.046 6.046 0 0 0-6.51-2.9A6.065 6.065 0 0 0 4.981 4.18a5.985 5.985 0 0 0-3.998 2.9 6.046 6.046 0 0 0 .743 7.097 5.98 5.98 0 0 0 .51 4.911 6.051 6.051 0 0 0 6.515 2.9A5.985 5.985 0 0 0 13.26 24a6.056 6.056 0 0 0 5.772-4.206 5.99 5.99 0 0 0 3.997-2.9 6.056 6.056 0 0 0-.747-7.073zM13.26 22.43a4.476 4.476 0 0 1-2.876-1.04l.141-.081 4.779-2.758a.795.795 0 0 0 .392-.681v-6.737l2.02 1.168a.071.071 0 0 1 .038.052v5.583a4.504 4.504 0 0 1-4.494 4.494zM3.6 18.304a4.47 4.47 0 0 1-.535-3.014l.142.085 4.783 2.759a.771.771 0 0 0 .78 0l5.843-3.369v2.332a.08.08 0 0 1-.033.062L9.74 19.95a4.5 4.5 0 0 1-6.14-1.646zM2.34 7.896a4.485 4.485 0 0 1 2.366-1.973V11.6a.766.766 0 0 0 .388.676l5.815 3.355-2.02 1.168a.076.076 0 0 1-.071 0l-4.83-2.786A4.504 4.504 0 0 1 2.34 7.872zm16.597 3.855l-5.833-3.387L15.119 7.2a.076.076 0 0 1 .071 0l4.83 2.791a4.494 4.494 0 0 1-.676 8.105v-5.678a.79.79 0 0 0-.407-.667zm2.01-3.023l-.141-.085-4.774-2.782a.776.776 0 0 0-.785 0L9.409 9.23V6.897a.066.066 0 0 1 .028-.061l4.83-2.787a4.5 4.5 0 0 1 6.68 4.66zm-12.64 4.135l-2.02-1.164a.08.08 0 0 1-.038-.057V6.075a4.5 4.5 0 0 1 7.375-3.453l-.142.08L8.704 5.46a.795.795 0 0 0-.393.681zm1.097-2.365l2.602-1.5 2.607 1.5v2.999l-2.597 1.5-2.607-1.5z"/>
+                            </svg>
+                            ChatGPT
+                        </div>
+                        <div class="llmtfy-engine-company">OpenAI</div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="claude" data-url="https://claude.ai/new?q=" data-display="Claude" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" fill="#D97757" aria-hidden="true">
+                                <rect x="4" y="6" width="16" height="12" rx="2"/>
+                                <circle cx="8" cy="10" r="1" fill="#FFF"/>
+                                <circle cx="16" cy="10" r="1" fill="#FFF"/>
+                                <path d="M8 14h8" stroke="#FFF" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            Claude
+                        </div>
+                        <div class="llmtfy-engine-company">Anthropic</div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="gemini" data-url="https://gemini.google.com/?" data-display="Gemini" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <defs>
+                                    <linearGradient id="gemini-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                        <stop offset="0%" style="stop-color:#4285F4"/>
+                                        <stop offset="100%" style="stop-color:#EA4335"/>
+                                    </linearGradient>
+                                </defs>
+                                <path fill="url(#gemini-grad)" d="M12 2l2.39 7.36L22 12l-7.61 2.64L12 22l-2.39-7.36L2 12l7.61-2.64L12 2z"/>
+                            </svg>
+                            Gemini
+                        </div>
+                        <div class="llmtfy-engine-company">Google</div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="perplexity" data-url="https://www.perplexity.ai/?q=" data-display="Perplexity" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main" style="font-size: 11px;">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="10" fill="#20B2AA"/>
+                                <path d="M12 7v5l3.5 3.5" stroke="#FFF" stroke-width="2" stroke-linecap="round" fill="none"/>
+                                <circle cx="12" cy="12" r="2" fill="#FFF"/>
+                            </svg>
+                            Perplexity
+                        </div>
+                        <div class="llmtfy-engine-company">Perplexity</div>
+                    </div>
+                    <div class="llmtfy-engine" data-engine="copilot" data-url="https://copilot.microsoft.com/?q=" data-display="Copilot" role="button" tabindex="0">
+                        <div class="llmtfy-engine-main">
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <rect x="4" y="4" width="7" height="7" fill="#0078D4"/>
+                                <rect x="13" y="4" width="7" height="7" fill="#0078D4"/>
+                                <rect x="4" y="13" width="7" height="7" fill="#0078D4"/>
+                                <rect x="13" y="13" width="7" height="7" fill="#40E0D0"/>
+                            </svg>
+                            Copilot
+                        </div>
+                        <div class="llmtfy-engine-company">Microsoft</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="llmtfy-search-box">
+                <textarea
+                       class="llmtfy-input"
+                       placeholder="What prompt should I generate for them?"
+                       autocomplete="off"
+                       aria-label="Enter your query"
+                       rows="1"></textarea>
+            </div>
+
+            <div class="llmtfy-button-group">
+                <button type="button" class="llmtfy-btn llmtfy-btn-primary" aria-label="Get shareable link">Get Link</button>
+                <button type="button" class="llmtfy-btn llmtfy-btn-secondary llmtfy-action-btn" aria-label="Perform prompt">Prompt</button>
+            </div>
+
+            <div class="llmtfy-result" role="region" aria-label="Generated link" aria-live="polite">
+                <div class="llmtfy-result-label">Share this link to enlighten someone:</div>
+                <a href="#" class="llmtfy-result-link" target="_blank" rel="noopener noreferrer"></a>
+                <button type="button" class="llmtfy-copy" aria-label="Copy link to clipboard">Copy Link</button>
+            </div>
+        </div>
+
+        <div class="llmtfy-mouse" aria-hidden="true">
+            <svg viewBox="0 0 28 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <!-- Mouse body -->
+                <path d="M3.5 9C3.5 4.31 7.31 0.5 12 0.5H16C20.69 0.5 24.5 4.31 24.5 9V24C24.5 28.69 20.69 32.5 16 32.5H12C7.31 32.5 3.5 28.69 3.5 24V9Z"
+                      fill="#FF1493"
+                      stroke="#000000"
+                      stroke-width="1"/>
+
+                <!-- Scroll wheel -->
+                <rect x="12" y="7" width="4" height="6" rx="2" fill="#FFFFFF" opacity="0.9"/>
+
+                <!-- Highlight -->
+                <ellipse cx="10" cy="8" rx="3" ry="4" fill="#FF69B4" opacity="0.6"/>
+
+                <!-- Click indicator -->
+                <path d="M14 0.5V12" stroke="#000000" stroke-width="0.5" opacity="0.3"/>
+            </svg>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // Error boundary wrapper
+            try {
+                // Constants
+                const CONSTANTS = Object.freeze({
+                    ANIMATION_DURATION: 5000,
+                    HINT_INTERVAL: 10000,
+                    TYPING_DELAY_BASE: 50,
+                    TYPING_DELAY_VARIANCE: 50,
+                    SECRET_CLICK_COUNT: 7,
+                    SECRET_URL: 'http://starikov.co/4o4/',
+                    DEBOUNCE_DELAY: 300,
+                    THROTTLE_DELAY: 1000,
+                    MAX_QUERY_LENGTH: 1000,
+                    MIN_QUERY_LENGTH: 1,
+                    CACHE_VERSION: 'v1',
+                    CACHE_EXPIRY: 3600000 // 1 hour
+                });
+
+                // Performance monitoring
+                const perfStart = performance.now();
+
+                // Feature detection with caching
+                const features = {
+                    localStorage: null,
+                    clipboard: null,
+                    intersectionObserver: null
+                };
+
+                // Check localStorage support
+                features.localStorage = (() => {
+                    try {
+                        const test = '__llmtfy_test__';
+                        localStorage.setItem(test, test);
+                        localStorage.removeItem(test);
+                        return true;
+                    } catch (e) {
+                        return false;
+                    }
+                })();
+
+                // Check clipboard support
+                features.clipboard = !!(navigator.clipboard && window.isSecureContext);
+
+                // Check IntersectionObserver support
+                features.intersectionObserver = 'IntersectionObserver' in window;
+
+                // Define hasLocalStorage variable
+                const hasLocalStorage = features.localStorage;
+
+                // Memory management - cleanup old data
+                if (hasLocalStorage) {
+                    try {
+                        const stored = localStorage.getItem('llmtfy-state');
+                        if (stored) {
+                            const data = JSON.parse(stored);
+                            if (!data.version || data.version !== CONSTANTS.CACHE_VERSION) {
+                                localStorage.removeItem('llmtfy-state');
+                            }
+                        }
+                    } catch (e) {
+                        localStorage.removeItem('llmtfy-state');
+                    }
+                }
+
+                // Performance optimization: Use requestAnimationFrame for animations
+                const raf = window.requestAnimationFrame || function(cb) { setTimeout(cb, 16); };
+                const caf = window.cancelAnimationFrame || function(id) { clearTimeout(id); };
+
+                // Get container with error handling
+                const container = document.getElementById('llmtfy-container');
+                if (!container) {
+                    console.error('LLMTFY: Container element not found');
+                    return;
+                }
+
+                // Cache DOM elements with error checking
+                const elements = {};
+                const elementSelectors = {
+                    tabs: '.llmtfy-tab',
+                    searchEngines: '[data-type="search"]',
+                    aiEngines: '[data-type="ai"]',
+                    searchInput: '.llmtfy-input',
+                    getLinkBtn: '.llmtfy-btn-primary',
+                    actionBtn: '.llmtfy-action-btn',
+                    resultContainer: '.llmtfy-result',
+                    resultLink: '.llmtfy-result-link',
+                    copyBtn: '.llmtfy-copy',
+                    engineName: '.llmtfy-engine-name',
+                    titleText: '.llmtfy-title-text',
+                    mouse: '.llmtfy-mouse',
+                    robot: '.llmtfy-robot',
+                    speechBubble: '.llmtfy-speech-bubble'
+                };
+
+                // Safely query elements
+                Object.keys(elementSelectors).forEach(key => {
+                    const selector = elementSelectors[key];
+                    if (key === 'tabs') {
+                        elements[key] = container.querySelectorAll(selector);
+                    } else {
+                        elements[key] = container.querySelector(selector);
+                    }
+                });
+
+                // Validate required elements
+                const requiredElements = ['tabs', 'searchInput', 'getLinkBtn', 'actionBtn'];
+                for (const elem of requiredElements) {
+                    if (!elements[elem] || (elements[elem].length === 0 && elem === 'tabs')) {
+                        console.error(`LLMTFY: Required element '${elem}' not found`);
+                        return;
+                    }
+                }
+
+                // Parse and sanitize URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const autoQuery = urlParams.get('q') || '';
+                const autoEngine = urlParams.get('e') || '';
+                const autoTab = urlParams.get('t') || '';
+
+                // Validate URL parameters
+                const validTabs = ['search', 'ai'];
+                const validEngines = ['google', 'bing', 'duckduckgo', 'kagi', 'yahoo', 'chatgpt', 'claude', 'gemini', 'perplexity', 'copilot'];
+
+                // State management with defaults
+                const state = {
+                    currentTab: validTabs.includes(autoTab) ? autoTab : 'ai',
+                    selectedEngine: validEngines.includes(autoEngine) ? autoEngine : 'chatgpt',
+                    selectedUrl: '',
+                    selectedDisplay: '',
+                    isAnimating: false,
+                    animationQueue: [],
+                    robotClicks: 0,
+                    hintInterval: null,
+                    danceSequence: 0,
+                    activeAnimations: new Set(),
+                    hasGeneratedLink: false
+                };
+
+                // Engine configurations - Fixed Gemini URL
+                const engineConfigs = Object.freeze({
+                    google: { url: 'https://www.google.com/search?q=', display: 'Google' },
+                    bing: { url: 'https://www.bing.com/search?q=', display: 'Bing' },
+                    duckduckgo: { url: 'https://duckduckgo.com/?q=', display: 'DuckDuckGo' },
+                    kagi: { url: 'https://kagi.com/search?q=', display: 'Kagi' },
+                    yahoo: { url: 'https://search.yahoo.com/search?p=', display: 'Yahoo' },
+                    chatgpt: { url: 'https://chat.openai.com/?q=', display: 'ChatGPT' },
+                    claude: { url: 'https://claude.ai/new?q=', display: 'Claude' },
+                    gemini: { url: 'https://gemini.google.com/?', display: 'Gemini' },
+                    perplexity: { url: 'https://www.perplexity.ai/?q=', display: 'Perplexity' },
+                    copilot: { url: 'https://copilot.microsoft.com/?q=', display: 'Copilot' }
+                });
+
+                // Set initial URL and display
+                if (engineConfigs[state.selectedEngine]) {
+                    state.selectedUrl = engineConfigs[state.selectedEngine].url;
+                    state.selectedDisplay = engineConfigs[state.selectedEngine].display;
+                }
+
+                // Ukrainian dances array
+                const ukrainianDances = ['hopak', 'kazachok', 'arkan', 'prysiudy', 'kolomyika', 'hutsulka', 'metelytsia'];
+
+                // Dance messages mapping
+                const danceMessages = {
+                    'hopak': 'That Tickles',
+                    'kazachok': 'Beep Boop',
+                    'arkan': '1010001011',
+                    'prysiudy': "Let's Boogie",
+                    'kolomyika': 'Do A Barrel Roll',
+                    'hutsulka': 'Y-M-C-A',
+                    'metelytsia': 'Dance Protocol'
+                };
+
+                // Additional random messages for after secret
+                const randomMessages = [
+                    'running dance.exe...',
+                    'Buzz Buzzzz',
+                    '1010001011',
+                    'Beep Boop',
+                    'That Tickles',
+                    "Let's Boogie"
+                ];
+
+                // Theme switching
+                function applyTheme(tab) {
+                    if (tab === 'search') {
+                        container.classList.add('search-theme');
+                    } else {
+                        container.classList.remove('search-theme');
+                    }
+                }
+
+                // Auto-resize textarea with max height
+                function autoResizeTextarea() {
+                    if (!elements.searchInput) return;
+
+                    try {
+                        elements.searchInput.style.height = 'auto';
+                        const newHeight = Math.min(elements.searchInput.scrollHeight, 300); // Max 300px
+                        elements.searchInput.style.height = newHeight + 'px';
+                    } catch (e) {
+                        console.warn('Failed to resize textarea:', e);
+                    }
+                }
+
+                // Debounce function with error handling
+                function debounce(func, wait) {
+                    let timeout;
+                    return function executedFunction(...args) {
+                        const later = () => {
+                            clearTimeout(timeout);
+                            try {
+                                func(...args);
+                            } catch (e) {
+                                console.error('Debounced function error:', e);
+                            }
+                        };
+                        clearTimeout(timeout);
+                        timeout = setTimeout(later, wait);
+                    };
+                }
+
+                // Throttle function with error handling
+                function throttle(func, limit) {
+                    let inThrottle;
+                    let lastArgs;
+                    return function(...args) {
+                        lastArgs = args;
+                        if (!inThrottle) {
+                            try {
+                                func.apply(this, args);
+                            } catch (e) {
+                                console.error('Throttled function error:', e);
+                            }
+                            inThrottle = true;
+                            setTimeout(() => {
+                                inThrottle = false;
+                                if (lastArgs) {
+                                    func.apply(this, lastArgs);
+                                }
+                            }, limit);
+                        }
+                    };
+                }
+
+                // Update title with error handling
+                function updateTitle() {
+                    try {
+                        const engineName = state.selectedDisplay || 'ChatGPT';
+                        const titlePrefix = 'Let Me';
+                        const titleSuffix = 'That For You';
+
+                        document.title = `${titlePrefix} ${engineName} ${titleSuffix} - LLMTFY`;
+
+                        // Animate title change
+                        raf(() => {
+                            if (elements.engineName) {
+                                elements.engineName.style.transition = 'none';
+                                elements.engineName.style.transform = 'scale(0.8)';
+                                elements.engineName.style.opacity = '0';
+
+                                setTimeout(() => {
+                                    if (elements.engineName) {
+                                        elements.engineName.textContent = engineName;
+                                        elements.engineName.style.transition = 'all 0.3s ease';
+                                        elements.engineName.style.transform = 'scale(1)';
+                                        elements.engineName.style.opacity = '1';
+                                    }
+                                }, 150);
+                            }
+                        });
+                    } catch (e) {
+                        console.warn('Failed to update title:', e);
+                    }
+                }
+
+            // Robot animations
+            function animateRobot() {
+                if (state.isAnimating || !elements.robot) return;
+
+                state.isAnimating = true;
+                state.robotClicks++;
+
+                // Clear hint
+                hideSpeechBubble();
+                clearInterval(state.hintInterval);
+
+                // Remove all dance classes
+                elements.robot.classList.remove('thinking', ...ukrainianDances);
+
+                // Check for secret (7th click)
+                if (state.robotClicks === CONSTANTS.SECRET_CLICK_COUNT) {
+                    // Show secret message
+                    showSpeechBubble("Secret Unlocked 📋");
+                    copyToClipboard(CONSTANTS.SECRET_URL);
+
+                    // Choose any random dance for the secret
+                    const randomDanceIndex = Math.floor(Math.random() * ukrainianDances.length);
+                    const selectedDance = ukrainianDances[randomDanceIndex];
+
+                    raf(() => {
+                        elements.robot.classList.add(selectedDance);
+                    });
+
+                    // Animate parts based on dance
+                    animateDanceParts(selectedDance);
+                } else {
+                    // Normal dance selection
+                    let selectedDance;
+                    let message;
+
+                    if (state.robotClicks <= 6) {
+                        // First 6 clicks: use specific messages with associated dances
+                        const danceKeys = Object.keys(danceMessages);
+                        selectedDance = danceKeys[(state.robotClicks - 1) % danceKeys.length];
+                        message = danceMessages[selectedDance];
+                    } else {
+                        // After secret: random dances and messages
+                        selectedDance = ukrainianDances[Math.floor(Math.random() * ukrainianDances.length)];
+                        message = randomMessages[Math.floor(Math.random() * randomMessages.length)];
+                    }
+
+                    showSpeechBubble(message);
+
+                    raf(() => {
+                        elements.robot.classList.add(selectedDance);
+                    });
+
+                    // Animate parts based on dance
+                    animateDanceParts(selectedDance);
+                }
+
+                // Reset animation after 5 seconds
+                setTimeout(() => {
+                    raf(() => {
+                        elements.robot.classList.remove(...ukrainianDances);
+                        elements.robot.classList.add('thinking');
+                        resetDanceParts();
+                    });
+                    state.isAnimating = false;
+
+                    // Hide message after dance (except for secret)
+                    if (state.robotClicks !== CONSTANTS.SECRET_CLICK_COUNT) {
+                        setTimeout(hideSpeechBubble, 1000);
+                    }
+
+                    // Restart hint timer
+                    startHintTimer();
+                }, CONSTANTS.ANIMATION_DURATION);
+            }
+
+            // Animate dance parts
+            function animateDanceParts(selectedDance) {
+                const armLeft = container.querySelector('.arm-left');
+                const armRight = container.querySelector('.arm-right');
+                const antenna = container.querySelector('.antenna');
+                const legLeft = container.querySelector('.leg-left');
+                const legRight = container.querySelector('.leg-right');
+
+                // Dance-specific animations
+                const danceAnimations = {
+                    hopak: () => {
+                        if (legLeft) legLeft.style.animation = 'llmtfy-leg-kick 0.5s ease-in-out 10';
+                        if (legRight) legRight.style.animation = 'llmtfy-leg-kick 0.5s ease-in-out 10 0.25s';
+                        if (armLeft) armLeft.style.animation = 'llmtfy-arm-wave 0.3s ease-in-out 16';
+                        if (armRight) armRight.style.animation = 'llmtfy-arm-wave 0.3s ease-in-out 16 0.15s';
+                    },
+                    kazachok: () => {
+                        if (legLeft) legLeft.style.animation = 'llmtfy-leg-kick 0.8s ease-in-out 6';
+                        if (legRight) legRight.style.animation = 'llmtfy-leg-kick 0.8s ease-in-out 6 0.4s';
+                        if (armLeft) armLeft.style.animation = 'llmtfy-arm-wave 0.8s ease-in-out 6';
+                        if (armRight) armRight.style.animation = 'llmtfy-arm-wave 0.8s ease-in-out 6 reverse';
+                    },
+                    arkan: () => {
+                        if (armLeft) armLeft.style.animation = 'llmtfy-arm-wave 0.5s ease-in-out 10';
+                        if (armRight) armRight.style.animation = 'llmtfy-arm-wave 0.5s ease-in-out 10 0.25s';
+                        if (antenna) antenna.style.animation = 'llmtfy-antenna-wiggle 0.25s ease-in-out 20';
+                    },
+                    prysiudy: () => {
+                        if (legLeft) legLeft.style.animation = 'llmtfy-leg-kick 0.25s ease-in-out 20';
+                        if (legRight) legRight.style.animation = 'llmtfy-leg-kick 0.25s ease-in-out 20 0.125s';
+                    },
+                    kolomyika: () => {
+                        if (armLeft) armLeft.style.animation = 'llmtfy-arm-wave 1.25s ease-in-out 4';
+                        if (armRight) armRight.style.animation = 'llmtfy-arm-wave 1.25s ease-in-out 4 reverse';
+                        if (antenna) antenna.style.animation = 'llmtfy-antenna-wiggle 0.625s ease-in-out 8';
+                    },
+                    hutsulka: () => {
+                        if (legLeft) legLeft.style.animation = 'llmtfy-leg-kick 0.625s ease-in-out 8';
+                        if (legRight) legRight.style.animation = 'llmtfy-leg-kick 0.625s ease-in-out 8 reverse';
+                        if (armLeft) armLeft.style.animation = 'llmtfy-arm-wave 0.625s ease-in-out 8';
+                        if (armRight) armRight.style.animation = 'llmtfy-arm-wave 0.625s ease-in-out 8 0.3125s';
+                    },
+                    metelytsia: () => {
+                        if (armLeft) armLeft.style.animation = 'llmtfy-arm-wave 0.25s ease-in-out 20';
+                        if (armRight) armRight.style.animation = 'llmtfy-arm-wave 0.25s ease-in-out 20 reverse';
+                        if (antenna) antenna.style.animation = 'llmtfy-antenna-wiggle 0.25s ease-in-out 20';
+                        if (legLeft) legLeft.style.animation = 'llmtfy-leg-kick 0.5s ease-in-out 10';
+                        if (legRight) legRight.style.animation = 'llmtfy-leg-kick 0.5s ease-in-out 10 reverse';
+                    }
+                };
+
+                // Execute dance animation
+                if (danceAnimations[selectedDance]) {
+                    danceAnimations[selectedDance]();
+                }
+            }
+
+            // Reset dance parts
+            function resetDanceParts() {
+                const armLeft = container.querySelector('.arm-left');
+                const armRight = container.querySelector('.arm-right');
+                const antenna = container.querySelector('.antenna');
+                const legLeft = container.querySelector('.leg-left');
+                const legRight = container.querySelector('.leg-right');
+
+                if (armLeft) armLeft.style.animation = '';
+                if (armRight) armRight.style.animation = '';
+                if (antenna) antenna.style.animation = '';
+                if (legLeft) legLeft.style.animation = '';
+                if (legRight) legRight.style.animation = '';
+            }
+
+            // Speech bubble functions
+            function showSpeechBubble(text) {
+                if (elements.speechBubble) {
+                    elements.speechBubble.textContent = text;
+                    elements.speechBubble.classList.add('show');
+                }
+            }
+
+            function hideSpeechBubble() {
+                if (elements.speechBubble) {
+                    elements.speechBubble.classList.remove('show');
+                }
+            }
+
+            // Start hint timer
+            function startHintTimer() {
+                clearInterval(state.hintInterval);
+                state.hintInterval = setInterval(() => {
+                    if (!state.isAnimating && Math.random() > 0.5) {
+                        showSpeechBubble('Click me!');
+                        setTimeout(hideSpeechBubble, 3000);
+                    }
+                }, CONSTANTS.HINT_INTERVAL);
+            }
+
+            // Copy to clipboard with better error handling
+            async function copyToClipboard(text) {
+                try {
+                    if (navigator.clipboard && window.isSecureContext) {
+                        await navigator.clipboard.writeText(text);
+                    } else {
+                        // Fallback for older browsers or non-secure contexts
+                        const textArea = document.createElement('textarea');
+                        textArea.value = text;
+                        textArea.style.position = 'fixed';
+                        textArea.style.left = '-9999px';
+                        textArea.style.top = '0';
+                        textArea.setAttribute('readonly', '');
+                        document.body.appendChild(textArea);
+
+                        const selection = document.getSelection();
+                        const range = document.createRange();
+                        range.selectNode(textArea);
+                        selection.removeAllRanges();
+                        selection.addRange(range);
+
+                        try {
+                            document.execCommand('copy');
+                        } catch (e) {
+                            console.error('Fallback copy failed:', e);
+                        }
+
+                        selection.removeAllRanges();
+                        document.body.removeChild(textArea);
+                    }
+                } catch (err) {
+                    console.error('Failed to copy to clipboard:', err);
+                }
+            }
+
+            // Switch tab
+            function switchTab(tab) {
+                if (!tab) return;
+
+                // Remove active from all tabs
+                elements.tabs.forEach(t => {
+                    t.classList.remove('active');
+                    t.setAttribute('aria-selected', 'false');
+                });
+
+                // Add active to clicked tab
+                tab.classList.add('active');
+                tab.setAttribute('aria-selected', 'true');
+                state.currentTab = tab.dataset.tab || tab.getAttribute('data-tab');
+
+                // Apply theme
+                applyTheme(state.currentTab);
+
+                const isSearchMode = state.currentTab === 'search';
+
+                // Show/hide appropriate engines
+                if (isSearchMode && elements.searchEngines) {
+                    elements.searchEngines.style.display = 'flex';
+                    if (elements.aiEngines) elements.aiEngines.style.display = 'none';
+                    elements.searchInput.placeholder = 'What should I search for them?';
+                    elements.actionBtn.textContent = 'Search';
+                    elements.actionBtn.setAttribute('aria-label', 'Perform search');
+
+                    const firstEngine = elements.searchEngines.querySelector('.llmtfy-engine');
+                    if (firstEngine) selectEngine(firstEngine);
+                } else if (elements.aiEngines) {
+                    if (elements.searchEngines) elements.searchEngines.style.display = 'none';
+                    elements.aiEngines.style.display = 'flex';
+                    elements.searchInput.placeholder = 'What prompt should I generate for them?';
+                    elements.actionBtn.textContent = 'Prompt';
+                    elements.actionBtn.setAttribute('aria-label', 'Perform prompt');
+
+                    const chatgptEngine = elements.aiEngines.querySelector('[data-engine="chatgpt"]');
+                    if (chatgptEngine) selectEngine(chatgptEngine);
+                }
+
+                updateTitle();
+                saveState();
+            }
+
+            // Select engine with auto-link update
+            function selectEngine(engine) {
+                if (!engine) return;
+
+                const parent = engine.parentElement;
+                if (!parent) return;
+
+                // Remove active from all engines
+                parent.querySelectorAll('.llmtfy-engine').forEach(e => {
+                    e.classList.remove('active');
+                });
+
+                // Add active to selected engine
+                engine.classList.add('active');
+
+                // Update state - use getAttribute as fallback
+                const engineName = engine.dataset?.engine || engine.getAttribute('data-engine') || 'chatgpt';
+                const engineUrl = engine.dataset?.url || engine.getAttribute('data-url') || 'https://chat.openai.com/?q=';
+                const engineDisplay = engine.dataset?.display || engine.getAttribute('data-display') || 'ChatGPT';
+
+                state.selectedEngine = engineName;
+                state.selectedUrl = engineUrl;
+                state.selectedDisplay = engineDisplay;
+
+                // Double-check we have valid values from configs
+                if (!state.selectedUrl && engineConfigs[state.selectedEngine]) {
+                    state.selectedUrl = engineConfigs[state.selectedEngine].url;
+                    state.selectedDisplay = engineConfigs[state.selectedEngine].display;
+                }
+
+                updateTitle();
+                saveState();
+
+                // Auto-update link if one was already generated
+                if (state.hasGeneratedLink && elements.searchInput.value.trim()) {
+                    // Shake the Get Link button
+                    elements.getLinkBtn.classList.add('shake');
+                    setTimeout(() => {
+                        elements.getLinkBtn.classList.remove('shake');
+                    }, 500);
+
+                    // Auto-generate new link
+                    setTimeout(() => {
+                        generateLink();
+                    }, 200);
+                }
+            }
+
+            // Input validation
+            function validateInput(input) {
+                if (!input || typeof input !== 'string') return false;
+                const trimmed = input.trim();
+                return trimmed.length >= CONSTANTS.MIN_QUERY_LENGTH &&
+                       trimmed.length <= CONSTANTS.MAX_QUERY_LENGTH;
+            }
+
+            // Sanitize input for URL
+            function sanitizeForURL(input) {
+                // Remove any potentially harmful characters
+                return encodeURIComponent(input.trim().slice(0, CONSTANTS.MAX_QUERY_LENGTH));
+            }
+
+            // Generate link
+            function generateLink() {
+                const query = elements.searchInput.value.trim();
+                if (!validateInput(query)) {
+                    shakeInput();
+                    return;
+                }
+
+                // Ensure we have a valid engine
+                let validEngine = state.selectedEngine;
+                if (!engineConfigs[validEngine]) {
+                    validEngine = 'chatgpt';
+                }
+
+                const baseUrl = window.location.origin + window.location.pathname;
+                const params = new URLSearchParams({
+                    q: query,
+                    e: validEngine,
+                    t: state.currentTab
+                });
+
+                const shareLink = `${baseUrl}?${params.toString()}`;
+
+                if (elements.resultLink && elements.resultContainer) {
+                    elements.resultLink.href = shareLink;
+                    elements.resultLink.textContent = shareLink;
+
+                    // Mark that a link has been generated
+                    state.hasGeneratedLink = true;
+
+                    // Show result with animation
+                    elements.resultContainer.style.display = 'block';
+                    raf(() => {
+                        elements.resultContainer.classList.add('show');
+                    });
+
+                    // Smooth scroll on mobile
+                    if (window.innerWidth <= 768) {
+                        setTimeout(() => {
+                            elements.resultContainer.scrollIntoView({
+                                behavior: 'smooth',
+                                block: 'nearest'
+                            });
+                        }, 100);
+                    }
+                }
+            }
+
+            // Perform action (search/prompt)
+            function performAction() {
+                const query = elements.searchInput.value.trim();
+                if (!validateInput(query)) {
+                    shakeInput();
+                    return;
+                }
+
+                // Ensure we have a valid URL
+                let actionUrl = state.selectedUrl;
+                if (!actionUrl) {
+                    // Fallback to engine configs
+                    if (engineConfigs[state.selectedEngine]) {
+                        actionUrl = engineConfigs[state.selectedEngine].url;
+                    } else {
+                        actionUrl = 'https://chat.openai.com/?q=';
+                    }
+                }
+
+                // Add loading state to button
+                const originalText = elements.actionBtn.textContent;
+                elements.actionBtn.innerHTML = '<span class="llmtfy-loading"></span>';
+                elements.actionBtn.disabled = true;
+
+                // Sanitize and redirect
+                const sanitizedQuery = sanitizeForURL(query);
+
+                // Special handling for Gemini
+                let finalUrl;
+                if (state.selectedEngine === 'gemini') {
+                    // Gemini uses a different format
+                    finalUrl = actionUrl + 'q=' + sanitizedQuery;
+                } else {
+                    finalUrl = actionUrl + sanitizedQuery;
+                }
+
+                setTimeout(() => {
+                    try {
+                        window.location.href = finalUrl;
+                    } catch (err) {
+                        console.error('Failed to redirect:', err);
+                        elements.actionBtn.textContent = originalText;
+                        elements.actionBtn.disabled = false;
+                    }
+                }, 300);
+            }
+
+            // Copy link
+            async function copyLink() {
+                if (!elements.resultLink) return;
+
+                const link = elements.resultLink.href;
+
+                try {
+                    await copyToClipboard(link);
+                    showCopySuccess();
+                } catch (err) {
+                    console.error('Failed to copy link:', err);
+                }
+            }
+
+            function showCopySuccess() {
+                if (!elements.copyBtn) return;
+
+                elements.copyBtn.textContent = '✓ Copied!';
+                elements.copyBtn.classList.add('copied');
+
+                setTimeout(() => {
+                    elements.copyBtn.textContent = 'Copy Link';
+                    elements.copyBtn.classList.remove('copied');
+                }, 2000);
+            }
+
+            // Shake input
+            function shakeInput() {
+                if (!elements.searchInput) return;
+
+                elements.searchInput.focus();
+                elements.searchInput.style.animation = 'llmtfy-shake 0.5s ease-in-out';
+
+                setTimeout(() => {
+                    elements.searchInput.style.animation = '';
+                }, 500);
+            }
+
+            // Mouse animation with scroll resilience
+            function animateMouse() {
+                if (state.animationQueue.length > 0 || !elements.mouse || !elements.actionBtn) return;
+
+                const mouse = elements.mouse;
+                const btn = elements.actionBtn;
+
+                // Use viewport-relative positioning
+                const startX = window.innerWidth + 50;
+                const startY = -50;
+
+                // Track button position continuously
+                let animationFrame;
+                let isAnimating = true;
+
+                state.animationQueue.push(() => {
+                    mouse.style.position = 'fixed';
+                    mouse.style.left = startX + 'px';
+                    mouse.style.top = startY + 'px';
+                    mouse.style.transition = 'none';
+                    mouse.classList.add('animating');
+                });
+
+                state.animationQueue.push(() => {
+                    // Start continuous tracking
+                    function updateMousePosition() {
+                        if (!isAnimating) return;
+
+                        const btnRect = btn.getBoundingClientRect();
+                        const targetX = btnRect.left + btnRect.width / 2 - 14;
+                        const targetY = btnRect.top + btnRect.height / 2 - 18;
+
+                        mouse.style.transition = 'left 1.5s cubic-bezier(0.4, 0, 0.2, 1), top 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                        mouse.style.left = targetX + 'px';
+                        mouse.style.top = targetY + 'px';
+
+                        animationFrame = requestAnimationFrame(updateMousePosition);
+                    }
+
+                    updateMousePosition();
+                });
+
+                state.animationQueue.push(() => {
+                    btn.style.transform = 'scale(1.05)';
+                });
+
+                state.animationQueue.push(() => {
+                    btn.style.transform = 'scale(0.95)';
+                });
+
+                state.animationQueue.push(() => {
+                    btn.style.transform = '';
+                    mouse.style.opacity = '0';
+                    isAnimating = false;
+                    if (animationFrame) {
+                        cancelAnimationFrame(animationFrame);
+                    }
+                });
+
+                state.animationQueue.push(() => {
+                    mouse.classList.remove('animating');
+                    mouse.style.transition = '';
+                    mouse.style.opacity = '';
+                    state.animationQueue = [];
+                });
+
+                // Execute animation queue
+                const timings = [0, 100, 1600, 2600, 2800, 3100];
+                state.animationQueue.forEach((fn, index) => {
+                    setTimeout(fn, timings[index] || 0);
+                });
+            }
+
+            // Type query animation
+            function typeQuery(query, callback) {
+                if (!elements.searchInput) return;
+
+                let i = 0;
+                elements.searchInput.value = '';
+
+                const type = () => {
+                    if (i < query.length) {
+                        elements.searchInput.value += query[i];
+                        autoResizeTextarea();
+                        i++;
+
+                        // Variable typing speed for more natural feel
+                        const delay = CONSTANTS.TYPING_DELAY_BASE + Math.random() * CONSTANTS.TYPING_DELAY_VARIANCE;
+                        setTimeout(type, delay);
+                    } else if (callback) {
+                        callback();
+                    }
+                };
+
+                type();
+            }
+
+            // Save state
+            const saveState = throttle(() => {
+                if (hasLocalStorage) {
+                    try {
+                        localStorage.setItem('llmtfy-state', JSON.stringify({
+                            tab: state.currentTab,
+                            engine: state.selectedEngine,
+                            version: CONSTANTS.CACHE_VERSION
+                        }));
+                    } catch (e) {
+                        console.warn('Failed to save state:', e);
+                    }
+                }
+            }, CONSTANTS.THROTTLE_DELAY);
+
+            // Load state
+            function loadState() {
+                if (hasLocalStorage) {
+                    try {
+                        const saved = localStorage.getItem('llmtfy-state');
+                        if (saved) {
+                            return JSON.parse(saved);
+                        }
+                    } catch (e) {
+                        console.warn('Failed to load state:', e);
+                    }
+                }
+                return null;
+            }
+
+            // Auto play animation
+            function autoPlay() {
+                // Directly type and animate without tab/engine switching
+                setTimeout(() => {
+                    typeQuery(autoQuery, () => {
+                        // After typing is complete, show mouse
+                        setTimeout(() => {
+                            animateMouse();
+
+                            // Wait for mouse animation to complete
+                            setTimeout(() => {
+                                performAction();
+                            }, 3000);
+                        }, 500);
+                    });
+                }, 1000);
+            }
+
+            // Initialize
+            function init() {
+                // Bind events
+                elements.tabs.forEach(tab => {
+                    tab.addEventListener('click', function(e) {
+                        switchTab(e.currentTarget);
+                    });
+                    tab.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            switchTab(e.currentTarget);
+                        }
+                    });
+                });
+
+                // Bind engine events directly
+                const allEngines = container.querySelectorAll('.llmtfy-engine');
+                allEngines.forEach(engine => {
+                    engine.addEventListener('click', function(e) {
+                        selectEngine(e.currentTarget);
+                    });
+
+                    engine.addEventListener('keypress', function(e) {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            selectEngine(e.currentTarget);
+                        }
+                    });
+                });
+
+                if (elements.getLinkBtn) {
+                    elements.getLinkBtn.addEventListener('click', generateLink);
+                }
+
+                if (elements.actionBtn) {
+                    elements.actionBtn.addEventListener('click', performAction);
+                }
+
+                if (elements.copyBtn) {
+                    elements.copyBtn.addEventListener('click', copyLink);
+                }
+
+                // Robot events
+                if (elements.robot && elements.robot.parentElement) {
+                    const robotContainer = elements.robot.parentElement;
+                    robotContainer.addEventListener('click', animateRobot);
+                    robotContainer.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            animateRobot();
+                        }
+                    });
+                }
+
+                // Add input event for auto-resize
+                if (elements.searchInput) {
+                    elements.searchInput.addEventListener('input', autoResizeTextarea);
+
+                    elements.searchInput.addEventListener('keypress', (e) => {
+                        if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            generateLink(); // Changed to always generate link on Enter
+                        }
+                    });
+
+                    // Optimize input performance on mobile
+                    if ('ontouchstart' in window) {
+                        elements.searchInput.addEventListener('touchstart', () => {
+                            elements.searchInput.setAttribute('autocomplete', 'off');
+                            elements.searchInput.setAttribute('autocorrect', 'off');
+                            elements.searchInput.setAttribute('autocapitalize', 'off');
+                            elements.searchInput.setAttribute('spellcheck', 'false');
+                        });
+                    }
+                }
+
+                // Fix mobile engine scrolling
+                const engineContainers = container.querySelectorAll('.llmtfy-engines');
+                engineContainers.forEach(container => {
+                    // Ensure container starts at the beginning
+                    container.scrollLeft = 0;
+
+                    // Add touch event handling for better mobile experience
+                    let isScrolling = false;
+                    container.addEventListener('touchstart', () => {
+                        isScrolling = true;
+                    });
+
+                    container.addEventListener('touchend', () => {
+                        isScrolling = false;
+                    });
+
+                    // Prevent accidental clicks while scrolling
+                    container.addEventListener('click', (e) => {
+                        if (isScrolling) {
+                            e.preventDefault();
+                            e.stopPropagation();
+                        }
+                    });
+                });
+
+                // Start hint timer
+                startHintTimer();
+
+                // Auto play if parameters exist
+                if (autoQuery && autoEngine && autoTab) {
+                    // Set initial state based on URL params
+                    const correctTab = container.querySelector(`[data-tab="${autoTab}"]`);
+                    if (correctTab) {
+                        // Set tab state without animation
+                        elements.tabs.forEach(t => {
+                            t.classList.remove('active');
+                            t.setAttribute('aria-selected', 'false');
+                        });
+                        correctTab.classList.add('active');
+                        correctTab.setAttribute('aria-selected', 'true');
+
+                        // Apply theme
+                        applyTheme(autoTab);
+
+                        // Show correct engine panel
+                        if (autoTab === 'search' && elements.searchEngines) {
+                            elements.searchEngines.style.display = 'flex';
+                            if (elements.aiEngines) elements.aiEngines.style.display = 'none';
+                            elements.searchInput.placeholder = 'What should I search for them?';
+                            elements.actionBtn.textContent = 'Search';
+                        } else if (elements.aiEngines) {
+                            if (elements.searchEngines) elements.searchEngines.style.display = 'none';
+                            elements.aiEngines.style.display = 'flex';
+                            elements.searchInput.placeholder = 'What prompt should I generate for them?';
+                            elements.actionBtn.textContent = 'Prompt';
+                        }
+
+                        // Set engine state without animation
+                        const selector = autoTab === 'search' ?
+                            `[data-type="search"] .llmtfy-engine[data-engine="${autoEngine}"]` :
+                            `[data-type="ai"] .llmtfy-engine[data-engine="${autoEngine}"]`;
+                        const engine = container.querySelector(selector);
+                        if (engine) {
+                            const parent = engine.parentElement;
+                            if (parent) {
+                                parent.querySelectorAll('.llmtfy-engine').forEach(e => e.classList.remove('active'));
+                                engine.classList.add('active');
+                            }
+                        }
+
+                        updateTitle();
+                    }
+
+                    autoPlay();
+                } else {
+                    // Load saved state or use defaults
+                    const savedState = loadState();
+                    if (savedState && savedState.tab && savedState.engine) {
+                        // Restore saved state
+                        const tab = container.querySelector(`[data-tab="${savedState.tab}"]`);
+                        if (tab) {
+                            switchTab(tab);
+
+                            setTimeout(() => {
+                                const selector = savedState.tab === 'search' ?
+                                    `[data-type="search"] .llmtfy-engine[data-engine="${savedState.engine}"]` :
+                                    `[data-type="ai"] .llmtfy-engine[data-engine="${savedState.engine}"]`;
+                                const engine = container.querySelector(selector);
+                                if (engine) {
+                                    selectEngine(engine);
+                                }
+                            }, 100);
+                        }
+                    } else {
+                        // Default to AI tab
+                        const defaultTab = elements.tabs[1];
+                        if (defaultTab) {
+                            switchTab(defaultTab);
+                        }
+                    }
+                }
+
+                // Handle visibility change
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        clearInterval(state.hintInterval);
+                        if (state.animationQueue.length > 0) {
+                            // Clear animation queue if page is hidden
+                            state.animationQueue = [];
+                            if (elements.mouse) {
+                                elements.mouse.classList.remove('animating');
+                                elements.mouse.style.opacity = '';
+                            }
+                        }
+                    } else {
+                        startHintTimer();
+                    }
+                });
+
+                // Performance optimization: Lazy load animations
+                if (features.intersectionObserver) {
+                    const observer = new IntersectionObserver((entries) => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.style.animationPlayState = 'running';
+                            } else {
+                                entry.target.style.animationPlayState = 'paused';
+                            }
+                        });
+                    });
+
+                    container.querySelectorAll('[class*="animate"]').forEach(el => {
+                        observer.observe(el);
+                    });
+                }
+
+                // Log performance
+                const perfEnd = performance.now();
+                console.log(`LLMTFY initialized in ${(perfEnd - perfStart).toFixed(2)}ms`);
+            }
+
+            // Start the app
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', init);
+            } else {
+                init();
+            }
+
+        } catch (error) {
+            console.error('LLMTFY: Fatal error during initialization', error);
+        }
+        })();
+    </script>
+</div>

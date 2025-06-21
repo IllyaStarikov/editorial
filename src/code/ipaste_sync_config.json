@@ -1,0 +1,10 @@
+{
+  "local_path": "~/Documents/markdown/editorial/src/ipaste/",
+  "remote_host": "24.199.100.99",
+  "remote_path": "/var/www/ghost/content/ipaste",
+  "ssh_user": "root",
+  "ssh_port": 22,
+  "ssh_key": "~/.ssh/id_rsa",
+  "dry_run": false,
+  "verbose": true
+}

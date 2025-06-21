@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700;800;900&display=swap');
+
+  .ios-timeline-container {
+    all: initial;
+    display: block;
+    width: 100%;
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    padding: 60px 0;
+    box-sizing: border-box;
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ios-timeline-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(31, 182, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(95, 197, 46, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 50% 50%, rgba(127, 90, 224, 0.05) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .ios-timeline-container * {
+    box-sizing: border-box;
+  }
+
+  .timeline-header {
+    text-align: center;
+    margin-bottom: 60px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .timeline-title {
+    font-size: 96px;
+    font-weight: 800;
+    margin: 0 0 24px 0;
+    letter-spacing: -0.05em;
+    background: linear-gradient(90deg,
+      #1FB6F7 0%,
+      #7F5AE0 16.66%,
+      #E03C31 33.33%,
+      #F48B29 50%,
+      #F8CD38 66.66%,
+      #5FC52E 83.33%,
+      #1FB6F7 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    background-size: 200% 100%;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .timeline-subtitle {
+    font-size: 32px;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  .chart-container {
+    position: relative;
+    width: 100%;
+    padding: 40px 20px;
+    height: calc(100vh - 300px);
+    min-height: 600px;
+  }
+
+  .chart-svg {
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  .axis {
+    stroke: rgba(255, 255, 255, 0.2);
+    stroke-width: 2;
+  }
+
+  .axis-text {
+    fill: #fff;
+    font-size: 18px;
+    font-weight: 600;
+    opacity: 0.95;
+  }
+
+  .axis-text-alt {
+    fill: rgba(255, 255, 255, 0.6);
+    font-size: 16px;
+    font-weight: 500;
+  }
+
+  .grid-line {
+    stroke: rgba(255, 255, 255, 0.08);
+    stroke-width: 1;
+  }
+
+  .version-line {
+    fill: none;
+    stroke: url(#lineGradient);
+    stroke-width: 4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+  }
+
+  .version-dot {
+    stroke: rgba(0, 0, 0, 0.5);
+    stroke-width: 3;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+  }
+
+  .version-dot:hover {
+    transform: scale(1.3) translateY(-4px);
+    filter: brightness(1.3) drop-shadow(0 8px 24px rgba(0, 0, 0, 0.8));
+  }
+
+  .version-dot.placeholder {
+    fill: rgba(255, 255, 255, 0.1);
+    stroke: rgba(255, 255, 255, 0.05);
+    opacity: 0.3;
+    r: 3;
+    cursor: default;
+    filter: none;
+  }
+
+  .version-dot.placeholder:hover {
+    transform: none;
+    filter: none;
+  }
+
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(40px) saturate(200%);
+    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  }
+
+  .point-release-dot {
+    fill: currentColor;
+    stroke: rgba(0, 0, 0, 0.4);
+    stroke-width: 2;
+    cursor: pointer;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.4));
+  }
+
+  .point-release-dot.visible {
+    opacity: 0.85;
+  }
+
+  .point-release-dot:hover {
+    transform: scale(1.3) translateY(-2px);
+    opacity: 1;
+    filter: brightness(1.3) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.6));
+  }
+
+  .point-release-line {
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-dasharray: 4,4;
+    opacity: 0.2;
+  }
+
+  .tooltip {
+    position: absolute;
+    padding: 28px 32px;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(10px) scale(0.95);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1000;
+    max-width: 450px;
+  }
+
+  .tooltip.visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+
+  .tooltip-version {
+    font-size: 36px;
+    font-weight: 700;
+    margin: 0 0 10px 0;
+    letter-spacing: -0.03em;
+  }
+
+  .tooltip-date {
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 16px 0;
+    font-weight: 500;
+  }
+
+  .tooltip-note {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.9);
+    margin: 0;
+    line-height: 1.6;
+    font-weight: 400;
+  }
+
+  .tooltip-click-hint {
+    font-size: 15px;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 18px 0 0 0;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .month-view {
+    position: absolute;
+    padding: 40px;
+    opacity: 0;
+    transform: scale(0.9);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2000;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .month-view.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .month-view-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 28px 0;
+    color: #fff;
+    letter-spacing: -0.03em;
+  }
+
+  .month-item {
+    padding: 20px;
+    margin: 14px 0;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 18px;
+    border-left: 4px solid currentColor;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .month-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(6px);
+  }
+
+  .month-date {
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0 0 10px 0;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .month-version {
+    font-size: 20px;
+    font-weight: 600;
+    color: #fff;
+    line-height: 1.5;
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 56px;
+    margin-top: 48px;
+    flex-wrap: wrap;
+    position: relative;
+    z-index: 1;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 20px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+  }
+
+  .legend-dot {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 3px solid rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4),
+                inset 0 1px 2px rgba(255, 255, 255, 0.3);
+  }
+
+  .legend-dot.major {
+    background: linear-gradient(135deg, #1FB6F7 0%, #5FC52E 100%);
+  }
+
+  .legend-dot.point {
+    background: #F48B29;
+  }
+
+  .legend-asterisk {
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 28px;
+    text-align: center;
+    font-weight: 400;
+  }
+
+  .close-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 44px;
+    height: 44px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: #fff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    font-weight: 300;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(20px);
+  }
+
+  .close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  /* Scrollbar styling */
+  .month-view::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  .month-view::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 5px;
+  }
+
+  .month-view::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 5px;
+    backdrop-filter: blur(10px);
+  }
+
+  .month-view::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+  }
+
+  @media (max-width: 768px) {
+    .timeline-title {
+      font-size: 56px;
+    }
+
+    .timeline-subtitle {
+      font-size: 24px;
+    }
+
+    .axis-text {
+      font-size: 16px;
+    }
+
+    .axis-text-alt {
+      font-size: 14px;
+    }
+
+    .tooltip {
+      max-width: 340px;
+    }
+
+    .month-view {
+      max-width: 90%;
+      left: 5% !important;
+      right: 5% !important;
+    }
+  }
+</style>
+</head>
+<body>
+<div class="ios-timeline-container">
+  <div class="timeline-header">
+    <h1 class="timeline-title">iOS Version History</h1>
+    <p class="timeline-subtitle">Every release from iPhone OS 1 to iOS 26</p>
+  </div>
+
+  <div class="chart-container">
+    <svg class="chart-svg" id="timeline-chart">
+      <defs>
+        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%" style="stop-color:#1FB6F7;stop-opacity:0.8" />
+          <stop offset="20%" style="stop-color:#7F5AE0;stop-opacity:0.8" />
+          <stop offset="40%" style="stop-color:#E03C31;stop-opacity:0.8" />
+          <stop offset="60%" style="stop-color:#F48B29;stop-opacity:0.8" />
+          <stop offset="80%" style="stop-color:#F8CD38;stop-opacity:0.8" />
+          <stop offset="100%" style="stop-color:#5FC52E;stop-opacity:0.8" />
+        </linearGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
+
+    <div class="tooltip glass-panel" id="tooltip">
+      <h3 class="tooltip-version"></h3>
+      <p class="tooltip-date"></p>
+      <p class="tooltip-note"></p>
+      <p class="tooltip-click-hint"></p>
+    </div>
+
+    <div class="month-view glass-panel" id="month-view">
+      <button class="close-btn" onclick="closeMonthView()">×</button>
+      <h3 class="month-view-title"></h3>
+      <div class="month-view-content"></div>
+    </div>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <div class="legend-dot major"></div>
+      <span>Major Release</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-dot point"></div>
+      <span>Point Release</span>
+    </div>
+  </div>
+  <div class="legend-asterisk">
+    * iPhone OS 1-3 were renamed to iOS starting with version 4
+  </div>
+</div>
+
+<script>
+(function() {
+  // Apple rainbow colors with better blending
+  const appleColors = {
+    blue: '#1FB6F7',
+    purple: '#7F5AE0',
+    red: '#E03C31',
+    orange: '#F48B29',
+    yellow: '#F8CD38',
+    green: '#5FC52E'
+  };
+
+  // Color mapping with smooth transitions
+  function getVersionColor(versionNum) {
+    if (versionNum <= 2) return appleColors.blue;
+    else if (versionNum === 3) return blendColors(appleColors.blue, appleColors.purple, 0.5);
+    else if (versionNum <= 5) return appleColors.purple;
+    else if (versionNum === 6) return blendColors(appleColors.purple, appleColors.red, 0.5);
+    else if (versionNum <= 8) return appleColors.red;
+    else if (versionNum === 9) return blendColors(appleColors.red, appleColors.orange, 0.5);
+    else if (versionNum <= 11) return appleColors.orange;
+    else if (versionNum === 12) return blendColors(appleColors.orange, appleColors.yellow, 0.5);
+    else if (versionNum <= 14) return appleColors.yellow;
+    else if (versionNum === 15) return blendColors(appleColors.yellow, appleColors.green, 0.5);
+    else return appleColors.green;
+  }
+
+  // Color blending function
+  function blendColors(color1, color2, ratio) {
+    const hex2rgb = (hex) => {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? [
+        parseInt(result[1], 16),
+        parseInt(result[2], 16),
+        parseInt(result[3], 16)
+      ] : null;
+    };
+
+    const rgb2hex = (r, g, b) => {
+      return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+    };
+
+    const c1 = hex2rgb(color1);
+    const c2 = hex2rgb(color2);
+
+    const r = Math.round(c1[0] * (1 - ratio) + c2[0] * ratio);
+    const g = Math.round(c1[1] * (1 - ratio) + c2[1] * ratio);
+    const b = Math.round(c1[2] * (1 - ratio) + c2[2] * ratio);
+
+    return rgb2hex(r, g, b);
+  }
+
+  // Complete version data
+  const versionData = {
+    "iOS 1": {
+      majorDate: new Date(2007, 5, 29),
+      note: "Original iPhone release",
+      fullName: "iPhone OS 1",
+      pointReleases: [
+        { version: "1.0", date: new Date(2007, 5, 29), note: "Initial release" },
+        { version: "1.0.1", date: new Date(2007, 6, 31), note: "Minor bug fixes" },
+        { version: "1.0.2", date: new Date(2007, 7, 21), note: "iPod app crash fix" },
+        { version: "1.1", date: new Date(2007, 8, 27), note: "iTunes Wi-Fi Music Store" },
+        { version: "1.1.1", date: new Date(2007, 8, 27), note: "Louder audio, improved Mail" },
+        { version: "1.1.2", date: new Date(2007, 10, 9), note: "TIFF security fix" },
+        { version: "1.1.3", date: new Date(2008, 0, 15), note: "Maps improvements" },
+        { version: "1.1.4", date: new Date(2008, 1, 26), note: "Bug fixes" },
+        { version: "1.1.5", date: new Date(2008, 6, 15), note: "Final iPhone OS 1 release" }
+      ]
+    },
+    "iOS 2": {
+      majorDate: new Date(2008, 6, 11),
+      note: "App Store introduced",
+      fullName: "iPhone OS 2",
+      pointReleases: [
+        { version: "2.0", date: new Date(2008, 6, 11), note: "App Store launch" },
+        { version: "2.0.1", date: new Date(2008, 7, 4), note: "Contacts/Calendar stability" },
+        { version: "2.0.2", date: new Date(2008, 7, 18), note: "3G communication fixes" },
+        { version: "2.1", date: new Date(2008, 8, 12), note: "Genius playlists" },
+        { version: "2.1.1", date: new Date(2008, 8, 9), note: "iPod Touch exclusive" },
+        { version: "2.2", date: new Date(2008, 10, 20), note: "Google Street View" },
+        { version: "2.2.1", date: new Date(2009, 0, 27), note: "SMS fixes" }
+      ]
+    },
+    "iOS 3": {
+      majorDate: new Date(2009, 5, 17),
+      note: "Cut, copy, and paste added",
+      fullName: "iPhone OS 3",
+      pointReleases: [
+        { version: "3.0", date: new Date(2009, 5, 17), note: "Cut/copy/paste, MMS" },
+        { version: "3.0.1", date: new Date(2009, 6, 31), note: "SMS security fix" },
+        { version: "3.1", date: new Date(2009, 8, 9), note: "App Store gifts" },
+        { version: "3.1.1", date: new Date(2009, 8, 17), note: "Sleep/wake fixes" },
+        { version: "3.1.2", date: new Date(2009, 9, 8), note: "Bug fixes" },
+        { version: "3.1.3", date: new Date(2010, 1, 2), note: "Final for original iPhone" },
+        { version: "3.2", date: new Date(2010, 3, 3), note: "iPad-only release" },
+        { version: "3.2.1", date: new Date(2010, 6, 15), note: "iPad Wi-Fi improvements" },
+        { version: "3.2.2", date: new Date(2010, 7, 11), note: "iPad PDF fixes" }
+      ]
+    },
+    "iOS 4": {
+      majorDate: new Date(2010, 5, 21),
+      note: "First named 'iOS', multitasking",
+      fullName: "iOS 4",
+      pointReleases: [
+        { version: "4.0", date: new Date(2010, 5, 21), note: "Multitasking, folders" },
+        { version: "4.0.1", date: new Date(2010, 6, 15), note: "Antenna fixes" },
+        { version: "4.0.2", date: new Date(2010, 7, 11), note: "PDF security" },
+        { version: "4.1", date: new Date(2010, 8, 8), note: "Game Center" },
+        { version: "4.2.1", date: new Date(2010, 10, 22), note: "iPad support, AirPlay" },
+        { version: "4.3", date: new Date(2011, 2, 11), note: "Personal Hotspot" },
+        { version: "4.3.1", date: new Date(2011, 2, 25), note: "Safari fixes" },
+        { version: "4.3.2", date: new Date(2011, 3, 14), note: "Security fixes" },
+        { version: "4.3.3", date: new Date(2011, 4, 4), note: "Location services fix" },
+        { version: "4.3.4", date: new Date(2011, 6, 15), note: "Certificate validation" },
+        { version: "4.3.5", date: new Date(2011, 6, 25), note: "Final iOS 4 release" }
+      ]
+    },
+    "iOS 5": {
+      majorDate: new Date(2011, 9, 12),
+      note: "Siri, iCloud, Notification Center",
+      fullName: "iOS 5",
+      pointReleases: [
+        { version: "5.0", date: new Date(2011, 9, 12), note: "iCloud, iMessage, Siri" },
+        { version: "5.0.1", date: new Date(2011, 10, 10), note: "Battery life fixes" },
+        { version: "5.1", date: new Date(2012, 2, 7), note: "iPad 3 support" },
+        { version: "5.1.1", date: new Date(2012, 4, 7), note: "Final iOS 5 release" }
+      ]
+    },
+    "iOS 6": {
+      majorDate: new Date(2012, 8, 19),
+      note: "Apple Maps, Passbook",
+      fullName: "iOS 6",
+      pointReleases: [
+        { version: "6.0", date: new Date(2012, 8, 19), note: "Apple Maps debut" },
+        { version: "6.0.1", date: new Date(2012, 10, 1), note: "iPhone 5 fixes" },
+        { version: "6.1", date: new Date(2013, 0, 28), note: "LTE expansion" },
+        { version: "6.1.1", date: new Date(2013, 1, 11), note: "iPhone 4S fixes" },
+        { version: "6.1.2", date: new Date(2013, 1, 19), note: "Exchange calendar fix" },
+        { version: "6.1.3", date: new Date(2013, 2, 19), note: "Lock screen security" },
+        { version: "6.1.4", date: new Date(2013, 4, 2), note: "iPhone 5 audio" },
+        { version: "6.1.5", date: new Date(2013, 10, 14), note: "FaceTime fixes" },
+        { version: "6.1.6", date: new Date(2014, 1, 21), note: "SSL security fix" }
+      ]
+    },
+    "iOS 7": {
+      majorDate: new Date(2013, 8, 18),
+      note: "Complete redesign, flat UI",
+      fullName: "iOS 7",
+      pointReleases: [
+        { version: "7.0", date: new Date(2013, 8, 18), note: "Flat design overhaul" },
+        { version: "7.0.1", date: new Date(2013, 8, 20), note: "Touch ID fix" },
+        { version: "7.0.2", date: new Date(2013, 8, 26), note: "Lock screen fixes" },
+        { version: "7.0.3", date: new Date(2013, 9, 22), note: "iCloud Keychain" },
+        { version: "7.0.4", date: new Date(2013, 10, 14), note: "FaceTime fixes" },
+        { version: "7.0.5", date: new Date(2014, 0, 29), note: "China network" },
+        { version: "7.0.6", date: new Date(2014, 1, 21), note: "SSL security" },
+        { version: "7.1", date: new Date(2014, 2, 10), note: "CarPlay" },
+        { version: "7.1.1", date: new Date(2014, 3, 22), note: "Touch ID reliability" },
+        { version: "7.1.2", date: new Date(2014, 5, 30), note: "iBeacon improvements" }
+      ]
+    },
+    "iOS 8": {
+      majorDate: new Date(2014, 8, 17),
+      note: "Continuity, Extensions, Widgets",
+      fullName: "iOS 8",
+      pointReleases: [
+        { version: "8.0", date: new Date(2014, 8, 17), note: "Continuity, Health app" },
+        { version: "8.0.1", date: new Date(2014, 8, 24), note: "Pulled release" },
+        { version: "8.0.2", date: new Date(2014, 8, 25), note: "Fixed 8.0.1 issues" },
+        { version: "8.1", date: new Date(2014, 9, 20), note: "Apple Pay" },
+        { version: "8.1.1", date: new Date(2014, 10, 17), note: "Performance fixes" },
+        { version: "8.1.2", date: new Date(2014, 11, 9), note: "Ringtone fixes" },
+        { version: "8.1.3", date: new Date(2015, 0, 27), note: "Reduced storage" },
+        { version: "8.2", date: new Date(2015, 2, 9), note: "Apple Watch support" },
+        { version: "8.3", date: new Date(2015, 3, 8), note: "New emoji" },
+        { version: "8.4", date: new Date(2015, 5, 30), note: "Apple Music" },
+        { version: "8.4.1", date: new Date(2015, 7, 13), note: "Apple Music fixes" }
+      ]
+    },
+    "iOS 9": {
+      majorDate: new Date(2015, 8, 16),
+      note: "iPad multitasking, 3D Touch",
+      fullName: "iOS 9",
+      pointReleases: [
+        { version: "9.0", date: new Date(2015, 8, 16), note: "Proactive Siri" },
+        { version: "9.0.1", date: new Date(2015, 8, 23), note: "Bug fixes" },
+        { version: "9.0.2", date: new Date(2015, 8, 30), note: "iCloud backup fixes" },
+        { version: "9.1", date: new Date(2015, 9, 21), note: "New emoji" },
+        { version: "9.2", date: new Date(2015, 11, 8), note: "Apple Music improvements" },
+        { version: "9.2.1", date: new Date(2016, 0, 19), note: "Security updates" },
+        { version: "9.3", date: new Date(2016, 2, 21), note: "Night Shift" },
+        { version: "9.3.1", date: new Date(2016, 2, 31), note: "Link issues fix" },
+        { version: "9.3.2", date: new Date(2016, 4, 16), note: "iPhone SE fixes" },
+        { version: "9.3.3", date: new Date(2016, 6, 18), note: "Bug fixes" },
+        { version: "9.3.4", date: new Date(2016, 7, 4), note: "Security improvements" },
+        { version: "9.3.5", date: new Date(2016, 7, 25), note: "Security fixes" },
+        { version: "9.3.6", date: new Date(2019, 6, 22), note: "GPS bug fix" }
+      ]
+    },
+    "iOS 10": {
+      majorDate: new Date(2016, 8, 13),
+      note: "Redesigned lock screen, iMessage apps",
+      fullName: "iOS 10",
+      pointReleases: [
+        { version: "10.0", date: new Date(2016, 8, 13), note: "Redesigned lock screen" },
+        { version: "10.0.1", date: new Date(2016, 8, 22), note: "Bug fixes" },
+        { version: "10.0.2", date: new Date(2016, 8, 23), note: "Headphone fixes" },
+        { version: "10.0.3", date: new Date(2016, 9, 17), note: "Cellular fixes" },
+        { version: "10.1", date: new Date(2016, 9, 24), note: "Portrait Mode" },
+        { version: "10.1.1", date: new Date(2016, 9, 31), note: "Health data fix" },
+        { version: "10.2", date: new Date(2016, 11, 12), note: "TV app" },
+        { version: "10.2.1", date: new Date(2017, 0, 23), note: "Security improvements" },
+        { version: "10.3", date: new Date(2017, 2, 27), note: "APFS filesystem" },
+        { version: "10.3.1", date: new Date(2017, 3, 3), note: "Security improvements" },
+        { version: "10.3.2", date: new Date(2017, 4, 15), note: "Bug fixes" },
+        { version: "10.3.3", date: new Date(2017, 6, 19), note: "Security updates" },
+        { version: "10.3.4", date: new Date(2019, 6, 22), note: "GPS fix" }
+      ]
+    },
+    "iOS 11": {
+      majorDate: new Date(2017, 8, 19),
+      note: "Control Center redesign, ARKit",
+      fullName: "iOS 11",
+      pointReleases: [
+        { version: "11.0", date: new Date(2017, 8, 19), note: "ARKit, Files app" },
+        { version: "11.0.1", date: new Date(2017, 8, 26), note: "Email fixes" },
+        { version: "11.0.2", date: new Date(2017, 9, 3), note: "iPhone 8 fixes" },
+        { version: "11.0.3", date: new Date(2017, 9, 11), note: "iPhone 7 fixes" },
+        { version: "11.1", date: new Date(2017, 9, 31), note: "New emoji" },
+        { version: "11.1.1", date: new Date(2017, 10, 9), note: "Keyboard fix" },
+        { version: "11.1.2", date: new Date(2017, 10, 16), note: "iPhone X display fix" },
+        { version: "11.2", date: new Date(2017, 11, 2), note: "Apple Pay Cash" },
+        { version: "11.2.1", date: new Date(2017, 11, 13), note: "HomeKit fix" },
+        { version: "11.2.2", date: new Date(2018, 0, 8), note: "Framework fixes" },
+        { version: "11.2.5", date: new Date(2018, 1, 19), note: "Audio fixes" },
+        { version: "11.2.6", date: new Date(2018, 1, 23), note: "Accessory fixes" },
+        { version: "11.3", date: new Date(2018, 2, 29), note: "Battery Health" },
+        { version: "11.3.1", date: new Date(2018, 3, 24), note: "iPhone 8 display" },
+        { version: "11.4", date: new Date(2018, 4, 29), note: "Messages in iCloud" },
+        { version: "11.4.1", date: new Date(2018, 6, 9), note: "Security fixes" }
+      ]
+    },
+    "iOS 12": {
+      majorDate: new Date(2018, 8, 17),
+      note: "Performance improvements, Screen Time",
+      fullName: "iOS 12",
+      pointReleases: [
+        { version: "12.0", date: new Date(2018, 8, 17), note: "Screen Time, Memoji" },
+        { version: "12.0.1", date: new Date(2018, 9, 8), note: "iPhone XS charging" },
+        { version: "12.1", date: new Date(2018, 9, 30), note: "Group FaceTime" },
+        { version: "12.1.1", date: new Date(2018, 11, 5), note: "FaceTime fixes" },
+        { version: "12.1.2", date: new Date(2018, 11, 17), note: "eSIM fixes" },
+        { version: "12.1.3", date: new Date(2019, 0, 22), note: "Messages fixes" },
+        { version: "12.1.4", date: new Date(2019, 1, 7), note: "FaceTime security" },
+        { version: "12.2", date: new Date(2019, 2, 25), note: "Apple News+" },
+        { version: "12.3", date: new Date(2019, 4, 13), note: "New TV app" },
+        { version: "12.3.1", date: new Date(2019, 4, 24), note: "VoLTE fixes" },
+        { version: "12.3.2", date: new Date(2019, 5, 17), note: "Camera fixes" },
+        { version: "12.4", date: new Date(2019, 6, 22), note: "Wireless migration" },
+        { version: "12.4.1", date: new Date(2019, 7, 26), note: "Security updates" },
+        { version: "12.5.7", date: new Date(2023, 0, 23), note: "Final security update" }
+      ]
+    },
+    "iOS 13": {
+      majorDate: new Date(2019, 8, 19),
+      note: "Dark Mode, Sign in with Apple",
+      fullName: "iOS 13",
+      pointReleases: [
+        { version: "13.0", date: new Date(2019, 8, 19), note: "Dark Mode" },
+        { version: "13.1", date: new Date(2019, 8, 24), note: "Bug fixes" },
+        { version: "13.1.1", date: new Date(2019, 8, 27), note: "Keyboard fixes" },
+        { version: "13.1.2", date: new Date(2019, 9, 1), note: "Camera fixes" },
+        { version: "13.1.3", date: new Date(2019, 9, 15), note: "Mail fixes" },
+        { version: "13.2", date: new Date(2019, 9, 28), note: "Deep Fusion" },
+        { version: "13.2.2", date: new Date(2019, 10, 7), note: "Multitasking fixes" },
+        { version: "13.2.3", date: new Date(2019, 10, 18), note: "Search fixes" },
+        { version: "13.3", date: new Date(2019, 11, 10), note: "Screen Time limits" },
+        { version: "13.3.1", date: new Date(2020, 0, 13), note: "Location fixes" },
+        { version: "13.4", date: new Date(2020, 2, 24), note: "iCloud folder sharing" },
+        { version: "13.4.1", date: new Date(2020, 3, 7), note: "FaceTime fix" },
+        { version: "13.5", date: new Date(2020, 4, 20), note: "COVID-19 Exposure API" },
+        { version: "13.5.1", date: new Date(2020, 5, 1), note: "Watch unlocking" },
+        { version: "13.6", date: new Date(2020, 6, 15), note: "Car Key support" },
+        { version: "13.6.1", date: new Date(2020, 7, 12), note: "Storage fixes" },
+        { version: "13.7", date: new Date(2020, 8, 1), note: "Final update" }
+      ]
+    },
+    "iOS 14": {
+      majorDate: new Date(2020, 8, 16),
+      note: "Home Screen widgets, App Library",
+      fullName: "iOS 14",
+      pointReleases: [
+        { version: "14.0", date: new Date(2020, 8, 16), note: "Widgets, App Library" },
+        { version: "14.0.1", date: new Date(2020, 8, 24), note: "Default app fixes" },
+        { version: "14.1", date: new Date(2020, 9, 20), note: "iPhone 12 support" },
+        { version: "14.2", date: new Date(2020, 10, 5), note: "People Detection" },
+        { version: "14.2.1", date: new Date(2020, 10, 19), note: "Lock screen fixes" },
+        { version: "14.3", date: new Date(2020, 11, 14), note: "Apple Fitness+" },
+        { version: "14.4", date: new Date(2021, 0, 26), note: "Keyboard lag fixes" },
+        { version: "14.4.1", date: new Date(2021, 2, 8), note: "WebKit security" },
+        { version: "14.4.2", date: new Date(2021, 2, 26), note: "Security fixes" },
+        { version: "14.5", date: new Date(2021, 3, 26), note: "App Tracking Transparency" },
+        { version: "14.5.1", date: new Date(2021, 4, 3), note: "ATT bug fix" },
+        { version: "14.6", date: new Date(2021, 4, 24), note: "Apple Card Family" },
+        { version: "14.7", date: new Date(2021, 6, 19), note: "MagSafe Battery Pack" },
+        { version: "14.7.1", date: new Date(2021, 6, 26), note: "Security fix" },
+        { version: "14.8", date: new Date(2021, 8, 13), note: "Security updates" },
+        { version: "14.8.1", date: new Date(2021, 9, 26), note: "Security updates" }
+      ]
+    },
+    "iOS 15": {
+      majorDate: new Date(2021, 8, 20),
+      note: "Focus modes, SharePlay",
+      fullName: "iOS 15",
+      pointReleases: [
+        { version: "15.0", date: new Date(2021, 8, 20), note: "Focus mode, Live Text" },
+        { version: "15.1", date: new Date(2021, 9, 25), note: "SharePlay enabled" },
+        { version: "15.2", date: new Date(2021, 11, 13), note: "App Privacy Report" },
+        { version: "15.3", date: new Date(2022, 0, 26), note: "Braille improvements" },
+        { version: "15.4", date: new Date(2022, 2, 14), note: "Face ID with mask" },
+        { version: "15.5", date: new Date(2022, 4, 16), note: "Podcast improvements" },
+        { version: "15.6", date: new Date(2022, 6, 20), note: "TV app improvements" },
+        { version: "15.7", date: new Date(2022, 8, 12), note: "Security updates" },
+        { version: "15.8", date: new Date(2022, 9, 24), note: "Security updates" }
+      ]
+    },
+    "iOS 16": {
+      majorDate: new Date(2022, 8, 12),
+      note: "Lock Screen customization",
+      fullName: "iOS 16",
+      pointReleases: [
+        { version: "16.0", date: new Date(2022, 8, 12), note: "Customizable Lock Screen" },
+        { version: "16.1", date: new Date(2022, 9, 24), note: "Live Activities API" },
+        { version: "16.2", date: new Date(2022, 11, 13), note: "Freeform app" },
+        { version: "16.3", date: new Date(2023, 0, 23), note: "Security Keys" },
+        { version: "16.4", date: new Date(2023, 2, 27), note: "Web Push notifications" },
+        { version: "16.5", date: new Date(2023, 4, 18), note: "My Sports in News" },
+        { version: "16.6", date: new Date(2023, 6, 24), note: "Security updates" },
+        { version: "16.7", date: new Date(2023, 8, 21), note: "Security updates" }
+      ]
+    },
+    "iOS 17": {
+      majorDate: new Date(2023, 8, 18),
+      note: "Interactive widgets, StandBy",
+      fullName: "iOS 17",
+      pointReleases: [
+        { version: "17.0", date: new Date(2023, 8, 18), note: "StandBy mode, NameDrop" },
+        { version: "17.1", date: new Date(2023, 9, 25), note: "AirDrop over internet" },
+        { version: "17.2", date: new Date(2023, 11, 11), note: "Journal app" },
+        { version: "17.3", date: new Date(2024, 0, 22), note: "Collaborative Playlists" },
+        { version: "17.4", date: new Date(2024, 2, 5), note: "EU compliance" },
+        { version: "17.5", date: new Date(2024, 4, 13), note: "Web distribution" },
+        { version: "17.6", date: new Date(2024, 6, 29), note: "Security updates" },
+        { version: "17.7", date: new Date(2024, 8, 16), note: "Security support" }
+      ]
+    },
+    "iOS 18": {
+      majorDate: new Date(2024, 8, 16),
+      note: "Apple Intelligence",
+      fullName: "iOS 18",
+      pointReleases: [
+        { version: "18.0", date: new Date(2024, 8, 16), note: "RCS messaging" },
+        { version: "18.1", date: new Date(2024, 9, 28), note: "Apple Intelligence" },
+        { version: "18.2", date: new Date(2024, 11, 11), note: "Image Playground" },
+        { version: "18.3", date: new Date(2025, 0, 27), note: "AI enabled by default" },
+        { version: "18.3.1", date: new Date(2025, 1, 10), note: "USB security fixes" },
+        { version: "18.3.2", date: new Date(2025, 1, 24), note: "Security updates" }
+      ]
+    }
+  };
+
+  // Create array of major versions for main timeline
+  const majorVersions = [];
+
+  // Add iOS 1-18
+  Object.keys(versionData).forEach((key, index) => {
+    majorVersions.push({
+      version: key,
+      date: versionData[key].majorDate,
+      note: versionData[key].note,
+      fullName: versionData[key].fullName,
+      versionNumber: index + 1,
+      hasPointReleases: true
+    });
+  });
+
+  // Add placeholder dots for iOS 19-25
+  for (let i = 19; i <= 25; i++) {
+    majorVersions.push({
+      version: `iOS ${i}`,
+      date: new Date(2025, 8, 15), // All at iOS 26 date
+      note: "",
+      versionNumber: i,
+      isPlaceholder: true
+    });
+  }
+
+  // Add iOS 26
+  majorVersions.push({
+    version: "iOS 26",
+    date: new Date(2025, 8, 15), // September 2025
+    note: "The next chapter",
+    fullName: "iOS 26",
+    versionNumber: 26,
+    hasPointReleases: false
+  });
+
+  // Setup SVG and scales
+  const svg = document.getElementById('timeline-chart');
+  const tooltip = document.getElementById('tooltip');
+  const monthView = document.getElementById('month-view');
+  const containerEl = document.querySelector('.chart-container');
+  const containerRect = containerEl.getBoundingClientRect();
+
+  const margin = { top: 120, right: 40, bottom: 140, left: 140 };
+  const width = containerRect.width - margin.left - margin.right;
+  const height = containerRect.height - margin.top - margin.bottom;
+
+  // Update SVG viewBox
+  svg.setAttribute('viewBox', `0 0 ${containerRect.width} ${containerRect.height}`);
+
+  // Create scales
+  const xScale = (date) => {
+    const minDate = new Date(2007, 0, 1);
+    const maxDate = new Date(2026, 0, 1);
+    const range = maxDate - minDate;
+    const progress = (date - minDate) / range;
+    return margin.left + progress * width;
+  };
+
+  const yScale = (versionNum) => {
+    if (versionNum <= 18) {
+      // Normal spacing for iOS 1-18
+      const progress = (versionNum - 1) / 17;
+      return margin.top + (1 - progress) * (height * 0.85);
+    } else if (versionNum === 26) {
+      // Moderate jump for iOS 26
+      return margin.top * 0.3;
+    } else {
+      // Placeholder dots near iOS 18
+      return yScale(18) - 20;
+    }
+  };
+
+  // Draw grid lines with two rows of year labels
+  const years = [];
+  for (let year = 2007; year <= 2025; year++) {
+    years.push(year);
+  }
+
+  years.forEach((year, index) => {
+    const x = xScale(new Date(year, 0, 1));
+    const gridLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    gridLine.setAttribute('class', 'grid-line');
+    gridLine.setAttribute('x1', x);
+    gridLine.setAttribute('y1', margin.top);
+    gridLine.setAttribute('x2', x);
+    gridLine.setAttribute('y2', margin.top + height);
+    svg.appendChild(gridLine);
+
+    // Two rows of labels
+    const isEvenRow = year % 2 === 0;
+    const yOffset = isEvenRow ? 35 : 60;
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('class', isEvenRow ? 'axis-text' : 'axis-text-alt');
+    text.setAttribute('x', x);
+    text.setAttribute('y', margin.top + height + yOffset);
+    text.setAttribute('text-anchor', 'middle');
+    text.textContent = year;
+    svg.appendChild(text);
+  });
+
+  // Draw version numbers on Y axis
+  [1, 5, 10, 15, 18, 26].forEach(v => {
+    const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    text.setAttribute('class', 'axis-text');
+    text.setAttribute('x', margin.left - 20);
+    text.setAttribute('y', yScale(v) + 6);
+    text.setAttribute('text-anchor', 'end');
+    text.textContent = `iOS ${v}${v <= 3 ? '*' : ''}`;
+    text.style.fill = getVersionColor(v);
+    text.style.fontSize = '20px';
+    text.style.fontWeight = '600';
+    svg.appendChild(text);
+  });
+
+  // Draw the main line
+  const pathData = majorVersions
+    .filter(v => !v.isPlaceholder)
+    .map((v, i) => {
+      const x = xScale(v.date);
+      const y = yScale(v.versionNumber);
+      return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+    }).join(' ');
+
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+  path.setAttribute('class', 'version-line');
+  path.setAttribute('d', pathData);
+  path.setAttribute('filter', 'url(#glow)');
+  svg.appendChild(path);
+
+  // Animate the line
+  const pathLength = path.getTotalLength();
+  path.style.strokeDasharray = pathLength;
+  path.style.strokeDashoffset = pathLength;
+
+  setTimeout(() => {
+    path.style.transition = 'stroke-dashoffset 4s ease-in-out';
+    path.style.strokeDashoffset = '0';
+  }, 100);
+
+  // State for expanded versions
+  let currentExpandedVersion = null;
+  let pointReleaseDots = new Map();
+
+  // Draw dots for major versions
+  majorVersions.forEach((v, i) => {
+    const x = xScale(v.date);
+    const y = yScale(v.versionNumber);
+
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('class', `version-dot ${v.isPlaceholder ? 'placeholder' : ''}`);
+    dot.setAttribute('cx', x);
+    dot.setAttribute('cy', y);
+    dot.setAttribute('r', v.isPlaceholder ? 3 : 12);
+
+    if (!v.isPlaceholder) {
+      const color = getVersionColor(v.versionNumber);
+      const gradient = document.createElementNS('http://www.w3.org/2000/svg', 'radialGradient');
+      gradient.setAttribute('id', `dotGrad${v.versionNumber}`);
+      gradient.innerHTML = `
+        <stop offset="0%" style="stop-color:${color};stop-opacity:1" />
+        <stop offset="100%" style="stop-color:${color};stop-opacity:0.7" />
+      `;
+      svg.querySelector('defs').appendChild(gradient);
+
+      dot.style.fill = `url(#dotGrad${v.versionNumber})`;
+
+      // Animate dots
+      dot.style.opacity = '0';
+      dot.style.transform = 'scale(0)';
+      setTimeout(() => {
+        dot.style.transition = 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)';
+        dot.style.opacity = '1';
+        dot.style.transform = 'scale(1)';
+      }, 100 + (i * 150));
+    }
+
+    // Add interactivity for non-placeholder dots
+    if (!v.isPlaceholder) {
+      dot.addEventListener('mouseenter', (e) => {
+        const rect = svg.getBoundingClientRect();
+        const container = document.querySelector('.ios-timeline-container');
+        const containerRect = container.getBoundingClientRect();
+
+        const color = getVersionColor(v.versionNumber);
+        tooltip.style.borderColor = color + '33';
+        tooltip.querySelector('.tooltip-version').textContent = v.fullName || v.version;
+        tooltip.querySelector('.tooltip-version').style.color = color;
+        tooltip.querySelector('.tooltip-date').textContent = v.date.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        });
+        tooltip.querySelector('.tooltip-note').textContent = v.note;
+
+        if (v.hasPointReleases) {
+          tooltip.querySelector('.tooltip-click-hint').textContent = 'Click to explore releases';
+        } else {
+          tooltip.querySelector('.tooltip-click-hint').textContent = '';
+        }
+
+        const tooltipRect = tooltip.getBoundingClientRect();
+        let left = e.clientX - containerRect.left - tooltipRect.width / 2;
+        let top = e.clientY - containerRect.top - tooltipRect.height - 20;
+
+        // Keep tooltip within bounds
+        if (left < 10) left = 10;
+        if (left + tooltipRect.width > containerRect.width - 10) {
+          left = containerRect.width - tooltipRect.width - 10;
+        }
+        if (top < 10) {
+          top = e.clientY - containerRect.top + 20;
+        }
+
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
+        tooltip.classList.add('visible');
+      });
+
+      dot.addEventListener('mouseleave', () => {
+        tooltip.classList.remove('visible');
+      });
+
+      // Click to expand point releases
+      if (v.hasPointReleases) {
+        dot.addEventListener('click', () => {
+          togglePointReleases(v.version);
+        });
+      }
+    }
+
+    svg.appendChild(dot);
+  });
+
+  // Function to toggle point releases
+  function togglePointReleases(versionKey) {
+    // Close any currently expanded version
+    if (currentExpandedVersion && currentExpandedVersion !== versionKey) {
+      const dots = pointReleaseDots.get(currentExpandedVersion) || [];
+      dots.forEach(dot => {
+        dot.style.opacity = '0';
+        setTimeout(() => dot.remove(), 300);
+      });
+      pointReleaseDots.delete(currentExpandedVersion);
+    }
+
+    if (currentExpandedVersion === versionKey) {
+      // Collapse
+      const dots = pointReleaseDots.get(versionKey) || [];
+      dots.forEach(dot => {
+        dot.style.opacity = '0';
+        setTimeout(() => dot.remove(), 300);
+      });
+      pointReleaseDots.delete(versionKey);
+      currentExpandedVersion = null;
+    } else {
+      // Expand
+      currentExpandedVersion = versionKey;
+      const data = versionData[versionKey];
+      const dots = [];
+      const versionNum = parseInt(versionKey.replace(/[^\d]/g, ''));
+      const color = getVersionColor(versionNum);
+
+      data.pointReleases.forEach((release, i) => {
+        const x = xScale(release.date);
+        const baseY = yScale(versionNum);
+        const y = baseY + (i + 1) * 25;
+
+        const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+        dot.setAttribute('class', 'point-release-dot');
+        dot.setAttribute('cx', x);
+        dot.setAttribute('cy', y);
+        dot.setAttribute('r', 7);
+        dot.style.fill = color;
+        dot.style.color = color;
+
+        // Connect to main version
+        const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        line.setAttribute('class', 'point-release-line');
+        line.setAttribute('x1', x);
+        line.setAttribute('y1', baseY);
+        line.setAttribute('x2', x);
+        line.setAttribute('y2', y);
+        line.style.stroke = color;
+        svg.appendChild(line);
+
+        // Add hover for point releases
+        dot.addEventListener('mouseenter', (e) => {
+          const rect = svg.getBoundingClientRect();
+          const container = document.querySelector('.ios-timeline-container');
+          const containerRect = container.getBoundingClientRect();
+
+          tooltip.style.borderColor = color + '33';
+          tooltip.querySelector('.tooltip-version').textContent = `${data.fullName} ${release.version}`;
+          tooltip.querySelector('.tooltip-version').style.color = color;
+          tooltip.querySelector('.tooltip-date').textContent = release.date.toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+          });
+          tooltip.querySelector('.tooltip-note').textContent = release.note;
+          tooltip.querySelector('.tooltip-click-hint').textContent = 'Click for month view';
+
+          const tooltipRect = tooltip.getBoundingClientRect();
+          let left = e.clientX - containerRect.left - tooltipRect.width / 2;
+          let top = e.clientY - containerRect.top - tooltipRect.height - 20;
+
+          if (left < 10) left = 10;
+          if (left + tooltipRect.width > containerRect.width - 10) {
+            left = containerRect.width - tooltipRect.width - 10;
+          }
+          if (top < 10) {
+            top = e.clientY - containerRect.top + 20;
+          }
+
+          tooltip.style.left = `${left}px`;
+          tooltip.style.top = `${top}px`;
+          tooltip.classList.add('visible');
+        });
+
+        dot.addEventListener('mouseleave', () => {
+          tooltip.classList.remove('visible');
+        });
+
+        // Click for monthly view
+        dot.addEventListener('click', (e) => {
+          e.stopPropagation();
+          showMonthlyBreakdown(versionKey, release.version);
+        });
+
+        svg.appendChild(dot);
+        dots.push(dot);
+        dots.push(line);
+
+        // Animate in
+        setTimeout(() => {
+          dot.classList.add('visible');
+        }, i * 50);
+      });
+
+      pointReleaseDots.set(versionKey, dots);
+    }
+  }
+
+  // Function to show monthly breakdown
+  function showMonthlyBreakdown(majorVersion, pointVersion) {
+    const releases = versionData[majorVersion].pointReleases;
+    const targetRelease = releases.find(r => r.version === pointVersion);
+
+    if (!targetRelease) return;
+
+    // Get releases in the same month
+    const targetMonth = targetRelease.date.getMonth();
+    const targetYear = targetRelease.date.getFullYear();
+
+    const monthReleases = Object.entries(versionData).flatMap(([major, data]) =>
+      data.pointReleases
+        .filter(r => r.date.getMonth() === targetMonth && r.date.getFullYear() === targetYear)
+        .map(r => ({
+          ...r,
+          majorVersion: major,
+          fullName: data.fullName,
+          versionNum: parseInt(major.replace(/[^\d]/g, ''))
+        }))
+    ).sort((a, b) => a.date - b.date);
+
+    // Populate month view
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+                       'July', 'August', 'September', 'October', 'November', 'December'];
+
+    monthView.querySelector('.month-view-title').textContent =
+      `${monthNames[targetMonth]} ${targetYear} Releases`;
+
+    const content = monthView.querySelector('.month-view-content');
+    content.innerHTML = '';
+
+    monthReleases.forEach(release => {
+      const item = document.createElement('div');
+      item.className = 'month-item';
+      item.style.borderColor = getVersionColor(release.versionNum);
+
+      const date = document.createElement('div');
+      date.className = 'month-date';
+      date.textContent = release.date.toLocaleDateString('en-US', {
+        weekday: 'long',
+        month: 'long',
+        day: 'numeric'
+      });
+
+      const version = document.createElement('div');
+      version.className = 'month-version';
+      version.textContent = `${release.fullName} ${release.version}: ${release.note}`;
+
+      item.appendChild(date);
+      item.appendChild(version);
+      content.appendChild(item);
+    });
+
+    // Position and show
+    const rect = svg.getBoundingClientRect();
+    const container = document.querySelector('.ios-timeline-container');
+    const containerRect = container.getBoundingClientRect();
+
+    monthView.style.left = '50%';
+    monthView.style.top = '50%';
+    monthView.style.transform = 'translate(-50%, -50%) scale(0.9)';
+    monthView.classList.add('visible');
+
+    setTimeout(() => {
+      monthView.style.transform = 'translate(-50%, -50%) scale(1)';
+    }, 10);
+  }
+
+  // Close month view function
+  window.closeMonthView = function() {
+    monthView.classList.remove('visible');
+  };
+
+  // Click outside to close month view
+  document.addEventListener('click', (e) => {
+    if (!monthView.contains(e.target) && monthView.classList.contains('visible')) {
+      closeMonthView();
+    }
+  });
+
+  // Add hover effect to show vertical guide
+  svg.addEventListener('mousemove', (e) => {
+    const rect = svg.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+
+    // Remove existing guide line
+    const existingGuide = svg.querySelector('.guide-line');
+    if (existingGuide) existingGuide.remove();
+
+    if (x >= margin.left && x <= margin.left + width) {
+      const guideLine = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      guideLine.setAttribute('class', 'guide-line');
+      guideLine.setAttribute('x1', x);
+      guideLine.setAttribute('y1', margin.top);
+      guideLine.setAttribute('x2', x);
+      guideLine.setAttribute('y2', margin.top + height);
+      guideLine.style.stroke = 'rgba(255, 255, 255, 0.08)';
+      guideLine.style.strokeWidth = '1';
+      guideLine.style.pointerEvents = 'none';
+      svg.insertBefore(guideLine, svg.firstChild);
+    }
+  });
+
+  svg.addEventListener('mouseleave', () => {
+    const guideLine = svg.querySelector('.guide-line');
+    if (guideLine) guideLine.remove();
+  });
+})();
+</script>
+</body>
+</html>

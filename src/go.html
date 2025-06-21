@@ -1,0 +1,961 @@
+<!--
+GO LINK REDIRECTOR - MAIN APPLICATION
+1. Create a page in Ghost with URL slug "go"
+2. Add this entire HTML block as an HTML card
+3. Add the minimal injector to your site's Code Injection
+4. All links are maintained in ONE place - right here!
+
+FEATURES:
+- Stylized "/go#" header with "Ready, Set, Go#" tagline
+- Collapsible sections (Social expanded by default)
+- Optional images for each link
+- Hide entire sections with visible: false
+- Hide individual links with visible: false
+- Shortcuts work but don't appear in UI
+- Secret: /go#revelio shows ALL links including hidden ones
+- Clean, modern design with hover effects
+-->
+<div id="go-link-container" style="
+    /* Container styles - self-contained */
+    position: relative;
+    width: 100%;
+    min-height: 400px;
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    padding: 3rem 2rem;
+    box-sizing: border-box;
+    isolation: isolate;
+">
+    <style>
+        /* Scoped styles for this component only */
+        #go-link-container * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        #go-link-container .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Header styles */
+        #go-link-container .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #go-link-container .title-wrapper {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        #go-link-container .title {
+            font-size: 5rem;
+            font-weight: 900;
+            letter-spacing: -0.05em;
+            position: relative;
+            display: inline-flex;
+            align-items: baseline;
+            animation: titleSlide 1s ease-out;
+        }
+
+        @keyframes titleSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #go-link-container .slash {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 300;
+            font-size: 4rem;
+            margin-right: -0.1em;
+        }
+
+        #go-link-container .go-text {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-style: italic;
+            text-shadow: 0 0 40px rgba(255, 255, 255, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: brightness(1) drop-shadow(0 0 20px rgba(255, 255, 255, 0.5)); }
+            to { filter: brightness(1.2) drop-shadow(0 0 30px rgba(255, 255, 255, 0.8)); }
+        }
+
+        #go-link-container .hash {
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 300;
+            font-size: 3.5rem;
+            margin-left: -0.1em;
+            opacity: 0.6;
+        }
+
+        #go-link-container .subtitle {
+            font-size: 1.25rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 300;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        /* Section styles */
+        #go-link-container .section {
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        #go-link-container .section.expanded {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        #go-link-container .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        #go-link-container .section-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        #go-link-container .section-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-size: 1.25rem;
+        }
+
+        #go-link-container h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.9);
+            flex: 1;
+        }
+
+        #go-link-container .expand-icon {
+            width: 24px;
+            height: 24px;
+            opacity: 0.6;
+            transition: transform 0.3s ease;
+        }
+
+        #go-link-container .section.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Link grid */
+        #go-link-container .link-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+            padding: 0 1.5rem 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        #go-link-container .section.expanded .link-grid {
+            max-height: 2000px;
+        }
+
+        /* Link card styles */
+        #go-link-container .link-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        #go-link-container .link-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #go-link-container .link-icon {
+            width: 40px;
+            height: 40px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        #go-link-container .link-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        /* Special handling for SVG and dark logos */
+        #go-link-container .link-icon img[src*="github"],
+        #go-link-container .link-icon img[src*="simple-icons"],
+        #go-link-container .link-icon img[src*=".svg"] {
+            filter: brightness(0) invert(1);
+            opacity: 0.8;
+        }
+
+        #go-link-container .link-card:hover .link-icon img {
+            opacity: 1;
+        }
+
+        #go-link-container .link-content {
+            flex: 1;
+        }
+
+        #go-link-container .link-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255,255,255,0.05) 100%);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        #go-link-container .link-card:hover {
+            transform: translateY(-2px);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+        }
+
+        #go-link-container .link-card:hover::before {
+            opacity: 1;
+        }
+
+        #go-link-container .link-card:hover .link-icon {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        #go-link-container .link-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        #go-link-container .link-path {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        #go-link-container .link-description {
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 0.75rem;
+        }
+
+        #go-link-container .link-arrow {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            width: 20px;
+            height: 20px;
+            opacity: 0.5;
+            transition: all 0.2s ease;
+        }
+
+        #go-link-container .link-card:hover .link-arrow {
+            opacity: 1;
+            transform: translate(2px, -2px);
+        }
+
+        /* Redirecting state */
+        #go-link-container .redirect-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        #go-link-container .redirect-content {
+            text-align: center;
+            max-width: 400px;
+        }
+
+        #go-link-container .spinner {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top: 3px solid #fff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        #go-link-container .redirect-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        #go-link-container .redirect-url {
+            font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            word-break: break-all;
+            margin-top: 1rem;
+        }
+
+        /* Error state */
+        #go-link-container .error-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1.5rem;
+            position: relative;
+        }
+
+        #go-link-container .error-icon::before,
+        #go-link-container .error-icon::after {
+            content: '';
+            position: absolute;
+            width: 40px;
+            height: 3px;
+            background: #ff4444;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(45deg);
+        }
+
+        #go-link-container .error-icon::after {
+            transform: translate(-50%, -50%) rotate(-45deg);
+        }
+
+        /* Back button */
+        #go-link-container .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s ease;
+            margin-top: 1.5rem;
+        }
+
+        #go-link-container .back-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        /* Empty state */
+        #go-link-container .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Search box */
+        #go-link-container .search-container {
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        #go-link-container .search-input {
+            width: 100%;
+            padding: 1rem 3rem 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #fff;
+            font-size: 1rem;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        #go-link-container .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        #go-link-container .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        #go-link-container .search-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+
+    <div class="container">
+        <div id="main-content">
+            <!-- Content will be dynamically generated -->
+            <div style="text-align: center; padding: 2rem; color: rgba(255,255,255,0.5);">
+                <p>Loading go links...</p>
+            </div>
+            <noscript>
+                <div style="text-align: center; padding: 2rem;">
+                    <h2>JavaScript Required</h2>
+                    <p>This page requires JavaScript to function.</p>
+                </div>
+            </noscript>
+        </div>
+    </div>
+
+    <script>
+        // GO LINK REDIRECTOR FOR GHOST
+        // This handles all redirects from /go#link or /go?to=link formats
+
+        // Minimal decryption logic only
+        function decryptUrl(encryptedUrl, key) {
+            try {
+                // Base64 decode
+                var decoded = decodeURIComponent(escape(atob(encryptedUrl)));
+                // XOR decrypt
+                var result = '';
+                for (var i = 0; i < decoded.length; i++) {
+                    result += String.fromCharCode(decoded.charCodeAt(i) ^ key.charCodeAt(i % key.length));
+                }
+                return result;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        // Wait for DOM to be ready
+        var initialized = false;
+        function initGoLinks() {
+            if (initialized) return;
+            initialized = true;
+            try {
+                // Get main content element
+                var mainContent = document.getElementById('main-content');
+                if (!mainContent) return;
+                // LINK CONFIGURATION
+                // Edit this object to manage all your links
+var LINKS = {
+    "public": [
+        {
+            section: "Social Profiles",
+            icon: "👤",
+            expanded: true,
+            links: [
+                {
+                    name: "GitHub",
+                    path: "github",
+                    url: "https://github.com/IllyaStarikov",
+                    description: "Check out my open source projects",
+                    image: "https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png",
+                    visible: true
+                },
+                {
+                    name: "LinkedIn",
+                    path: "linkedin",
+                    url: "https://linkedin.com/in/illyastarikov",
+                    description: "Professional network and experience",
+                    image: "https://cdn-icons-png.flaticon.com/512/174/174857.png",
+                    visible: true
+                },
+                {
+                    name: "BlueSky",
+                    path: "bluesky",
+                    url: "https://bsky.app/profile/illya.starikov.co",
+                    description: "Follow me on BlueSky",
+                    image: "https://bsky.app/static/apple-touch-icon.png",
+                    visible: true
+                },
+                {
+                    name: "Spotify",
+                    path: "spotify",
+                    url: "https://open.spotify.com/user/ows1bq75fpsu8jc6to7swizs7",
+                    description: "See what I'm listening to",
+                    image: "https://storage.googleapis.com/pr-newsroom-wp/1/2018/11/Spotify_Logo_CMYK_Green.png",
+                    visible: true
+                },
+                {
+                    name: "Strava",
+                    path: "strava",
+                    url: "https://strava.com/athletes/12825495",
+                    description: "My athletic activities",
+                    image: "https://cdn.worldvectorlogo.com/logos/strava-2.svg",
+                    visible: true
+                },
+                {
+                    name: "Amazon Wishlist",
+                    path: "wishlist",
+                    url: "https://amazon.com/hz/wishlist/ls/27GJGUU9A6P8S",
+                    description: "Gift ideas if you're feeling generous",
+                    image: "https://www.pngmart.com/files/23/Amazon-Logo-White-PNG-Image.png",
+                    visible: true
+                },
+                {
+                    name: "Tesla Referral",
+                    path: "tesla",
+                    url: "https://ts.la/illya39523",
+                    description: "Get benefits on your Tesla purchase",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/b/bd/Tesla_Motors.svg",
+                    visible: true
+                }
+            ]
+        },
+        {
+            section: "Learning & Coding",
+            icon: "📚",
+            links: [
+                {
+                    name: "Goodreads",
+                    path: "goodreads",
+                    url: "https://goodreads.com/user/show/137314885-illya-starikov",
+                    description: "Books I'm reading",
+                    image: "https://s.gr-assets.com/assets/icons/goodreads_icon_50x50-823139ec9dc84278d3863007486ae0ac.png",
+                    visible: true
+                },
+                {
+                    name: "Duolingo",
+                    path: "duolingo",
+                    url: "https://duolingo.com/profile/illyastarikov",
+                    description: "Language learning progress",
+                    image: "https://d35aaqx5ub95lt.cloudfront.net/images/dca3b978d07a7dfc05adb1d5526e9e21.svg",
+                    visible: true
+                },
+                {
+                    name: "Duome Stats",
+                    path: "duome",
+                    url: "https://duome.eu/illyastarikov",
+                    description: "Detailed Duolingo statistics",
+                    image: "https://d35aaqx5ub95lt.cloudfront.net/images/dca3b978d07a7dfc05adb1d5526e9e21.svg",
+                    visible: true
+                },
+                {
+                    name: "Kattis",
+                    path: "kattis",
+                    url: "https://open.kattis.com/users/starikov",
+                    description: "Competitive programming profile",
+                    image: "https://open.kattis.com/images/kattis/judge.png",
+                    visible: true
+                }
+            ]
+        },
+        {
+            section: "Gaming",
+            icon: "🎮",
+            links: [
+                {
+                    name: "PlayStation",
+                    path: "psn",
+                    url: "https://psnprofiles.com/slavvboyy",
+                    description: "PSN: slavvboyy",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Playstation_logo_colour.svg/1200px-Playstation_logo_colour.svg.png",
+                    visible: true
+                },
+                {
+                    name: "Nintendo Switch",
+                    path: "switch",
+                    url: "https://starikov.co/elsewhere/#gaming",
+                    description: "Friend Code: SW-7932-1047-2126",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f0/Nintendo_Switch_logo.svg/1024px-Nintendo_Switch_logo.svg.png",
+                    visible: true
+                }
+            ]
+        },
+        {
+            section: "Support & Payment",
+            icon: "💸",
+            links: [
+                {
+                    name: "Venmo",
+                    path: "venmo",
+                    url: "https://account.venmo.com/u/starikov",
+                    description: "Send money via Venmo: @starikov",
+                    image: "https://cdn1.venmo.com/marketing/images/branding/venmo-icon.svg",
+                    visible: true
+                },
+                {
+                    name: "Cash App",
+                    path: "cashapp",
+                    url: "https://cash.app/$illyastarikov",
+                    description: "Send money via Cash App",
+                    image: "https://upload.wikimedia.org/wikipedia/commons/c/c5/Square_Cash_app_logo.svg",
+                    visible: true
+                },
+                {
+                    name: "PayPal",
+                    path: "paypal",
+                    url: "https://paypal.me/IllyaStarikov",
+                    description: "Send money via PayPal",
+                    image: "https://cdn-icons-png.flaticon.com/512/174/174861.png",
+                    visible: true
+                },
+                {
+                    name: "Zelle",
+                    path: "zelle",
+                    url: "https://starikov.co/contact",
+                    description: "Contact for phone number",
+                    image: "https://download.logo.wine/logo/Zelle_(payment_service)/Zelle_(payment_service)-Logo.wine.png",
+                    visible: true
+                },
+                {
+                    name: "Apple Pay",
+                    path: "applepay",
+                    url: "https://starikov.co/contact",
+                    description: "Contact for phone number",
+                    image: "https://developer.apple.com/assets/elements/icons/apple-pay/apple-pay.svg",
+                    visible: true
+                }
+            ]
+        }
+    ],
+    "encrypted": {}
+};
+                        // Example sections you can hide by setting visible: false
+                        // {
+                        //     section: "Hidden Section Example",
+                        //     icon: "🚫",
+                        //     visible: false, // This entire section won't show
+                        //     links: [
+                        //         { name: "Hidden Link", path: "hidden", url: "https://example.com", visible: true }
+                        //     ]
+                        // }
+                    ],
+                    // Additional links
+                    "encrypted": {
+                        // "admin": "your-encrypted-string-here",
+                        // "dashboard": "your-encrypted-string-here"
+                    }
+                };
+
+                // Add invisible shortcuts and aliases
+                var shortcuts = [
+                    { path: "gh", url: "https://github.com/IllyaStarikov" },
+                    { path: "li", url: "https://linkedin.com/in/illyastarikov" },
+                    { path: "cal", url: "https://calendly.com/illyastarikov" }, // TODO: Update with your calendar
+                    { path: "coffee", url: "https://venmo.com/starikov" },
+                    { path: "boba", url: "https://venmo.com/starikov" },
+                    { path: "tip", url: "https://venmo.com/starikov" },
+                    { path: "meet", url: "https://calendly.com/illyastarikov" }, // TODO: Update with your calendar
+                    { path: "ps", url: "https://psnprofiles.com/slavvboyy" },
+                    { path: "playstation", url: "https://psnprofiles.com/slavvboyy" },
+                    { path: "amazon", url: "https://amazon.com/hz/wishlist/ls/27GJGUU9A6P8S" },
+                    { path: "music", url: "https://open.spotify.com/user/ows1bq75fpsu8jc6to7swizs7" },
+                    { path: "run", url: "https://strava.com/athletes/12825495" },
+                    { path: "code", url: "https://github.com/IllyaStarikov" },
+                    { path: "books", url: "https://goodreads.com/illyastarikov" },
+                    { path: "pay", url: "https://venmo.com/starikov" },
+                    { path: "cash", url: "https://cash.app/$illyastarikov" }
+                ];
+
+                // Build lookup table for all links including shortcuts
+                var allLinks = {};
+                LINKS.public.forEach(function(section) {
+                    section.links.forEach(function(link) {
+                        allLinks[link.path] = link.url;
+                    });
+                });
+                shortcuts.forEach(function(shortcut) {
+                    allLinks[shortcut.path] = shortcut.url;
+                });
+
+                // Configuration
+                var REDIRECT_DELAY = 800;
+
+                // Get current path and parameters
+                var fullPath = window.location.pathname;
+                var urlParams = new URLSearchParams(window.location.search);
+                var hash = window.location.hash.replace('#', '');
+
+                // Get the destination from either:
+                // 1. Hash: /go#github (primary method from our injector)
+                // 2. Query parameter: /go?to=github (fallback)
+                var destination = hash || urlParams.get('to') || urlParams.get('link') || urlParams.get('l');
+
+                // Handle hash with parameters (e.g., #github&key=secret)
+                var hashKey = null;
+                if (hash && hash.includes('&')) {
+                    var hashParts = hash.split('&');
+                    destination = hashParts[0];
+                    for (var i = 1; i < hashParts.length; i++) {
+                        if (hashParts[i].startsWith('key=')) {
+                            hashKey = hashParts[i].substring(4);
+                        }
+                    }
+                }
+
+                // Check if we have a destination
+                if (destination) {
+                    var targetPath = destination.toLowerCase();
+                    var found = false;
+                    var targetUrl = null;
+
+                    // Check all links (including shortcuts)
+                    targetUrl = allLinks[targetPath];
+                    if (targetUrl) {
+                        found = true;
+                    }
+
+                    // Check encrypted links
+                    if (!found && LINKS.encrypted[targetPath]) {
+                        var providedKey = urlParams.get('key') || hashKey;
+                        if (providedKey) {
+                            var decrypted = decryptUrl(LINKS.encrypted[targetPath], providedKey);
+                            if (decrypted && decrypted.startsWith('http')) {
+                                found = true;
+                                targetUrl = decrypted;
+                            }
+                        } else {
+                            // Show key required
+                            mainContent.innerHTML = '<div class="redirect-overlay">' +
+                                '<div class="redirect-content">' +
+                                '<div class="error-icon"></div>' +
+                                '<h1 class="redirect-title">Access Key Required</h1>' +
+                                '<p>This link requires an access key.</p>' +
+                                '<p style="font-size: 0.875rem; color: rgba(255,255,255,0.6); margin-top: 1rem;">Use format: /go#' + targetPath + '&key=your-key</p>' +
+                                '<a href="/go" class="back-button">' +
+                                '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                '<path d="M19 12H5M12 19l-7-7 7-7"/>' +
+                                '</svg>' +
+                                'Back to links</a>' +
+                                '</div></div>';
+                            return;
+                        }
+                    }
+
+                    if (found && targetUrl) {
+                        // Show redirect screen
+                        mainContent.innerHTML = '<div class="redirect-overlay">' +
+                            '<div class="redirect-content">' +
+                            '<div class="spinner"></div>' +
+                            '<h1 class="redirect-title">Redirecting...</h1>' +
+                            '<p>Taking you to your destination</p>' +
+                            '<div class="redirect-url">' + targetUrl + '</div>' +
+                            '</div></div>';
+
+                        // Perform redirect
+                        setTimeout(function() {
+                            window.location.href = targetUrl;
+                        }, REDIRECT_DELAY);
+                    } else {
+                        // Show 404
+                        mainContent.innerHTML = '<div class="redirect-overlay">' +
+                            '<div class="redirect-content">' +
+                            '<div class="error-icon"></div>' +
+                            '<h1 class="redirect-title">Link Not Found</h1>' +
+                            '<p>The link "' + destination + '" doesn\'t exist.</p>' +
+                            '<a href="/go" class="back-button">' +
+                            '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                            '<path d="M19 12H5M12 19l-7-7 7-7"/>' +
+                            '</svg>' +
+                            'Back to links</a>' +
+                            '</div></div>';
+                    }
+                } else {
+                    // Show link directory
+                    showLinkDirectory(false);
+                }
+
+                // Function to show all links including hidden ones
+                function showAllLinks() {
+                    showLinkDirectory(true);
+                }
+
+                // Function to show link directory
+                function showLinkDirectory(showHidden) {
+                    var html = '<div class="header">' +
+                        '<div class="title-wrapper">' +
+                        '<h1 class="title">' +
+                        '<span class="slash">/</span>' +
+                        '<span class="go-text">go</span>' +
+                        '<span class="hash">#</span>' +
+                        '</h1>' +
+                        '</div>' +
+                        '<p class="subtitle">Ready, Set, Go#</p>' +
+                        '</div>';
+
+                    // Add search
+                    html += '<div class="search-container">' +
+                        '<input type="text" class="search-input" id="search-links" placeholder="Search links..." />' +
+                        '<svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                        '<circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>' +
+                        '</svg></div>';
+
+                    // Build sections
+                    var hasVisibleLinks = false;
+
+                    LINKS.public.forEach(function(section, sectionIndex) {
+                        // Check if section is visible or if we're showing hidden
+                        if (!showHidden && section.visible === false) return;
+
+                        var visibleLinks = section.links.filter(function(link) {
+                            return showHidden || link.visible !== false;
+                        });
+
+                        if (visibleLinks.length > 0) {
+                            hasVisibleLinks = true;
+                            var isExpanded = section.expanded || false;
+
+                            html += '<div class="section ' + (isExpanded ? 'expanded' : '') + '" data-section="' + section.section + '" data-section-index="' + sectionIndex + '">' +
+                                '<div class="section-header" onclick="toggleSection(' + sectionIndex + ')">' +
+                                '<div class="section-icon">' + (section.icon || '📁') + '</div>' +
+                                '<h2>' + section.section + ' <span style="font-weight: 400; font-size: 0.875rem; opacity: 0.6;">(' + visibleLinks.length + ')</span></h2>' +
+                                '<svg class="expand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                '<path d="M6 9l6 6 6-6"/>' +
+                                '</svg>' +
+                                '</div>' +
+                                '<div class="link-grid">';
+
+                            visibleLinks.forEach(function(link) {
+                                var imageHtml = '';
+                                if (link.image) {
+                                    imageHtml = '<div class="link-icon"><img src="' + link.image + '" alt="' + link.name + '" /></div>';
+                                }
+
+                                html += '<a href="/go#' + link.path + '" class="link-card" data-name="' + link.name.toLowerCase() + '" data-description="' + (link.description || '').toLowerCase() + '">' +
+                                    (imageHtml ? '<div class="link-header">' + imageHtml + '<div class="link-content">' : '<div class="link-content" style="margin-bottom: 0.5rem;">') +
+                                    '<div class="link-name">' + link.name + '</div>' +
+                                    '<div class="link-path">/go#' + link.path + '</div>' +
+                                    '</div>' +
+                                    (imageHtml ? '</div>' : '') +
+                                    '<div class="link-description">' + (link.description || '') + '</div>' +
+                                    '<svg class="link-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">' +
+                                    '<path d="M7 17L17 7M17 7H7M17 7V17"/>' +
+                                    '</svg></a>';
+                            });
+
+                            html += '</div></div>';
+                        }
+                    });
+
+                    if (!hasVisibleLinks) {
+                        html += '<div class="empty-state">No links available</div>';
+                    }
+
+                    if (showHidden) {
+                        html += '<div style="text-align: center; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.1)); border-radius: 16px; border: 1px solid rgba(138, 43, 226, 0.3);">' +
+                            '<p style="font-size: 1.5rem; margin-bottom: 0.5rem;">✨ 🪄 ✨</p>' +
+                            '<p style="font-size: 0.875rem; opacity: 0.8; letter-spacing: 0.1em; text-transform: uppercase;">Revelio! All secrets revealed</p>' +
+                            '</div>';
+                    }
+
+                    mainContent.innerHTML = html;
+
+                    // Add search functionality
+                    var searchInput = document.getElementById('search-links');
+                    if (searchInput) {
+                        searchInput.addEventListener('input', function(e) {
+                            var query = e.target.value.toLowerCase();
+                            var sections = document.querySelectorAll('.section');
+
+                            sections.forEach(function(section) {
+                                var cards = section.querySelectorAll('.link-card');
+                                var hasMatch = false;
+
+                                cards.forEach(function(card) {
+                                    var name = card.getAttribute('data-name');
+                                    var desc = card.getAttribute('data-description');
+                                    var show = !query || name.includes(query) || desc.includes(query);
+                                    card.style.display = show ? 'block' : 'none';
+                                    if (show) hasMatch = true;
+                                });
+
+                                // Auto-expand sections with matches
+                                if (query && hasMatch) {
+                                    section.classList.add('expanded');
+                                }
+
+                                // Hide sections with no matches
+                                section.style.display = hasMatch || !query ? 'block' : 'none';
+                            });
+                        });
+                    }
+                }
+
+                // Toggle section expansion
+                window.toggleSection = function(index) {
+                    var section = document.querySelector('[data-section-index="' + index + '"]');
+                    if (section) {
+                        section.classList.toggle('expanded');
+                    }
+                };
+            } catch (error) {
+                document.getElementById('main-content').innerHTML =
+                    '<div class="redirect-overlay">' +
+                    '<div class="redirect-content">' +
+                    '<h1>Configuration Error</h1>' +
+                    '<p>There was an error loading the go links.</p>' +
+                    '</div></div>';
+            }
+        }
+
+        // Try to init on DOMContentLoaded
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initGoLinks);
+        } else {
+            // DOM already loaded, init immediately
+            initGoLinks();
+        }
+
+        // Fallback: also try after a short delay
+        setTimeout(initGoLinks, 100);
+    </script>
+</div>

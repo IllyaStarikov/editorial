@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+</head>
+<body>
+    <div id="go-link-container" style="
+        /* Container styles - self-contained */
+        position: relative;
+        width: 100%;
+        min-height: 400px;
+        background: #000;
+        color: #fff;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        padding: 2rem;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        isolation: isolate;
+    ">
+        <style>
+            /* Scoped styles for this component only */
+            #go-link-container * {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            #go-link-container .redirect-content {
+                text-align: center;
+                max-width: 600px;
+                width: 100%;
+            }
+
+            #go-link-container .status-icon {
+                width: 60px;
+                height: 60px;
+                margin: 0 auto 1.5rem;
+                position: relative;
+            }
+
+            #go-link-container .spinner {
+                border: 3px solid rgba(255, 255, 255, 0.1);
+                border-top: 3px solid #fff;
+                border-radius: 50%;
+                width: 60px;
+                height: 60px;
+                animation: go-link-spin 1s linear infinite;
+            }
+
+            @keyframes go-link-spin {
+                0% { transform: rotate(0deg); }
+                100% { transform: rotate(360deg); }
+            }
+
+            #go-link-container .error-icon {
+                width: 60px;
+                height: 60px;
+                position: relative;
+            }
+
+            #go-link-container .error-icon::before,
+            #go-link-container .error-icon::after {
+                content: '';
+                position: absolute;
+                width: 40px;
+                height: 3px;
+                background: #ff4444;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%) rotate(45deg);
+            }
+
+            #go-link-container .error-icon::after {
+                transform: translate(-50%, -50%) rotate(-45deg);
+            }
+
+            #go-link-container h1 {
+                font-size: 1.75rem;
+                font-weight: 600;
+                margin-bottom: 0.75rem;
+                letter-spacing: -0.02em;
+            }
+
+            #go-link-container p {
+                font-size: 1rem;
+                line-height: 1.6;
+                color: rgba(255, 255, 255, 0.8);
+                margin-bottom: 1.5rem;
+            }
+
+            #go-link-container .destination {
+                font-family: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+                font-size: 0.875rem;
+                color: rgba(255, 255, 255, 0.6);
+                word-break: break-all;
+                margin-top: 1rem;
+            }
+
+            #go-link-container .manual-link {
+                display: inline-block;
+                margin-top: 1.5rem;
+                padding: 0.75rem 1.5rem;
+                background: rgba(255, 255, 255, 0.1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+                color: #fff;
+                text-decoration: none;
+                border-radius: 6px;
+                font-size: 0.875rem;
+                transition: all 0.2s ease;
+            }
+
+            #go-link-container .manual-link:hover {
+                background: rgba(255, 255, 255, 0.15);
+                border-color: rgba(255, 255, 255, 0.3);
+                transform: translateY(-1px);
+            }
+
+            #go-link-container .back-link {
+                position: absolute;
+                top: 2rem;
+                left: 2rem;
+                color: rgba(255, 255, 255, 0.6);
+                text-decoration: none;
+                font-size: 0.875rem;
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                transition: color 0.2s ease;
+            }
+
+            #go-link-container .back-link:hover {
+                color: rgba(255, 255, 255, 0.9);
+            }
+
+            #go-link-container .back-link svg {
+                width: 16px;
+                height: 16px;
+            }
+        </style>
+
+        <a href="/" class="back-link">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to home
+        </a>
+
+        <div class="redirect-content" id="redirect-content">
+            <div class="status-icon">
+                <div class="spinner"></div>
+            </div>
+            <h1>Redirecting...</h1>
+            <p>Taking you to your destination</p>
+        </div>
+
+        <script>
+            (function() {
+                // Configuration - Update this object with your go links
+                const GO_LINKS = {
+                    // Example links - replace with your own
+                    "github": "https://github.com",
+                    "twitter": "https://twitter.com",
+                    "linkedin": "https://linkedin.com",
+                    "google": "https://google.com",
+                    "docs": "https://docs.google.com",
+                    // Add more links here as needed
+                    // "shortname": "https://destination-url.com"
+                };
+
+                // Redirect delay in milliseconds
+                const REDIRECT_DELAY = 1000;
+
+                // Get the current path
+                const path = window.location.pathname;
+                const pathParts = path.split('/').filter(part => part);
+
+                // Check if we're on a /go/ path
+                if (pathParts[0] === 'go' && pathParts[1]) {
+                    const shortLink = pathParts[1].toLowerCase();
+                    const destination = GO_LINKS[shortLink];
+
+                    const contentEl = document.getElementById('redirect-content');
+
+                    if (destination) {
+                        // Valid link found
+                        setTimeout(() => {
+                            contentEl.innerHTML = `
+                                <div class="status-icon">
+                                    <div class="spinner"></div>
+                                </div>
+                                <h1>Redirecting...</h1>
+                                <p>Taking you to your destination</p>
+                                <div class="destination">${destination}</div>
+                            `;
+                        }, 100);
+
+                        // Perform redirect
+                        setTimeout(() => {
+                            window.location.href = destination;
+                        }, REDIRECT_DELAY);
+                    } else {
+                        // Invalid link
+                        contentEl.innerHTML = `
+                            <div class="status-icon">
+                                <div class="error-icon"></div>
+                            </div>
+                            <h1>Link Not Found</h1>
+                            <p>The go link "/${path}" doesn't exist.</p>
+                            <a href="/" class="manual-link">Return Home</a>
+                        `;
+                    }
+                } else {
+                    // Not on a valid go path, show available links
+                    const linksList = Object.entries(GO_LINKS)
+                        .map(([key, url]) => `<li><code>/go/${key}</code> → ${new URL(url).hostname}</li>`)
+                        .join('');
+
+                    contentEl.innerHTML = `
+                        <div style="text-align: left; max-width: 600px;">
+                            <h1 style="margin-bottom: 1.5rem;">Available Go Links</h1>
+                            <ul style="list-style: none; padding: 0;">
+                                ${linksList}
+                            </ul>
+                        </div>
+                    `;
+                }
+            })();
+        </script>
+    </div>
+</body>
+</html>

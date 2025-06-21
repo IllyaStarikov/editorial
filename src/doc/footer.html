@@ -1,0 +1,154 @@
+<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.12.3/tocbot.min.js></script><script>const parent = document.querySelector(".gh-content.gh-canvas");
+// Create the <aside> element
+const asideElement = document.createElement("aside");
+asideElement.setAttribute("class", "gh-sidebar");
+//asideElement.style.zIndex = 0; // sent to back so it doesn't show on top of images
+
+// Create the container div for title and TOC
+const containerElement = document.createElement("div");
+containerElement.setAttribute("class", "gh-toc-container");
+
+// Create the title element
+const titleElement = document.createElement("div");
+titleElement.textContent = "Table of Contents";
+titleElement.style.fontWeight = "bold";
+containerElement.appendChild(titleElement);
+
+// Create the <div> element for TOC
+const divElement = document.createElement("div");
+divElement.setAttribute("class", "gh-toc");
+containerElement.appendChild(divElement);
+
+// Append the <div> element to the <aside> element
+asideElement.appendChild(containerElement);
+parent.insertBefore(asideElement, parent.firstChild);
+
+tocbot.init({
+  // Where to render the table of contents.
+  tocSelector: '.gh-toc',
+  // Where to grab the headings to build the table of contents.
+  contentSelector: '.gh-content',
+  // Which headings to grab inside of the contentSelector element.
+  headingSelector: 'h1, h2, h3, h4',
+  // Ensure correct positioning
+  hasInnerContainers: true,
+});
+
+// Get the table of contents element
+const toc = document.querySelector(".gh-toc");
+const sidebar = document.querySelector(".gh-sidebar");
+
+// Check the number of items in the table of contents
+const tocItems = toc.querySelectorAll('li').length;
+
+// Only show the table of contents if it has more than 5 items
+if (tocItems > 2) {
+  sidebar.style.display = 'block';
+} else {
+  sidebar.style.display = 'none';
+}</script>
+
+
+<!-- Add this to your Ghost Code Injection (Site Footer) -->
+<script>
+(function() {
+  // Force tables to break out of containers
+  function makeTablesWide() {
+    const tables = document.querySelectorAll('.gh-content table');
+
+    tables.forEach(function(table) {
+      // Get viewport width
+      const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+
+      // Calculate desired table width (85% of viewport)
+      const tableWidth = vw * 0.85;
+      const maxWidth = 1400; // Max width in pixels
+      const finalWidth = Math.min(tableWidth, maxWidth);
+
+      // Apply styles directly to break out of any container
+      table.style.cssText = `
+        width: ${finalWidth}px !important;
+        max-width: none !important;
+        position: relative !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        margin-left: calc(-${finalWidth}px / 2) !important;
+        margin-right: calc(-${finalWidth}px / 2) !important;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+        background-color: #0D0D0D;
+      `;
+
+      // Handle extra-wide tables
+      if (table.classList.contains('extra-wide')) {
+        const extraWidth = Math.min(vw * 0.95, 1800);
+        table.style.width = `${extraWidth}px !important`;
+        table.style.marginLeft = `calc(-${extraWidth}px / 2) !important`;
+        table.style.marginRight = `calc(-${extraWidth}px / 2) !important`;
+      }
+
+      // Ensure parent containers don't clip
+      let parent = table.parentElement;
+      while (parent && !parent.classList.contains('gh-canvas')) {
+        parent.style.overflow = 'visible';
+        parent.style.maxWidth = 'none';
+        parent = parent.parentElement;
+      }
+
+      // Special handling for wrappable tables
+      if (table.classList.contains('wrappable')) {
+        const cells = table.querySelectorAll('th, td');
+        cells.forEach(function(cell) {
+          cell.style.wordWrap = 'break-word';
+          cell.style.overflowWrap = 'break-word';
+          cell.style.whiteSpace = 'normal';
+          cell.style.maxWidth = '400px';
+        });
+      }
+    });
+
+    // Ensure body doesn't have overflow-x hidden
+    document.body.style.overflowX = 'visible';
+
+    // Find Ghost's main content wrapper and ensure it doesn't clip
+    const mainContent = document.querySelector('main, .gh-canvas, article');
+    if (mainContent) {
+      mainContent.style.overflowX = 'visible';
+    }
+  }
+
+  // Run on page load
+  makeTablesWide();
+
+  // Run on window resize
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(makeTablesWide, 250);
+  });
+
+  // Also run after a delay to catch any late-loading content
+  setTimeout(makeTablesWide, 1000);
+
+  // Optional: Add visual feedback
+  console.log('Wide tables script loaded. Tables found:', document.querySelectorAll('.gh-content table').length);
+})();
+</script>
+
+<!-- Optional: Add this CSS as well for a cleaner look -->
+<style>
+/* Ensure smooth transitions */
+.gh-content table {
+  transition: none !important; /* Disable transitions during resize */
+}
+
+/* Better mobile handling */
+@media (max-width: 768px) {
+  .gh-content table {
+    width: 100% !important;
+    margin: 0 !important;
+    left: auto !important;
+    transform: none !important;
+  }
+}
+</style>
+
