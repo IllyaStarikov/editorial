@@ -2147,7 +2147,7 @@
                     elements.actionBtn.setAttribute('aria-label', 'Perform search');
 
                     const firstEngine = elements.searchEngines.querySelector('.llmtfy-engine');
-                    if (firstEngine) selectEngine(firstEngine);
+                    if (firstEngine) selectEngine(firstEngine, true);
                 } else if (elements.aiEngines) {
                     if (elements.searchEngines) elements.searchEngines.style.display = 'none';
                     elements.aiEngines.style.display = 'flex';
@@ -2156,15 +2156,14 @@
                     elements.actionBtn.setAttribute('aria-label', 'Perform prompt');
 
                     const chatgptEngine = elements.aiEngines.querySelector('[data-engine="chatgpt"]');
-                    if (chatgptEngine) selectEngine(chatgptEngine);
+                    if (chatgptEngine) selectEngine(chatgptEngine, true);
                 }
 
-                updateTitle();
                 saveState();
             }
 
             // Select engine with auto-link update
-            function selectEngine(engine) {
+            function selectEngine(engine, skipTitleUpdate = false) {
                 if (!engine) return;
 
                 const parent = engine.parentElement;
@@ -2193,7 +2192,9 @@
                     state.selectedDisplay = engineConfigs[state.selectedEngine].display;
                 }
 
-                updateTitle();
+                if (!skipTitleUpdate) {
+                    updateTitle();
+                }
                 saveState();
 
                 // Auto-update link if one was already generated
@@ -2560,6 +2561,10 @@
                 // Add input event for auto-resize
                 if (elements.searchInput) {
                     elements.searchInput.addEventListener('input', autoResizeTextarea);
+                    
+                    // Update title when user starts interacting with the app
+                    elements.searchInput.addEventListener('focus', updateTitle);
+                    elements.searchInput.addEventListener('input', updateTitle);
 
                     elements.searchInput.addEventListener('keypress', (e) => {
                         if (e.key === 'Enter' && !e.shiftKey) {
@@ -2649,7 +2654,6 @@
                             }
                         }
 
-                        updateTitle();
                     }
 
                     autoPlay();
@@ -2668,7 +2672,7 @@
                                     `[data-type="ai"] .llmtfy-engine[data-engine="${savedState.engine}"]`;
                                 const engine = container.querySelector(selector);
                                 if (engine) {
-                                    selectEngine(engine);
+                                    selectEngine(engine, true);
                                 }
                             }, 100);
                         }

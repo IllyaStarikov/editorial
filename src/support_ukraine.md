@@ -1,5 +1,31 @@
 # Ukrainian Donation Organizations: Comprehensive Guide
 
+<style>
+/* Responsive logo sizing for the organizations table */
+.responsive-logo {
+  max-height: 16px !important;
+  max-width: 16px !important;
+  height: auto !important;
+  width: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+@media (min-width: 481px) {
+  .responsive-logo {
+    max-height: 32px !important;
+    max-width: 32px !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .responsive-logo {
+    max-height: 64px !important;
+    max-width: 64px !important;
+  }
+}
+</style>
+
 <table class="table-wrappable">
 <thead>
 <tr>
@@ -12,196 +38,196 @@
 </thead>
 <tbody>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/united_24.png" alt="United24 Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/united_24.png" alt="United24 Logo" class="responsive-logo"></td>
 <td><strong><a href="#united24">United24</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Government Platform</td>
 <td>Official presidential initiative - raised $1.454+ billion from 120+ countries with zero operational fees</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/come_back_alive.png" alt="Come Back Alive Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/come_back_alive.png" alt="Come Back Alive Logo" class="responsive-logo"></td>
 <td><strong><a href="#come-back-alive">Повернись живим<br><br>(Come Back Alive)</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Military Equipment</td>
 <td>First licensed to buy lethal weapons - 14 billion UAH raised, equipped 100+ units</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/serhiy_prytula_charity_foundation.png" alt="Serhiy Prytula Foundation Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/serhiy_prytula_charity_foundation.png" alt="Serhiy Prytula Foundation Logo" class="responsive-logo"></td>
 <td><strong><a href="#serhiy-prytula-charity-foundation">Благодійний фонд Сергія Притули<br><br>(Serhiy Prytula Charity Foundation)</a></strong></td>
 <td>Kyiv, UA<br>Chicago, USA</td>
 <td>Military/Humanitarian</td>
 <td>Famous "People's Bayraktar" campaign - $174+ million raised, 10,269 drones delivered</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/army_sos.png" alt="Army SOS Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/army_sos.png" alt="Army SOS Logo" class="responsive-logo"></td>
 <td><strong><a href="#army-sos">Армія SOS<br><br>(Army SOS)</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Tech Defense</td>
 <td>Created "Kropyva" artillery software used by 90% of Ukrainian artillery</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/ukraine_aid_ops.png" alt="Ukraine Aid Ops Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/ukraine_aid_ops.png" alt="Ukraine Aid Ops Logo" class="responsive-logo"></td>
 <td><strong><a href="#ukraine-aid-ops">Ukraine Aid Ops</a></strong></td>
 <td>Delaware, USA<br>Estonia</td>
 <td>Military Equipment</td>
 <td>89% efficiency - delivered 1,510+ drones, medical supplies to frontline</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/ukraine_frontline.png" alt="Ukraine Frontline Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/ukraine_frontline.png" alt="Ukraine Frontline Logo" class="responsive-logo"></td>
 <td><strong><a href="#ukraine-frontline">Ukraine Frontline</a></strong></td>
 <td>Virginia, USA</td>
 <td>Tactical Supplies</td>
 <td>Founded invasion day - delivers to unreachable frontline units</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/protect_a_volunteer.png" alt="Protect A Volunteer Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/protect_a_volunteer.png" alt="Protect A Volunteer Logo" class="responsive-logo"></td>
 <td><strong><a href="#protect-a-volunteer">Protect A Volunteer</a></strong></td>
 <td>USA</td>
 <td>Volunteer Support</td>
 <td>"Adopt a volunteer" model supporting international fighters</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/azov_one.png" alt="Azov One Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/azov_one.png" alt="Azov One Logo" class="responsive-logo"></td>
 <td><strong><a href="#azov-one">Azov One</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Military Support</td>
 <td>Official Azov Brigade fundraising platform for non-lethal equipment</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/sustain_ukraine.png" alt="Sustain Ukraine Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/sustain_ukraine.png" alt="Sustain Ukraine Logo" class="responsive-logo"></td>
 <td><strong><a href="#sustain-ukraine">Sustain Ukraine</a></strong></td>
 <td>USA</td>
 <td>Military Gear</td>
 <td>Direct field delivery of tactical gear and medical supplies</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/ukrainian_freedom_fund.png" alt="Ukrainian Freedom Fund Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/ukrainian_freedom_fund.png" alt="Ukrainian Freedom Fund Logo" class="responsive-logo"></td>
 <td><strong><a href="#ukrainian-freedom-fund">Ukrainian Freedom Fund</a></strong></td>
 <td>Wyoming, USA<br>Kyiv, UA</td>
 <td>Direct Support</td>
 <td>&lt;4% overhead historically (11% in 2023) - aided 120+ military units since 2014</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/nafo.png" alt="NAFO Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/nafo.png" alt="NAFO Logo" class="responsive-logo"></td>
 <td><strong><a href="#nafo-fellas">NAFO Fellas</a></strong></td>
 <td>Global Online</td>
 <td>Info Warfare</td>
 <td>85,000+ members countering propaganda while fundraising over $1M</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/kolo.png" alt="KOLO Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/kolo.png" alt="KOLO Logo" class="responsive-logo"></td>
 <td><strong><a href="#kolo-charity-foundation">КОЛО<br><br>(KOLO) Charity Foundation</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Tech Support</td>
 <td>100% pass-through, focuses on mid-size equipment orders</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/leleka_foundation.png" alt="Leleka Foundation Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/leleka_foundation.png" alt="Leleka Foundation Logo" class="responsive-logo"></td>
 <td><strong><a href="#leleka-foundation">Leleka Foundation</a></strong></td>
 <td>USA<br>Ukraine</td>
 <td>Medical Supplies</td>
 <td>$13M+ raised, 18,000+ first-aid kits, 75 medic backpacks weekly</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/hospitalles_medical_battalion.png" alt="Hospitallers Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/hospitalles_medical_battalion.png" alt="Hospitallers Logo" class="responsive-logo"></td>
 <td><strong><a href="#hospitallers-medical-battalion">Госпітальєри<br><br>(Hospitallers) Medical Battalion</a></strong></td>
 <td>Dnipro, UA</td>
 <td>Combat Medicine</td>
 <td>3,000+ evacuated, founded by teenage paramedic <a href="https://en.wikipedia.org/wiki/Yana_Zinkevych">Yana Zinkevych</a></td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/revived_soldiers_ukraine.png" alt="Revived Soldiers Ukraine Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/revived_soldiers_ukraine.png" alt="Revived Soldiers Ukraine Logo" class="responsive-logo"></td>
 <td><strong><a href="#revived-soldiers-ukraine">Revived Soldiers Ukraine</a></strong></td>
 <td>Florida, USA</td>
 <td>Prosthetics</td>
 <td>Advanced bionic prostheses and US medical treatment</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/superhumans.png" alt="Superhumans Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/superhumans.png" alt="Superhumans Logo" class="responsive-logo"></td>
 <td><strong><a href="#superhumans">Superhumans</a></strong></td>
 <td>Lviv, UA</td>
 <td>Rehabilitation</td>
 <td>470+ prostheses manufactured, 230+ reconstructive surgeries</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/doctors_without_borders.png" alt="Doctors Without Borders Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/doctors_without_borders.png" alt="Doctors Without Borders Logo" class="responsive-logo"></td>
 <td><strong><a href="#doctors-without-borders">Doctors Without Borders</a></strong></td>
 <td>Geneva<br>Kyiv, UA</td>
 <td>Emergency Medical</td>
 <td>Operating since 1999, expanded after 2022 invasion</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/tabletochki.png" alt="Tabletochki Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/tabletochki.png" alt="Tabletochki Logo" class="responsive-logo"></td>
 <td><strong><a href="#tabletochki">Таблеточки<br><br>(Tabletochki)</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Children's Cancer</td>
 <td>Ukraine's largest childhood cancer charity - evacuated 800+ families, 6% overhead</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/nova_ukraine.png" alt="Nova Ukraine Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/nova_ukraine.png" alt="Nova Ukraine Logo" class="responsive-logo"></td>
 <td><strong><a href="#nova-ukraine">Nova Ukraine</a></strong></td>
 <td>California, USA</td>
 <td>Humanitarian</td>
 <td>$160+ million delivered, 11+ million helped, 100% Charity Navigator</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/razom.png" alt="Razom Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/razom.png" alt="Razom Logo" class="responsive-logo"></td>
 <td><strong><a href="#razom-for-ukraine">Razom for Ukraine</a></strong></td>
 <td>New York, USA</td>
 <td>Multi-Program</td>
 <td>$139 million aid delivered, 99% Charity Navigator rating</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/voices_of_children.png" alt="Voices of Children Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/voices_of_children.png" alt="Voices of Children Logo" class="responsive-logo"></td>
 <td><strong><a href="#voices-of-children">Голоси дітей<br><br>(Voices of Children)</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Child Psychology</td>
 <td>105,000+ children served with psychological support since 2015</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/renegade_relief.png" alt="Renegade Relief Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/renegade_relief.png" alt="Renegade Relief Logo" class="responsive-logo"></td>
 <td><strong><a href="#renegade-relief">Renegade Relief</a></strong></td>
 <td>Tennessee, USA<br>Poland</td>
 <td>Frontline Aid</td>
 <td>Reaches isolated communities major charities can't access</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/dobrodiy_club.png" alt="Dobrodiy Club Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/dobrodiy_club.png" alt="Dobrodiy Club Logo" class="responsive-logo"></td>
 <td><strong><a href="#dobrodiy-club">Добродій<br><br>(Dobrodiy) Club</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Youth Support</td>
 <td>250,000+ children helped since war, "Place of Power" safe spaces</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/east_sos.png" alt="East SOS Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/east_sos.png" alt="East SOS Logo" class="responsive-logo"></td>
 <td><strong><a href="#east-sos">Схід SOS<br><br>(East SOS)</a></strong></td>
 <td>Kyiv, UA<br>Uzhhorod, UA</td>
 <td>Evacuation</td>
 <td>80,000+ evacuated from frontlines, 10,000+ with disabilities</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/everybody_can.png" alt="Everybody Can Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/everybody_can.png" alt="Everybody Can Logo" class="responsive-logo"></td>
 <td><strong><a href="#everybody-can">Кожен Може<br><br>(Everybody Can)</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Vulnerable Groups</td>
 <td>20,000+ served through 260 projects across 4 programs</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/help_heroes_of_ukraine.png" alt="Help Heroes Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/help_heroes_of_ukraine.png" alt="Help Heroes Logo" class="responsive-logo"></td>
 <td><strong><a href="#help-heroes-of-ukraine">Help Heroes of Ukraine</a></strong></td>
 <td>Illinois, USA</td>
 <td>Military/Humanitarian</td>
 <td>$3M+ raised but financial sustainability concerns noted</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/uanimals.png" alt="UAnimals Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/uanimals.png" alt="UAnimals Logo" class="responsive-logo"></td>
 <td><strong><a href="#uanimals">UAnimals</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Animal Rescue</td>
 <td>3,863+ animals evacuated, 942+ tons of food distributed</td>
 </tr>
 <tr>
-<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/happy_paws.png" alt="Happy Paw Logo" style="max-height: 64px !important; max-width: 64px !important; height: auto; width: auto; display: block; margin: 0 auto;"></td>
+<td style="text-align: center !important; vertical-align: middle !important;"><img src="https://starikov.co/content/images/2025/06/happy_paws.png" alt="Happy Paw Logo" class="responsive-logo"></td>
 <td><strong><a href="#happy-paw">Щаслива лапа<br><br>(Happy Paw)</a></strong></td>
 <td>Kyiv, UA</td>
 <td>Animal Welfare</td>
