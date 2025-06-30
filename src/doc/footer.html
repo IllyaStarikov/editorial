@@ -1,71 +1,661 @@
-<script src=https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.12.3/tocbot.min.js></script><script>const parent = document.querySelector(".gh-content.gh-canvas");
-// Create the <aside> element
-const asideElement = document.createElement("aside");
-asideElement.setAttribute("class", "gh-sidebar");
-//asideElement.style.zIndex = 0; // sent to back so it doesn't show on top of images
-
-// Create the container div for title and TOC
-const containerElement = document.createElement("div");
-containerElement.setAttribute("class", "gh-toc-container");
-
-// Create the title element
-const titleElement = document.createElement("div");
-titleElement.textContent = "Table of Contents";
-titleElement.style.fontWeight = "bold";
-containerElement.appendChild(titleElement);
-
-// Create the <div> element for TOC
-const divElement = document.createElement("div");
-divElement.setAttribute("class", "gh-toc");
-containerElement.appendChild(divElement);
-
-// Append the <div> element to the <aside> element
-asideElement.appendChild(containerElement);
-parent.insertBefore(asideElement, parent.firstChild);
-
-tocbot.init({
-  // Where to render the table of contents.
-  tocSelector: '.gh-toc',
-  // Where to grab the headings to build the table of contents.
-  contentSelector: '.gh-content',
-  // Which headings to grab inside of the contentSelector element.
-  headingSelector: 'h1, h2, h3, h4',
-  // Ensure correct positioning
-  hasInnerContainers: true,
-});
-
-// Get the table of contents element
-const toc = document.querySelector(".gh-toc");
-const sidebar = document.querySelector(".gh-sidebar");
-
-// Check the number of items in the table of contents
-const tocItems = toc.querySelectorAll('li').length;
-
-// Only show the table of contents if it has more than 5 items
-if (tocItems > 2) {
-  sidebar.style.display = 'block';
-} else {
-  sidebar.style.display = 'none';
-}</script>
-
-
-<!-- Add this to your Ghost Code Injection (Site Footer) -->
+<!-- SITE HEADER INJECTION -->
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-H5ERFVZRFB"></script>
 <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-H5ERFVZRFB');
+</script>
+
+<style>
+/* ===================================   WIDER CONTENT LAYOUT (Slightly Reduced)   =================================== */
+:root {
+  /* Mobile-first approach - slightly larger base sizes for better readability */
+  --line-length: min(100%, 800px) !important;
+  --font-size-125: 1.375rem !important;   /* body text - Increased from 1.125rem */
+  --font-size-150: 1.5rem !important;     /* small headings - Increased from 1.25rem */
+  --font-size-200: 1.75rem !important;    /* h1 (mobile) - Increased from 1.5rem */
+  --font-size-250: 2rem !important;       /* subheadings - Increased from 1.75rem */
+  --font-size-300: 2.25rem !important;    /* Increased from 2rem */
+  --font-size-400: 2.5rem !important;     /* Increased from 2.25rem */
+
+  /* ADD: Separate code font sizes */
+  --code-font-size-mobile: 0.875rem !important;  /* 14px equivalent */
+  --code-font-size-desktop: 1rem !important;     /* 16px equivalent */
+}
+
+/* All common text containers inherit body's size */
+.gh-content,
+.gh-content p,
+.gh-content li,
+.gh-content blockquote,
+.gh-content span,
+.gh-content div,
+body {
+  font-size: var(--font-size-125) !important;
+}
+
+/* FIX FOR BULLETS - Ensure lists have bullets */
+.gh-content ul:not(.u-plain-list),
+.c-content ul:not(.u-plain-list) {
+  list-style: disc !important;
+  padding-left: 2em !important;
+}
+
+.gh-content ol:not(.u-plain-list),
+.c-content ol:not(.u-plain-list) {
+  list-style: decimal !important;
+  padding-left: 2em !important;
+}
+
+.gh-content li,
+.c-content li {
+  list-style-position: outside !important;
+  margin-left: 0 !important;
+}
+
+/* FIXED: Override code block font sizes */
+code[class*="language-"],
+pre[class*="language-"],
+.gh-content code,
+.gh-content pre,
+.gh-content .kg-code-card code,
+.gh-content .kg-code-card pre,
+code,
+pre {
+  font-size: var(--code-font-size-mobile) !important;
+  line-height: 1.5 !important;
+}
+
+/* Mobile-specific code block handling */
+@media (max-width: 768px) {
+  .gh-content > *,
+  .c-content > *,
+  .c-post__inner > * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .gh-content,
+  .c-content {
+    overflow-x: hidden !important;
+  }
+
+  code[class*="language-"],
+  pre[class*="language-"],
+  .gh-content code,
+  .gh-content pre,
+  .gh-content .kg-code-card code,
+  .gh-content .kg-code-card pre,
+  code,
+  pre {
+    font-size: 0.75rem !important;
+    white-space: pre-wrap !important;
+  }
+}
+
+/* Desktop bump */
+@media (min-width: 64em) {
+  :root {
+    --font-size-125: 1.75rem !important;
+    --font-size-150: 1.75rem !important;
+    --font-size-200: 2.25rem !important;
+    --font-size-250: 2.75rem !important;
+    --font-size-300: 3.25rem !important;
+    --font-size-400: 4.0rem !important;
+  }
+
+  code[class*="language-"],
+  pre[class*="language-"],
+  .gh-content code,
+  .gh-content pre,
+  .gh-content .kg-code-card code,
+  .gh-content .kg-code-card pre,
+  code,
+  pre {
+    font-size: var(--code-font-size-desktop) !important;
+    white-space: pre !important;
+  }
+}
+
+/* CLIPBOARD BUTTON STYLES */
+.header-clipboard-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rem;
+  height: 2rem;
+  padding: 0.25rem;
+  border: 1px solid;
+  border-radius: 0.25rem;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+h2:hover .header-clipboard-btn,
+h3:hover .header-clipboard-btn,
+h4:hover .header-clipboard-btn,
+h5:hover .header-clipboard-btn,
+h6:hover .header-clipboard-btn,
+.header-clipboard-btn:focus {
+  opacity: 1;
+}
+
+.header-clipboard-btn svg {
+  width: 1rem;
+  height: 1rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+}
+
+.header-clipboard-btn.success {
+  animation: clipboard-success 0.3s ease-in-out;
+}
+
+@keyframes clipboard-success {
+  0%, 100% { transform: translateY(-50%) scale(1); }
+  50% { transform: translateY(-50%) scale(1.1); }
+}
+
+.header-clipboard-tooltip {
+  position: absolute;
+  top: -2rem;
+  right: 0;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  border-radius: 0.25rem;
+  border: 1px solid;
+  opacity: 0;
+  transform: translateY(0.25rem);
+  transition: all 0.2s ease-in-out;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.header-clipboard-tooltip.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Ghost Table of Contents - Fixed */
+.ghost-toc {
+  margin: var(--space-200) 0;
+  padding: var(--space-100);
+  border: var(--border-width) var(--border-style) currentColor;
+  border-radius: var(--border-radius);
+  font-family: var(--font-family-sans-serif);
+  font-size: var(--font-size-100);
+  line-height: var(--line-height-100);
+  background: inherit;
+  color: inherit;
+  max-width: 100%;
+}
+
+@media (min-width: 40em) {
+  .ghost-toc {
+    padding: var(--space-150);
+  }
+}
+
+.ghost-toc__title {
+  font-size: var(--font-size-125);
+  font-weight: var(--font-weight-semi-bold);
+  text-transform: uppercase;
+  letter-spacing: var(--font-letter-spacing-tiny);
+  text-align: center;
+  margin-bottom: var(--space-075);
+  padding-bottom: var(--space-075);
+  border-bottom: var(--border-width) var(--border-style) currentColor;
+  color: inherit;
+}
+
+.ghost-toc__list {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.ghost-toc__list--nested {
+  padding-left: var(--space-100) !important;
+  margin-top: var(--space-025);
+}
+
+.ghost-toc__item {
+  margin-bottom: var(--space-025);
+  list-style: none !important;
+}
+
+.ghost-toc__link {
+  display: block;
+  padding: var(--space-050) var(--space-075);
+  color: inherit;
+  text-decoration: none;
+  border-radius: var(--border-radius-small);
+  transition: background-color 0.2s ease;
+  word-break: break-word;
+  cursor: pointer;
+}
+
+.ghost-toc__link[data-number]::before {
+  content: attr(data-number) ". ";
+  opacity: 0.5;
+  margin-right: var(--space-050);
+  font-weight: var(--font-weight-medium);
+  color: inherit;
+}
+
+.ghost-toc__list--nested .ghost-toc__link::before {
+  content: "–";
+  opacity: 0.3;
+  margin-right: var(--space-050);
+  color: inherit;
+}
+
+.ghost-toc__link:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+  background: transparent;
+  color: inherit;
+}
+
+.ghost-toc__link--active {
+  font-weight: var(--font-weight-semi-bold);
+  text-decoration: underline;
+  background: transparent;
+  color: inherit;
+}
+
+.ghost-toc:empty,
+.ghost-toc--hidden {
+  display: none;
+}
+
+/* Ensure smooth scrolling and offset */
+html {
+  scroll-behavior: smooth;
+}
+
+h1[id], h2[id], h3[id], h4[id], h5[id], h6[id] {
+  scroll-margin-top: 100px;
+  position: relative;
+}
+
+/* Table improvements remain the same */
+/* ... (rest of your existing table CSS) ... */
+</style>
+
+<link rel="stylesheet" href="/assets/css/prism.css">
+<script defer src="/assets/js/prism.js"></script>
+
+<!-- MathJax configuration -->
+<script>
+  window.MathJax = {
+    loader: {
+      load: ['[tex]/ams']
+    },
+    tex: {
+      packages: {'[+]': ['ams']},
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    },
+    svg: {
+      fontCache: 'global'
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<!-- SITE FOOTER INJECTION -->
+<script>
+// Clipboard functionality - Fixed
 (function() {
-  // Force tables to break out of containers
+  'use strict';
+
+  if (window.__ghostHeaderClipboard) return;
+
+  const CONFIG = {
+    selectors: {
+      headers: '.c-content h2[id], .c-content h3[id], .c-content h4[id], .c-content h5[id], .c-content h6[id]',
+      button: 'header-clipboard-btn',
+      tooltip: 'header-clipboard-tooltip'
+    },
+    messages: {
+      copyLabel: 'Copy link to this section',
+      copiedText: 'Link copied!',
+      failedText: 'Failed to copy'
+    },
+    timing: {
+      tooltipDuration: 2000,
+      initDelay: 100
+    }
+  };
+
+  function createIcon() {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2');
+
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', '8');
+    rect.setAttribute('y', '2');
+    rect.setAttribute('width', '8');
+    rect.setAttribute('height', '4');
+    rect.setAttribute('rx', '1');
+
+    svg.appendChild(path);
+    svg.appendChild(rect);
+
+    return svg;
+  }
+
+  async function copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.top = '-9999px';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+
+      const success = document.execCommand('copy');
+      document.body.removeChild(textarea);
+      return success;
+    } catch (err) {
+      console.error('Copy failed:', err);
+      return false;
+    }
+  }
+
+  function showTooltip(button, message) {
+    const existing = button.querySelector(`.${CONFIG.selectors.tooltip}`);
+    if (existing) existing.remove();
+
+    const tooltip = document.createElement('div');
+    tooltip.className = CONFIG.selectors.tooltip;
+    tooltip.textContent = message;
+
+    const btnStyles = window.getComputedStyle(button);
+    tooltip.style.backgroundColor = btnStyles.backgroundColor;
+    tooltip.style.color = btnStyles.color;
+    tooltip.style.borderColor = btnStyles.borderColor;
+
+    button.appendChild(tooltip);
+
+    requestAnimationFrame(() => {
+      tooltip.classList.add('show');
+      button.classList.add('success');
+    });
+
+    setTimeout(() => {
+      tooltip.classList.remove('show');
+      button.classList.remove('success');
+      setTimeout(() => {
+        if (tooltip.parentNode) tooltip.remove();
+      }, 300);
+    }, CONFIG.timing.tooltipDuration);
+  }
+
+  function enhanceHeader(header) {
+    if (!header || !header.id || header.querySelector(`.${CONFIG.selectors.button}`)) {
+      return;
+    }
+
+    const button = document.createElement('button');
+    button.className = CONFIG.selectors.button;
+    button.type = 'button';
+    button.setAttribute('aria-label', CONFIG.messages.copyLabel);
+    button.setAttribute('title', CONFIG.messages.copyLabel);
+
+    button.appendChild(createIcon());
+
+    const textColor = window.getComputedStyle(header).color;
+    button.style.borderColor = textColor;
+    button.style.color = textColor;
+
+    button.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const url = `${window.location.origin}${window.location.pathname}#${header.id}`;
+      const success = await copyToClipboard(url);
+
+      showTooltip(button, success ? CONFIG.messages.copiedText : CONFIG.messages.failedText);
+    });
+
+    header.appendChild(button);
+  }
+
+  function init() {
+    const headers = document.querySelectorAll(CONFIG.selectors.headers);
+    headers.forEach(header => enhanceHeader(header));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(init, CONFIG.timing.initDelay);
+    });
+  } else {
+    setTimeout(init, CONFIG.timing.initDelay);
+  }
+
+  // Re-init on route change
+  let lastPath = location.pathname;
+  setInterval(() => {
+    if (location.pathname !== lastPath) {
+      lastPath = location.pathname;
+      setTimeout(init, CONFIG.timing.initDelay);
+    }
+  }, 1000);
+
+  window.__ghostHeaderClipboard = { init, version: '2.1.0' };
+})();
+
+// Table of Contents - Fixed
+(function() {
+  'use strict';
+
+  window.ghostTOC = window.ghostTOC || {};
+
+  function buildTOC() {
+    const container = document.querySelector('.ghost-toc');
+    if (!container) return;
+
+    const content = document.querySelector('.c-content');
+    if (!content) {
+      container.style.display = 'none';
+      return;
+    }
+
+    const headingData = [];
+    const headings = content.querySelectorAll('h2, h3, h4');
+
+    headings.forEach((heading, index) => {
+      let cleanText = '';
+      for (let node of heading.childNodes) {
+        if (node.nodeType === 3) {
+          cleanText += node.textContent;
+        } else if (node.nodeType === 1 && !node.classList.contains('header-clipboard-btn')) {
+          cleanText += node.textContent;
+        }
+      }
+
+      cleanText = cleanText.trim();
+      if (!cleanText) return;
+
+      let id = heading.id;
+      if (!id) {
+        id = 'toc-' + index;
+        heading.id = id;
+      }
+
+      headingData.push({
+        id: id,
+        text: cleanText,
+        level: parseInt(heading.tagName[1]),
+        element: heading
+      });
+    });
+
+    if (headingData.length < 2) {
+      container.style.display = 'none';
+      return;
+    }
+
+    container.innerHTML = '<div class="ghost-toc__title">Table of Contents</div>';
+
+    const mainList = document.createElement('ul');
+    mainList.className = 'ghost-toc__list';
+
+    let topLevelCounter = 0;
+    let currentList = mainList;
+    let lastLevel = 2;
+    let listStack = [mainList];
+
+    headingData.forEach(data => {
+      const item = document.createElement('li');
+      item.className = 'ghost-toc__item';
+
+      const link = document.createElement('a');
+      link.className = 'ghost-toc__link';
+      link.textContent = data.text;
+      link.href = '#' + data.id;
+
+      // Direct scroll implementation
+      link.onclick = function(e) {
+        e.preventDefault();
+        const target = document.getElementById(data.id);
+        if (!target) return false;
+
+        // Force scroll with multiple methods
+        const yOffset = -100;
+        const y = target.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+        // Method 1: scrollTo
+        window.scrollTo({ top: y, behavior: 'smooth' });
+
+        // Method 2: Fallback with timeout
+        setTimeout(() => {
+          if (Math.abs(window.pageYOffset - y) > 50) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            window.scrollBy(0, yOffset);
+          }
+        }, 100);
+
+        // Update hash
+        window.location.hash = data.id;
+        return false;
+      };
+
+      if (data.level === 2) {
+        topLevelCounter++;
+        link.setAttribute('data-number', topLevelCounter);
+      }
+
+      item.appendChild(link);
+
+      // Handle nesting
+      if (data.level > lastLevel) {
+        const nested = document.createElement('ul');
+        nested.className = 'ghost-toc__list ghost-toc__list--nested';
+        const parent = currentList.lastElementChild;
+        if (parent) parent.appendChild(nested);
+        listStack.push(nested);
+        currentList = nested;
+      } else if (data.level < lastLevel) {
+        const diff = lastLevel - data.level;
+        for (let i = 0; i < diff && listStack.length > 1; i++) {
+          listStack.pop();
+        }
+        currentList = listStack[listStack.length - 1];
+      }
+
+      currentList.appendChild(item);
+      lastLevel = data.level;
+    });
+
+    container.appendChild(mainList);
+
+    // Active tracking
+    window.ghostTOC.updateActive = function() {
+      const scrollPos = window.scrollY + 150;
+      let current = null;
+
+      headingData.forEach(data => {
+        if (data.element && data.element.offsetTop <= scrollPos) {
+          current = data;
+        }
+      });
+
+      container.querySelectorAll('.ghost-toc__link').forEach(link => {
+        link.classList.remove('ghost-toc__link--active');
+        if (current && link.textContent === current.text) {
+          link.classList.add('ghost-toc__link--active');
+        }
+      });
+    };
+
+    let scrollTimer;
+    window.addEventListener('scroll', () => {
+      clearTimeout(scrollTimer);
+      scrollTimer = setTimeout(window.ghostTOC.updateActive, 50);
+    });
+
+    window.ghostTOC.updateActive();
+  }
+
+  function initTOC() {
+    buildTOC();
+
+    // Reinit after delay to catch any dynamic content
+    setTimeout(buildTOC, 2000);
+  }
+
+  // Multiple init attempts for reliability
+  document.addEventListener('DOMContentLoaded', initTOC);
+  window.addEventListener('load', () => setTimeout(initTOC, 500));
+  setTimeout(initTOC, 1500);
+
+  // Handle route changes
+  let lastPath = location.pathname;
+  setInterval(() => {
+    if (location.pathname !== lastPath) {
+      lastPath = location.pathname;
+      setTimeout(initTOC, 1000);
+    }
+  }, 1000);
+})();
+
+// Wide tables script (keep your existing one)
+(function() {
   function makeTablesWide() {
     const tables = document.querySelectorAll('.gh-content table');
 
     tables.forEach(function(table) {
-      // Get viewport width
       const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-
-      // Calculate desired table width (85% of viewport)
       const tableWidth = vw * 0.85;
-      const maxWidth = 1400; // Max width in pixels
+      const maxWidth = 1400;
       const finalWidth = Math.min(tableWidth, maxWidth);
 
-      // Apply styles directly to break out of any container
       table.style.cssText = `
         width: ${finalWidth}px !important;
         max-width: none !important;
@@ -78,7 +668,6 @@ if (tocItems > 2) {
         background-color: #0D0D0D;
       `;
 
-      // Handle extra-wide tables
       if (table.classList.contains('extra-wide')) {
         const extraWidth = Math.min(vw * 0.95, 1800);
         table.style.width = `${extraWidth}px !important`;
@@ -86,7 +675,6 @@ if (tocItems > 2) {
         table.style.marginRight = `calc(-${extraWidth}px / 2) !important`;
       }
 
-      // Ensure parent containers don't clip
       let parent = table.parentElement;
       while (parent && !parent.classList.contains('gh-canvas')) {
         parent.style.overflow = 'visible';
@@ -94,7 +682,6 @@ if (tocItems > 2) {
         parent = parent.parentElement;
       }
 
-      // Special handling for wrappable tables
       if (table.classList.contains('wrappable')) {
         const cells = table.querySelectorAll('th, td');
         cells.forEach(function(cell) {
@@ -106,39 +693,30 @@ if (tocItems > 2) {
       }
     });
 
-    // Ensure body doesn't have overflow-x hidden
     document.body.style.overflowX = 'visible';
 
-    // Find Ghost's main content wrapper and ensure it doesn't clip
     const mainContent = document.querySelector('main, .gh-canvas, article');
     if (mainContent) {
       mainContent.style.overflowX = 'visible';
     }
   }
 
-  // Run on page load
   makeTablesWide();
 
-  // Run on window resize
   let resizeTimer;
   window.addEventListener('resize', function() {
     clearTimeout(resizeTimer);
     resizeTimer = setTimeout(makeTablesWide, 250);
   });
 
-  // Also run after a delay to catch any late-loading content
   setTimeout(makeTablesWide, 1000);
-
-  // Optional: Add visual feedback
-  console.log('Wide tables script loaded. Tables found:', document.querySelectorAll('.gh-content table').length);
 })();
 </script>
 
-<!-- Optional: Add this CSS as well for a cleaner look -->
 <style>
 /* Ensure smooth transitions */
 .gh-content table {
-  transition: none !important; /* Disable transitions during resize */
+  transition: none !important;
 }
 
 /* Better mobile handling */
@@ -151,4 +729,3 @@ if (tocItems > 2) {
   }
 }
 </style>
-
