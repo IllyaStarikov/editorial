@@ -124,7 +124,7 @@
                 <p style="font-size: 0.8em;">Letters confirmed absent. No spaces.</p>
             </div>
         </div>
-        
+
         <button id="find-word-btn" class="wordle-button">
             Find Best Word
         </button>
@@ -142,36 +142,36 @@
     <script>
         // Word list (curated for common 5-letter English words)
         const wordList = [
-            "ABOUT", "ALERT", "ARGUE", "BEACH", "BRAIN", "BREAD", "BRING", "BROWN", "BUILD", "CHAIR", 
-            "CHANT", "CHARM", "CLEAN", "CLEAR", "CLOCK", "CLOUD", "COAST", "COULD", "COUNT", "CRANE", 
-            "CREAM", "DANCE", "DEATH", "DREAM", "DRINK", "DRIVE", "EARLY", "EARTH", "ENJOY", "EQUAL", 
-            "EVERY", "EXACT", "FAITH", "FIGHT", "FINAL", "FIRST", "FLAME", "FLOOR", "FOCUS", "FORCE", 
-            "FORTH", "FOUND", "FRAME", "FRESH", "FRONT", "FRUIT", "GHOST", "GIANT", "GLASS", "GRACE", 
-            "GRADE", "GRAND", "GRASS", "GREAT", "GREEN", "GROUP", "GUARD", "GUESS", "GUIDE", "HEART", 
-            "HEAVY", "HORSE", "HOTEL", "HOUSE", "HUMAN", "IDEAL", "IMAGE", "INPUT", "ISSUE", "JUICE", 
+            "ABOUT", "ALERT", "ARGUE", "BEACH", "BRAIN", "BREAD", "BRING", "BROWN", "BUILD", "CHAIR",
+            "CHANT", "CHARM", "CLEAN", "CLEAR", "CLOCK", "CLOUD", "COAST", "COULD", "COUNT", "CRANE",
+            "CREAM", "DANCE", "DEATH", "DREAM", "DRINK", "DRIVE", "EARLY", "EARTH", "ENJOY", "EQUAL",
+            "EVERY", "EXACT", "FAITH", "FIGHT", "FINAL", "FIRST", "FLAME", "FLOOR", "FOCUS", "FORCE",
+            "FORTH", "FOUND", "FRAME", "FRESH", "FRONT", "FRUIT", "GHOST", "GIANT", "GLASS", "GRACE",
+            "GRADE", "GRAND", "GRASS", "GREAT", "GREEN", "GROUP", "GUARD", "GUESS", "GUIDE", "HEART",
+            "HEAVY", "HORSE", "HOTEL", "HOUSE", "HUMAN", "IDEAL", "IMAGE", "INPUT", "ISSUE", "JUICE",
             "LARGE", "LAUGH", "LEARN", "LEAST", "LEAVE", "LEGAL", "LEVEL", "LIGHT", "LOCAL", "LOGIN",
-            "LUCKY", "LUNCH", "MAGIC", "MAJOR", "MARCH", "MATCH", "METAL", "MODEL", "MONEY", "MONTH", 
-            "MORAL", "MORPH", "MOUSE", "MOUTH", "MUSIC", "NEVER", "NIGHT", "NOBLE", "NOISE", "NORTH", 
+            "LUCKY", "LUNCH", "MAGIC", "MAJOR", "MARCH", "MATCH", "METAL", "MODEL", "MONEY", "MONTH",
+            "MORAL", "MORPH", "MOUSE", "MOUTH", "MUSIC", "NEVER", "NIGHT", "NOBLE", "NOISE", "NORTH",
             "NOVEL", "NURSE", "OCEAN", "OFFER", "OFTEN", "ORDER", "OTHER", "OUGHT", "PAINT", "PANIC",
-            "PAPER", "PARTY", "PEACE", "PHONE", "PHOTO", "PIECE", "PILOT", "PLACE", "PLAIN", "PLANE", 
-            "PLANT", "PLATE", "POINT", "POUND", "POWER", "PRESS", "PRICE", "PRIDE", "PRIME", "PRINT", 
-            "PRIOR", "PRIZE", "PROOF", "PROUD", "QUIET", "QUITE", "RADIO", "RAISE", "RANGE", "RAPID", 
-            "RATIO", "REACH", "REACT", "READY", "REALM", "RELAX", "REPLY", "RIGHT", "RIVER", "ROUND", 
-            "ROUTE", "ROYAL", "RURAL", "SCALE", "SCARE", "SCOPE", "SCORE", "SENSE", "SERVE", "SHADE", 
-            "SHAKE", "SHALL", "SHAPE", "SHARE", "SHARK", "SHARP", "SHEET", "SHELF", "SHIFT", "SHINE", 
-            "SHIRT", "SHOCK", "SHOOT", "SHORT", "SHOWS", "SIGHT", "SILK", "SINCE", "SKILL", "SLEEP", 
-            "SLICE", "SLIDE", "SLOPE", "SMALL", "SMART", "SMILE", "SMOKE", "SOLID", "SOLVE", "SOUND", 
-            "SOUTH", "SPACE", "SPARE", "SPEAK", "SPEED", "SPEND", "SPICY", "SPIKE", "SPLIT", "SPORT", 
-            "SQUAD", "SQUARE", "STACK", "STAFF", "STAGE", "STAND", "STARE", "START", "STATE", "STAY", 
-            "STEAM", "STEEL", "STICK", "STILL", "STOCK", "STONE", "STORE", "STORM", "STORY", "STUDY", 
-            "STUFF", "STYLE", "SUGAR", "SUITE", "SUPER", "SWEET", "TABLE", "TASTE", "TEACH", "THANK", 
+            "PAPER", "PARTY", "PEACE", "PHONE", "PHOTO", "PIECE", "PILOT", "PLACE", "PLAIN", "PLANE",
+            "PLANT", "PLATE", "POINT", "POUND", "POWER", "PRESS", "PRICE", "PRIDE", "PRIME", "PRINT",
+            "PRIOR", "PRIZE", "PROOF", "PROUD", "QUIET", "QUITE", "RADIO", "RAISE", "RANGE", "RAPID",
+            "RATIO", "REACH", "REACT", "READY", "REALM", "RELAX", "REPLY", "RIGHT", "RIVER", "ROUND",
+            "ROUTE", "ROYAL", "RURAL", "SCALE", "SCARE", "SCOPE", "SCORE", "SENSE", "SERVE", "SHADE",
+            "SHAKE", "SHALL", "SHAPE", "SHARE", "SHARK", "SHARP", "SHEET", "SHELF", "SHIFT", "SHINE",
+            "SHIRT", "SHOCK", "SHOOT", "SHORT", "SHOWS", "SIGHT", "SILK", "SINCE", "SKILL", "SLEEP",
+            "SLICE", "SLIDE", "SLOPE", "SMALL", "SMART", "SMILE", "SMOKE", "SOLID", "SOLVE", "SOUND",
+            "SOUTH", "SPACE", "SPARE", "SPEAK", "SPEED", "SPEND", "SPICY", "SPIKE", "SPLIT", "SPORT",
+            "SQUAD", "SQUARE", "STACK", "STAFF", "STAGE", "STAND", "STARE", "START", "STATE", "STAY",
+            "STEAM", "STEEL", "STICK", "STILL", "STOCK", "STONE", "STORE", "STORM", "STORY", "STUDY",
+            "STUFF", "STYLE", "SUGAR", "SUITE", "SUPER", "SWEET", "TABLE", "TASTE", "TEACH", "THANK",
             "THEIR", "THEME", "THERE", "THESE", "THING", "THINK", "THIRD", "THREE", "THROW", "TIDAL",
-            "TIGER", "TIMER", "TIMES", "TIRED", "TITLE", "TODAY", "TONES", "TOPIC", "TOTAL", "TOUCH", 
-            "TOUGH", "TRACE", "TRACK", "TRADE", "TRAIL", "TRAIN", "TRASH", "TREAT", "TREND", "TRIAL", 
-            "TRIBE", "TRICK", "TRUCK", "TRULY", "TRUST", "TRUTH", "TWICE", "UNCLE", "UNDER", "UNION", 
-            "UNIQUE", "UNITY", "UNTIL", "UPPER", "UPSET", "URBAN", "USAGE", "USUAL", "VALID", "VALUE", 
+            "TIGER", "TIMER", "TIMES", "TIRED", "TITLE", "TODAY", "TONES", "TOPIC", "TOTAL", "TOUCH",
+            "TOUGH", "TRACE", "TRACK", "TRADE", "TRAIL", "TRAIN", "TRASH", "TREAT", "TREND", "TRIAL",
+            "TRIBE", "TRICK", "TRUCK", "TRULY", "TRUST", "TRUTH", "TWICE", "UNCLE", "UNDER", "UNION",
+            "UNIQUE", "UNITY", "UNTIL", "UPPER", "UPSET", "URBAN", "USAGE", "USUAL", "VALID", "VALUE",
             "VIDEO", "VIRUS", "VISIT", "VITAL", "VOICE", "VOTED", "WASTE", "WATCH", "WATER", "WEARY",
-            "WEIGH", "WHEAT", "WHEEL", "WHERE", "WHICH", "WHILE", "WHITE", "WHOLE", "WHOSE", "WOMAN", 
+            "WEIGH", "WHEAT", "WHEEL", "WHERE", "WHICH", "WHILE", "WHITE", "WHOLE", "WHOSE", "WOMAN",
             "WORLD", "WORRY", "WORSE", "WOULD", "WRITE", "WRONG", "YACHT", "YIELD", "YOUNG", "YOUTH"
         ];
         const ALL_POSSIBLE_LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
@@ -181,12 +181,12 @@
         function showWordleMessage(text, type = 'info', duration = 3000) {
             const messageBox = document.getElementById('wordleMessageBox');
             const messageText = document.getElementById('wordleMessageText');
-            
+
             if (!messageBox || !messageText) return; // Guard against missing elements
 
             messageText.textContent = text;
             messageBox.className = 'wordle-message-box'; // Reset classes
-            messageBox.classList.add(type); 
+            messageBox.classList.add(type);
             messageBox.style.display = 'block';
 
             if (duration) {
@@ -214,7 +214,7 @@
                 input.type = 'text';
                 input.maxLength = 1;
                 // Add a general class for styling via host CSS if needed
-                input.classList.add('wordle-letter-input'); 
+                input.classList.add('wordle-letter-input');
                 input.dataset.index = i;
 
                 input.addEventListener('input', (e) => {
@@ -232,8 +232,8 @@
                             prevInput.focus();
                         }
                     } else if (e.key.length === 1 && e.key.match(/[a-z]/i)) {
-                        if (e.target.value) { 
-                             e.target.value = ''; 
+                        if (e.target.value) {
+                             e.target.value = '';
                         }
                     } else if (e.key === 'ArrowLeft') {
                         const prevInput = letterInputs[i - 1];
@@ -265,7 +265,7 @@
                 }
 
                 const greenPatternArray = letterInputs.map(input => input.value.toUpperCase());
-                
+
                 const yellowLettersRaw = yellowLettersInput.value.toUpperCase().replace(/[^A-Z]/g, '');
                 const grayLettersRaw = grayLettersInput.value.toUpperCase().replace(/[^A-Z]/g, '');
 
@@ -309,7 +309,7 @@
         function findBestWord(greenPatternArray, yellowLettersSet, grayLettersSet) {
             const candidateWords = [];
 
-            for (const word of wordList) { 
+            for (const word of wordList) {
                 let isPossible = true;
 
                 for (let char of word) {
@@ -336,7 +336,7 @@
                     }
                 }
                 if (!isPossible) continue;
-                
+
                 // Yellow letter cannot be in a position where it was *already tried* and was yellow.
                 // The current UI doesn't explicitly track "tried positions for yellow letters".
                 // However, we must ensure a yellow letter is NOT in a green position if that green position is for a DIFFERENT letter.
@@ -357,7 +357,7 @@
                     // The existing logic: "yellow letter must be in the word" and "not in a conflicting green spot" is the main filter here.
                 }
                 if (!isPossible) continue;
-                
+
                 candidateWords.push(word);
             }
 
@@ -382,13 +382,13 @@
                 const discoveryScore = distinctLettersInWordForDiscovery.size;
                 const uniqueOverallScore = new Set(word).size;
 
-                scoredCandidates.push({ 
-                    word: word, 
-                    discoveryScore: discoveryScore, 
-                    uniqueOverallScore: uniqueOverallScore 
+                scoredCandidates.push({
+                    word: word,
+                    discoveryScore: discoveryScore,
+                    uniqueOverallScore: uniqueOverallScore
                 });
             }
-            
+
             scoredCandidates.sort((a, b) => {
                 if (b.discoveryScore !== a.discoveryScore) {
                     return b.discoveryScore - a.discoveryScore;
@@ -396,9 +396,9 @@
                 if (b.uniqueOverallScore !== a.uniqueOverallScore) {
                     return b.uniqueOverallScore - a.uniqueOverallScore;
                 }
-                return a.word.localeCompare(b.word); 
+                return a.word.localeCompare(b.word);
             });
-            
+
             return scoredCandidates.length > 0 ? scoredCandidates[0].word : null;
         }
 

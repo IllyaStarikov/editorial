@@ -2,7 +2,7 @@
 <div class="unicode-pokedex-container">
 <style>
 /* =================================
-   UNICODEX - Self-Contained Production Ready Styles
+   UNICODEX - Self-Contained Production Ready Styles (FIXED)
    ================================= */
 
 /* Reset and Base Styles - Scoped to Container */
@@ -14,6 +14,9 @@
     line-height: 1.5;
     position: relative;
     isolation: isolate;
+    /* FIXED: Remove width constraints */
+    width: 100% !important;
+    max-width: none !important;
 }
 
 .unicode-pokedex-container * {
@@ -29,17 +32,21 @@
     background: none;
 }
 
-/* Main Container */
+/* Main Container - FIXED: Full width */
 .unicode-pokedex-container .unicode-pokedex-wrapper {
     min-height: 100vh;
-    padding: 1rem;
+    /* FIXED: Remove fixed padding, use responsive padding */
+    padding: clamp(1rem, 3vw, 2rem);
     position: relative;
     overflow: hidden;
     background: #0a0a0a;
-    background-image: 
+    background-image:
         radial-gradient(circle at 20% 50%, rgba(255, 71, 87, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(72, 219, 251, 0.05) 0%, transparent 50%),
         radial-gradient(circle at 40% 20%, rgba(29, 209, 161, 0.05) 0%, transparent 50%);
+    /* FIXED: Ensure full width */
+    width: 100%;
+    max-width: none;
 }
 
 /* Animated Background - Contained */
@@ -98,16 +105,18 @@
     75% { transform: translate(15px, 15px) scale(1.02); }
 }
 
-/* Header Styles */
+/* Header Styles - FIXED: Responsive padding */
 .unicode-pokedex-container .pokedex-header {
     text-align: center;
     margin-bottom: 2rem;
     position: relative;
     z-index: 10;
     background: linear-gradient(135deg, #ff4757, #ff6348);
-    padding: 4rem 2rem 3rem;
+    padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 3vw, 2rem) clamp(1.5rem, 4vw, 3rem);
     border-radius: 24px;
     box-shadow: 0 20px 40px rgba(255, 71, 87, 0.15);
+    /* FIXED: Full width */
+    width: 100%;
 }
 
 /* Blue Eye */
@@ -121,7 +130,7 @@
     background: linear-gradient(135deg, #48dbfb, #0abde3);
     border-radius: 50%;
     border: 3px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 
+    box-shadow:
         0 0 30px rgba(72, 219, 251, 0.4),
         inset 0 0 20px rgba(255, 255, 255, 0.3);
 }
@@ -141,11 +150,11 @@
 }
 
 @keyframes unicodex-pulse {
-    0%, 100% { 
+    0%, 100% {
         transform: scale(1);
         opacity: 0.8;
     }
-    50% { 
+    50% {
         transform: scale(1.1);
         opacity: 1;
     }
@@ -184,18 +193,18 @@
 }
 
 @keyframes unicodex-glow {
-    0%, 100% { 
+    0%, 100% {
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
         transform: scale(1);
     }
-    50% { 
+    50% {
         box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
         transform: scale(1.05);
     }
 }
 
 .unicode-pokedex-container .pokedex-header h1 {
-    font-size: 2.75rem;
+    font-size: clamp(2rem, 5vw, 2.75rem);
     font-weight: 800;
     text-transform: uppercase;
     letter-spacing: -0.02em;
@@ -207,7 +216,7 @@
 }
 
 .unicode-pokedex-container .pokedex-header p {
-    font-size: 1.1rem;
+    font-size: clamp(1rem, 2.5vw, 1.1rem);
     color: rgba(255, 255, 255, 0.9);
     max-width: 600px;
     margin: 0 auto;
@@ -216,7 +225,7 @@
     z-index: 1;
 }
 
-/* Compact Search Bar */
+/* Compact Search Bar - FIXED: Full width */
 .unicode-pokedex-container .controls-container {
     display: flex;
     align-items: center;
@@ -232,6 +241,8 @@
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    /* FIXED: Full width */
+    width: 100%;
 }
 
 /* Search Container */
@@ -355,12 +366,14 @@
     color: #1dd1a1;
 }
 
-/* Main Content Area */
+/* Main Content Area - FIXED: Full width */
 .unicode-pokedex-container .content-wrapper {
     background: linear-gradient(135deg, #ff4757, #ff6348);
     border-radius: 24px;
     padding: 1.5rem;
     box-shadow: 0 20px 40px rgba(255, 71, 87, 0.15);
+    /* FIXED: Full width */
+    width: 100%;
 }
 
 .unicode-pokedex-container .screen-frame {
@@ -368,15 +381,19 @@
     border-radius: 20px;
     padding: 3px;
     box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.2);
+    /* FIXED: Full width */
+    width: 100%;
 }
 
 .unicode-pokedex-container .screen {
     background: #0f0f0f;
     border-radius: 18px;
-    padding: 2rem;
+    padding: clamp(1rem, 3vw, 2rem);
     min-height: 500px;
     position: relative;
     overflow: hidden;
+    /* FIXED: Full width */
+    width: 100%;
 }
 
 .unicode-pokedex-container .screen::before {
@@ -403,6 +420,8 @@
     transform: translateY(20px);
     animation: unicodex-fadeInUp 0.5s ease forwards;
     position: relative;
+    /* FIXED: Full width */
+    width: 100%;
 }
 
 @keyframes unicodex-fadeInUp {
@@ -422,7 +441,7 @@
 }
 
 .unicode-pokedex-container .category-title {
-    font-size: 1.5rem;
+    font-size: clamp(1.25rem, 3vw, 1.5rem);
     font-weight: 700;
     color: #ffffff;
     text-transform: uppercase;
@@ -438,14 +457,15 @@
     font-weight: 600;
 }
 
-/* Symbol Grid */
+/* Symbol Grid - FIXED: Better responsive grid */
 .unicode-pokedex-container .symbol-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(55px, 1fr));
-    gap: 0.6rem;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(45px, 8vw, 65px), 1fr));
+    gap: clamp(0.4rem, 1vw, 0.8rem);
+    width: 100%;
 }
 
-/* Symbol Card */
+/* Symbol Card - Regular font for rendered Unicode symbols */
 .unicode-pokedex-container .symbol-card {
     aspect-ratio: 1;
     background: rgba(255, 255, 255, 0.05);
@@ -454,7 +474,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.25rem;
+    font-size: clamp(0.9rem, 2.5vw, 1.25rem);
     font-weight: 600;
     color: rgba(255, 255, 255, 0.9);
     cursor: pointer;
@@ -462,6 +482,10 @@
     transition: all 0.15s ease;
     -webkit-tap-highlight-color: transparent;
     user-select: none;
+    text-align: center;
+    line-height: 1.2;
+    padding: 0.25rem;
+    overflow: hidden;
 }
 
 /* Enhanced hover effect for desktop */
@@ -471,7 +495,7 @@
         background: rgba(72, 219, 251, 0.15);
         border-color: rgba(72, 219, 251, 0.4);
         color: #ffffff;
-        box-shadow: 
+        box-shadow:
             0 6px 16px rgba(72, 219, 251, 0.15),
             0 0 0 1px rgba(72, 219, 251, 0.3);
         z-index: 10;
@@ -482,38 +506,36 @@
     transform: translateY(-2px) scale(1.02);
 }
 
-/* Info Popover - Clean and Flexible Width */
+/* Info Popover - Clean and Flexible */
 .unicode-pokedex-container .info-popover {
     position: absolute;
     background: rgba(18, 18, 18, 0.95);
-    border: 1px solid rgba(255, 255, 255, 0.08);
     border-radius: 16px;
     padding: 1.25rem;
-    min-width: 280px;
-    max-width: 400px;
-    width: max-content;
+    width: auto;
+    white-space: nowrap;
     opacity: 0;
     visibility: hidden;
     transform: scale(0.95) translateY(10px);
     transition: all 0.2s ease;
     z-index: 1000;
-    box-shadow: 
-        0 8px 24px rgba(0, 0, 0, 0.4),
-        0 0 1px rgba(255, 255, 255, 0.08);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
+    overflow: hidden;
 }
 
-.unicode-pokedex-container .info-popover::before {
+.unicode-pokedex-container .info-popover::after {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #48dbfb, #1dd1a1);
-    border-radius: 16px 16px 0 0;
-    opacity: 0.8;
+    inset: 0;
+    border-radius: 16px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(72, 219, 251, 0.3), rgba(29, 209, 161, 0.3));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
 }
 
 .unicode-pokedex-container .info-popover.active {
@@ -556,6 +578,7 @@
     font-weight: 700;
     color: #ffffff;
     margin-bottom: 0.2rem;
+    white-space: normal;
     word-break: break-word;
 }
 
@@ -565,15 +588,16 @@
     font-weight: 500;
 }
 
-/* Encoding Grid - Clean and Subtle */
+/* Encoding Grid - Flexible Layout */
 .unicode-pokedex-container .encoding-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
     margin-bottom: 1rem;
 }
 
 .unicode-pokedex-container .encoding-item {
+    flex: 0 0 auto;
     background: rgba(255, 255, 255, 0.02);
     border: 1px solid rgba(255, 255, 255, 0.05);
     border-radius: 10px;
@@ -605,6 +629,15 @@
     opacity: 0.3;
 }
 
+.unicode-pokedex-container .encoding-item.copied {
+    animation: unicodex-encoding-flash 0.4s ease;
+}
+
+@keyframes unicodex-encoding-flash {
+    0%, 100% { background: rgba(255, 255, 255, 0.02); }
+    50% { background: rgba(29, 209, 161, 0.2); }
+}
+
 .unicode-pokedex-container .encoding-label {
     font-size: 0.7rem;
     color: rgba(255, 255, 255, 0.4);
@@ -621,6 +654,23 @@
     font-weight: 500;
     word-break: break-all;
     line-height: 1.2;
+}
+
+/* UTF Toggle */
+.unicode-pokedex-container .encoding-item.utf-toggle {
+    cursor: pointer;
+    user-select: none;
+}
+
+.unicode-pokedex-container .encoding-item.utf-toggle .encoding-label {
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.unicode-pokedex-container .utf-toggle-indicator {
+    font-size: 0.6rem;
+    opacity: 0.6;
 }
 
 /* Special styling for UTF sequences */
@@ -672,6 +722,22 @@
 .unicode-pokedex-container .popover-capture-btn.captured {
     background: #ff4757;
     color: #ffffff;
+    animation: unicodex-capture-pulse 0.6s ease;
+}
+
+@keyframes unicodex-capture-pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(29, 209, 161, 0.2);
+    }
+    50% {
+        transform: scale(1.02);
+        box-shadow: 0 0 20px rgba(29, 209, 161, 0.5);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 12px rgba(29, 209, 161, 0.2);
+    }
 }
 
 .unicode-pokedex-container .popover-capture-btn.captured::before {
@@ -685,16 +751,16 @@
 }
 
 @keyframes unicodex-copy-flash {
-    0% { 
+    0% {
         background: rgba(255, 255, 255, 0.05);
         transform: scale(1);
     }
-    50% { 
+    50% {
         background: rgba(29, 209, 161, 0.3);
         transform: scale(1.1);
         box-shadow: 0 0 20px rgba(29, 209, 161, 0.5);
     }
-    100% { 
+    100% {
         background: rgba(255, 255, 255, 0.05);
         transform: scale(1);
     }
@@ -732,74 +798,71 @@
         left: 50% !important;
         transform: translateX(-50%) scale(0.9) translateY(10px);
     }
-    
+
     .unicode-pokedex-container .info-popover.active {
         transform: translateX(-50%) scale(1) translateY(0);
     }
-}
 
-/* Responsive */
-@media (max-width: 768px) {
+    /* Mobile symbol cards - adjusted font for rendered symbols */
+    .unicode-pokedex-container .symbol-card {
+        font-size: clamp(0.8rem, 3vw, 1rem);
+        padding: 0.2rem;
+    }
+
     .unicode-pokedex-container .pokedex-header {
-        padding: 3rem 1.5rem 2.5rem;
+        padding: 2rem 1rem 1.5rem;
     }
-    
+
     .unicode-pokedex-container .pokedex-header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
     }
-    
+
     .unicode-pokedex-container .pokedex-header::before {
-        width: 50px;
-        height: 50px;
+        width: 40px;
+        height: 40px;
+        top: 0.75rem;
+        left: 0.75rem;
     }
-    
+
     .unicode-pokedex-container .pokedex-header::after {
-        width: 18px;
-        height: 18px;
-        top: 1.15rem;
-        left: 1.15rem;
+        width: 14px;
+        height: 14px;
+        top: 0.95rem;
+        left: 0.95rem;
     }
-    
+
     .unicode-pokedex-container .indicator-lights {
-        top: 1.5rem;
-        right: 1.5rem;
-        gap: 0.5rem;
+        top: 1rem;
+        right: 1rem;
+        gap: 0.4rem;
     }
-    
+
     .unicode-pokedex-container .indicator-light {
-        width: 12px;
-        height: 12px;
+        width: 10px;
+        height: 10px;
     }
-    
+
     .unicode-pokedex-container .controls-container {
         flex-direction: column;
         align-items: stretch;
         gap: 0.75rem;
     }
-    
+
     .unicode-pokedex-container .symbol-grid {
-        grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-        gap: 0.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+        gap: 0.4rem;
     }
-    
-    .unicode-pokedex-container .symbol-card {
-        font-size: 1rem;
-    }
-    
+
     .unicode-pokedex-container .category-dropdown {
         left: 0;
         right: 0;
     }
-    
+
     .unicode-pokedex-container .copy-notification {
         bottom: 1rem;
         right: 1rem;
         left: 1rem;
         text-align: center;
-    }
-    
-    .unicode-pokedex-container .encoding-grid {
-        grid-template-columns: 1fr 1fr;
     }
 }
 
@@ -869,7 +932,7 @@
             <div class="indicator-light"></div>
             <div class="indicator-light"></div>
         </div>
-        <h1>Unicodex</h1>
+        <h1><a href="https://starikov.co/unicodex/">Unicodex</a></h1>
         <p>Gotta glyph 'em all!</p>
     </div>
 
@@ -879,7 +942,7 @@
             <span class="search-icon">🔍</span>
             <input type="text" class="search-input" placeholder="Search symbols..." id="pokedexSearchInput">
         </div>
-        
+
         <div class="category-selector" id="pokedexCategorySelector">
             <button class="category-current" id="pokedexCategoryButton">
                 <span id="pokedexCurrentCategory">All Categories</span>
@@ -927,19 +990,19 @@
 <script>
 (function() {
     'use strict';
-    
+
     // ================================
-    // UNICODEX - Self-Contained Production Code
+    // UNICODEX - Self-Contained Production Code (FIXED)
     // ================================
-    
+
     // Get container scope
     const container = document.currentScript.parentElement;
-    
+
     // Constants
     const HOVER_DELAY = 300;
     const NOTIFICATION_DURATION = 2000;
     const ANIMATION_DURATION = 600;
-    
+
     // Symbol names database
     const SYMBOL_NAMES = {
         '!': 'Exclamation Mark',
@@ -1017,8 +1080,8 @@
         '≤': 'Less-Than Or Equal To',
         '≥': 'Greater-Than Or Equal To'
     };
-    
-    // HTML named entities
+
+    // HTML named entities - Extended
     const HTML_ENTITIES = {
         '"': '&quot;',
         '&': '&amp;',
@@ -1058,9 +1121,110 @@
         '¿': '&iquest;',
         '×': '&times;',
         '÷': '&divide;',
-        '€': '&euro;'
+        '€': '&euro;',
+        '™': '&trade;',
+        '←': '&larr;',
+        '↑': '&uarr;',
+        '→': '&rarr;',
+        '↓': '&darr;',
+        '↔': '&harr;',
+        '⇐': '&lArr;',
+        '⇑': '&uArr;',
+        '⇒': '&rArr;',
+        '⇓': '&dArr;',
+        '⇔': '&hArr;',
+        '∀': '&forall;',
+        '∂': '&part;',
+        '∃': '&exist;',
+        '∅': '&empty;',
+        '∇': '&nabla;',
+        '∈': '&isin;',
+        '∉': '&notin;',
+        '∋': '&ni;',
+        '∏': '&prod;',
+        '∑': '&sum;',
+        '−': '&minus;',
+        '∗': '&lowast;',
+        '√': '&radic;',
+        '∝': '&prop;',
+        '∞': '&infin;',
+        '∠': '&ang;',
+        '∧': '&and;',
+        '∨': '&or;',
+        '∩': '&cap;',
+        '∪': '&cup;',
+        '∫': '&int;',
+        '∴': '&there4;',
+        '∼': '&sim;',
+        '≅': '&cong;',
+        '≈': '&asymp;',
+        '≠': '&ne;',
+        '≡': '&equiv;',
+        '≤': '&le;',
+        '≥': '&ge;',
+        '⊂': '&sub;',
+        '⊃': '&sup;',
+        '⊄': '&nsub;',
+        '⊆': '&sube;',
+        '⊇': '&supe;',
+        '⊕': '&oplus;',
+        '⊗': '&otimes;',
+        '⊥': '&perp;',
+        '⋅': '&sdot;',
+        'Α': '&Alpha;',
+        'Β': '&Beta;',
+        'Γ': '&Gamma;',
+        'Δ': '&Delta;',
+        'Ε': '&Epsilon;',
+        'Ζ': '&Zeta;',
+        'Η': '&Eta;',
+        'Θ': '&Theta;',
+        'Ι': '&Iota;',
+        'Κ': '&Kappa;',
+        'Λ': '&Lambda;',
+        'Μ': '&Mu;',
+        'Ν': '&Nu;',
+        'Ξ': '&Xi;',
+        'Ο': '&Omicron;',
+        'Π': '&Pi;',
+        'Ρ': '&Rho;',
+        'Σ': '&Sigma;',
+        'Τ': '&Tau;',
+        'Υ': '&Upsilon;',
+        'Φ': '&Phi;',
+        'Χ': '&Chi;',
+        'Ψ': '&Psi;',
+        'Ω': '&Omega;',
+        'α': '&alpha;',
+        'β': '&beta;',
+        'γ': '&gamma;',
+        'δ': '&delta;',
+        'ε': '&epsilon;',
+        'ζ': '&zeta;',
+        'η': '&eta;',
+        'θ': '&theta;',
+        'ι': '&iota;',
+        'κ': '&kappa;',
+        'λ': '&lambda;',
+        'μ': '&mu;',
+        'ν': '&nu;',
+        'ξ': '&xi;',
+        'ο': '&omicron;',
+        'π': '&pi;',
+        'ρ': '&rho;',
+        'σ': '&sigma;',
+        'τ': '&tau;',
+        'υ': '&upsilon;',
+        'φ': '&phi;',
+        'χ': '&chi;',
+        'ψ': '&psi;',
+        'ω': '&omega;',
+        '♠': '&spades;',
+        '♣': '&clubs;',
+        '♥': '&hearts;',
+        '♦': '&diams;'
     };
-    
+
     // LaTeX commands
     const LATEX_COMMANDS = {
         '$': '\\$',
@@ -1075,7 +1239,7 @@
         '\\': '\\backslash',
         '<': '<',
         '>': '>',
-        '|': '|',
+        '|': '\\vert',
         '°': '^\\circ',
         '±': '\\pm',
         '×': '\\times',
@@ -1093,7 +1257,98 @@
         '¥': '\\yen',
         '©': '\\copyright',
         '®': '\\textregistered',
-        '™': '\\texttrademark'
+        '™': '\\texttrademark',
+        '←': '\\leftarrow',
+        '↑': '\\uparrow',
+        '→': '\\rightarrow',
+        '↓': '\\downarrow',
+        '↔': '\\leftrightarrow',
+        '⇐': '\\Leftarrow',
+        '⇑': '\\Uparrow',
+        '⇒': '\\Rightarrow',
+        '⇓': '\\Downarrow',
+        '⇔': '\\Leftrightarrow',
+        '∀': '\\forall',
+        '∂': '\\partial',
+        '∃': '\\exists',
+        '∅': '\\emptyset',
+        '∇': '\\nabla',
+        '∈': '\\in',
+        '∉': '\\notin',
+        '∋': '\\ni',
+        '∏': '\\prod',
+        '∗': '\\ast',
+        '∝': '\\propto',
+        '∠': '\\angle',
+        '∧': '\\wedge',
+        '∨': '\\vee',
+        '∩': '\\cap',
+        '∪': '\\cup',
+        '∴': '\\therefore',
+        '∼': '\\sim',
+        '≅': '\\cong',
+        '≡': '\\equiv',
+        '⊂': '\\subset',
+        '⊃': '\\supset',
+        '⊄': '\\not\\subset',
+        '⊆': '\\subseteq',
+        '⊇': '\\supseteq',
+        '⊕': '\\oplus',
+        '⊗': '\\otimes',
+        '⊥': '\\perp',
+        '⋅': '\\cdot',
+        'α': '\\alpha',
+        'β': '\\beta',
+        'γ': '\\gamma',
+        'δ': '\\delta',
+        'ε': '\\epsilon',
+        'ζ': '\\zeta',
+        'η': '\\eta',
+        'θ': '\\theta',
+        'ι': '\\iota',
+        'κ': '\\kappa',
+        'λ': '\\lambda',
+        'μ': '\\mu',
+        'ν': '\\nu',
+        'ξ': '\\xi',
+        'ο': 'o',
+        'π': '\\pi',
+        'ρ': '\\rho',
+        'σ': '\\sigma',
+        'τ': '\\tau',
+        'υ': '\\upsilon',
+        'φ': '\\phi',
+        'χ': '\\chi',
+        'ψ': '\\psi',
+        'ω': '\\omega',
+        'Α': 'A',
+        'Β': 'B',
+        'Γ': '\\Gamma',
+        'Δ': '\\Delta',
+        'Ε': 'E',
+        'Ζ': 'Z',
+        'Η': 'H',
+        'Θ': '\\Theta',
+        'Ι': 'I',
+        'Κ': 'K',
+        'Λ': '\\Lambda',
+        'Μ': 'M',
+        'Ν': 'N',
+        'Ξ': '\\Xi',
+        'Ο': 'O',
+        'Π': '\\Pi',
+        'Ρ': 'P',
+        'Σ': '\\Sigma',
+        'Τ': 'T',
+        'Υ': '\\Upsilon',
+        'Φ': '\\Phi',
+        'Χ': 'X',
+        'Ψ': '\\Psi',
+        'Ω': '\\Omega',
+        '♠': '\\spadesuit',
+        '♣': '\\clubsuit',
+        '♥': '\\heartsuit',
+        '♦': '\\diamondsuit'
     };
 
     // Unicode Symbol Categories
@@ -1191,6 +1446,7 @@
             this.activePopover = null;
             this.hoverTimeout = null;
             this.mouseLeaveTimeout = null;
+            this.globalUtfMode = 'utf8'; // Global UTF mode for all symbols
         }
     }
 
@@ -1200,7 +1456,7 @@
             this.container = container;
             this.elements = {};
         }
-        
+
         init() {
             const ids = [
                 'pokedexSearchInput',
@@ -1218,7 +1474,7 @@
                 'pokedexCopyNotification',
                 'pokedexNotificationText'
             ];
-            
+
             ids.forEach(id => {
                 const element = this.container.querySelector(`#${id}`);
                 if (element) {
@@ -1228,7 +1484,7 @@
                 }
             });
         }
-        
+
         get(id) {
             return this.elements[id];
         }
@@ -1239,20 +1495,32 @@
         static getSymbolName(char) {
             return SYMBOL_NAMES[char] || `Unicode U+${char.charCodeAt(0).toString(16).toUpperCase().padStart(4, '0')}`;
         }
-        
+
         static getUTF8Bytes(char) {
             const encoder = new TextEncoder();
             const bytes = encoder.encode(char);
             return Array.from(bytes).map(b => b.toString(16).toUpperCase().padStart(2, '0')).join(' ');
         }
-        
+
+        static getUTF16Bytes(char) {
+            const code = char.charCodeAt(0);
+            if (code <= 0xFFFF) {
+                return code.toString(16).toUpperCase().padStart(4, '0');
+            }
+            // Surrogate pair
+            const high = Math.floor((code - 0x10000) / 0x400) + 0xD800;
+            const low = ((code - 0x10000) % 0x400) + 0xDC00;
+            return `${high.toString(16).toUpperCase().padStart(4, '0')} ${low.toString(16).toUpperCase().padStart(4, '0')}`;
+        }
+
+        static getUTF32Bytes(char) {
+            return char.charCodeAt(0).toString(16).toUpperCase().padStart(8, '0');
+        }
+
         static generateEncodings(symbol) {
-            const htmlEntity = HTML_ENTITIES[symbol.char] || 
-                              `&#${symbol.decimal};`;
-            
-            const latexCommand = LATEX_COMMANDS[symbol.char] || 
+            const latexCommand = LATEX_COMMANDS[symbol.char] ||
                                `\\char"${symbol.hex}`;
-            
+
             return [
                 {
                     label: 'Direct',
@@ -1268,29 +1536,25 @@
                     label: 'UTF-8',
                     value: this.getUTF8Bytes(symbol.char),
                     copyValue: this.getUTF8Bytes(symbol.char),
-                    isUtf: true
-                },
-                {
-                    label: 'HTML',
-                    value: htmlEntity,
-                    copyValue: htmlEntity
-                },
-                {
-                    label: 'HTML Hex',
-                    value: `&#x${symbol.hex};`,
-                    copyValue: `&#x${symbol.hex};`
+                    isUtf: true,
+                    utfType: 'utf8'
                 },
                 {
                     label: 'LaTeX',
                     value: latexCommand,
                     copyValue: latexCommand
+                },
+                {
+                    label: 'URL',
+                    value: encodeURIComponent(symbol.char),
+                    copyValue: encodeURIComponent(symbol.char)
                 }
             ];
         }
-        
+
         static generateSymbols(categories) {
             const allSymbols = [];
-            
+
             categories.forEach(category => {
                 category.symbols = [];
                 category.ranges.forEach(([start, end]) => {
@@ -1300,16 +1564,19 @@
                             if (char.charCodeAt(0) !== i) continue;
                             if (category.filter && !category.filter(i)) continue;
                             if (i < 0x20 || (i >= 0x7F && i <= 0x9F)) continue;
-                            
+
                             const symbol = {
                                 char: char,
                                 decimal: i,
                                 hex: i.toString(16).toUpperCase().padStart(4, '0'),
                                 category: category.name,
                                 categoryId: category.id,
-                                name: this.getSymbolName(char)
+                                name: this.getSymbolName(char),
+                                utf8: this.getUTF8Bytes(char),
+                                utf16: this.getUTF16Bytes(char),
+                                utf32: this.getUTF32Bytes(char)
                             };
-                            
+
                             category.symbols.push(symbol);
                             allSymbols.push(symbol);
                         } catch (e) {
@@ -1318,7 +1585,7 @@
                     }
                 });
             });
-            
+
             return allSymbols;
         }
     }
@@ -1330,90 +1597,178 @@
             this.dom = dom;
             this.container = container;
         }
-        
+
         showNotification(message, isError = false) {
             const notification = this.dom.get('pokedexCopyNotification');
             const text = this.dom.get('pokedexNotificationText');
-            
+
             text.textContent = message;
-            notification.style.background = isError ? 
-                'rgba(255, 71, 87, 0.95)' : 
+            notification.style.background = isError ?
+                'rgba(255, 71, 87, 0.95)' :
                 'rgba(29, 209, 161, 0.95)';
-            
+
             notification.classList.add('show');
             setTimeout(() => {
                 notification.classList.remove('show');
             }, NOTIFICATION_DURATION);
         }
-        
+
         positionPopover(targetElement) {
             const popover = this.dom.get('pokedexInfoPopover');
             const wrapper = this.container.querySelector('.unicode-pokedex-wrapper');
             const rect = targetElement.getBoundingClientRect();
             const wrapperRect = wrapper.getBoundingClientRect();
+
+            // Let the popover size naturally first
+            popover.style.width = 'auto';
+
+            // Force reflow to get accurate dimensions
+            popover.offsetHeight;
+
             const popoverRect = popover.getBoundingClientRect();
-            
+
             // Calculate position relative to wrapper
             let top = rect.bottom - wrapperRect.top + 10;
             let left = rect.left - wrapperRect.left + (rect.width / 2) - (popoverRect.width / 2);
-            
+
             // Boundary checks within wrapper
-            if (left < 10) left = 10;
-            if (left + popoverRect.width > wrapperRect.width - 10) {
-                left = wrapperRect.width - popoverRect.width - 10;
+            const padding = 10;
+            if (left < padding) left = padding;
+            if (left + popoverRect.width > wrapperRect.width - padding) {
+                left = wrapperRect.width - popoverRect.width - padding;
             }
-            
-            if (top + popoverRect.height > wrapperRect.height - 10) {
+
+            // Check if we need to show above
+            if (top + popoverRect.height > wrapperRect.height - padding) {
                 top = rect.top - wrapperRect.top - popoverRect.height - 10;
             }
-            
+
+            // Final boundary check for top
+            if (top < padding) top = padding;
+
             popover.style.top = `${top}px`;
             popover.style.left = `${left}px`;
         }
-        
+
         showInfoPopover(symbol, targetElement) {
             this.state.currentSymbol = symbol;
             this.state.activePopover = targetElement;
-            
-            // Update content
+
+            // Update content - Show actual rendered symbol
             this.dom.get('pokedexPopoverSymbol').textContent = symbol.char;
             this.dom.get('pokedexPopoverName').textContent = symbol.name;
             this.dom.get('pokedexPopoverCategory').textContent = symbol.category;
-            
+
             // Generate encodings
             const encodings = SymbolManager.generateEncodings(symbol);
             const grid = this.dom.get('pokedexEncodingGrid');
-            
-            grid.innerHTML = encodings.map(enc => `
-                <div class="encoding-item ${enc.isUtf ? 'utf-sequence' : ''}" data-value="${enc.copyValue}">
-                    <div class="encoding-label">${enc.label}</div>
-                    <div class="encoding-value">${enc.value}</div>
-                </div>
-            `).join('');
-            
+
+            // Build encoding items with UTF toggle
+            let encodingHTML = '';
+            encodings.forEach(enc => {
+                if (enc.utfType === 'utf8') {
+                    // Use global UTF mode
+                    let currentLabel, currentValue;
+                    switch (this.state.globalUtfMode) {
+                        case 'utf8':
+                            currentLabel = 'UTF-8';
+                            currentValue = symbol.utf8;
+                            break;
+                        case 'utf16':
+                            currentLabel = 'UTF-16';
+                            currentValue = symbol.utf16;
+                            break;
+                        case 'utf32':
+                            currentLabel = 'UTF-32';
+                            currentValue = symbol.utf32;
+                            break;
+                    }
+
+                    encodingHTML += `
+                        <div class="encoding-item utf-sequence utf-toggle" data-symbol-char="${symbol.char}">
+                            <div class="encoding-label">
+                                <span id="utf-label">${currentLabel}</span>
+                                <span class="utf-toggle-indicator">▼</span>
+                            </div>
+                            <div class="encoding-value" id="utf-value">${currentValue}</div>
+                        </div>
+                    `;
+                } else {
+                    encodingHTML += `
+                        <div class="encoding-item ${enc.isUtf ? 'utf-sequence' : ''}" data-value="${enc.copyValue}">
+                            <div class="encoding-label">${enc.label}</div>
+                            <div class="encoding-value">${enc.value}</div>
+                        </div>
+                    `;
+                }
+            });
+
+            grid.innerHTML = encodingHTML;
+
             // Add click handlers
-            grid.querySelectorAll('.encoding-item').forEach(item => {
+            grid.querySelectorAll('.encoding-item:not(.utf-toggle)').forEach(item => {
                 item.onclick = () => {
                     const value = item.dataset.value;
-                    this.copyText(value, `${item.querySelector('.encoding-label').textContent} copied!`);
+                    const label = item.querySelector('.encoding-label').textContent;
+                    this.copyText(value, `${label} copied!`);
+
+                    // Flash animation
+                    item.classList.add('copied');
+                    setTimeout(() => item.classList.remove('copied'), 400);
                 };
             });
-            
+
+            // UTF toggle handler - now changes global mode
+            const utfToggle = grid.querySelector('.utf-toggle');
+            if (utfToggle) {
+                utfToggle.onclick = () => {
+                    const modes = ['utf8', 'utf16', 'utf32'];
+                    const currentIndex = modes.indexOf(this.state.globalUtfMode);
+                    const nextIndex = (currentIndex + 1) % modes.length;
+                    this.state.globalUtfMode = modes[nextIndex];
+
+                    const label = utfToggle.querySelector('#utf-label');
+                    const value = utfToggle.querySelector('#utf-value');
+
+                    switch (this.state.globalUtfMode) {
+                        case 'utf8':
+                            label.textContent = 'UTF-8';
+                            value.textContent = symbol.utf8;
+                            break;
+                        case 'utf16':
+                            label.textContent = 'UTF-16';
+                            value.textContent = symbol.utf16;
+                            break;
+                        case 'utf32':
+                            label.textContent = 'UTF-32';
+                            value.textContent = symbol.utf32;
+                            break;
+                    }
+
+                    // Copy current UTF value
+                    this.copyText(value.textContent, `${label.textContent} copied!`);
+
+                    // Flash animation
+                    utfToggle.classList.add('copied');
+                    setTimeout(() => utfToggle.classList.remove('copied'), 400);
+                };
+            }
+
             // Show popover
             this.dom.get('pokedexInfoPopover').classList.add('active');
-            
+
             // Position after showing
             setTimeout(() => {
                 this.positionPopover(targetElement);
             }, 0);
         }
-        
+
         hideInfoPopover() {
             this.dom.get('pokedexInfoPopover').classList.remove('active');
             this.state.activePopover = null;
             this.state.currentSymbol = null;
         }
-        
+
         copyText(text, message, animateElement) {
             const performCopy = () => {
                 if (navigator.clipboard && navigator.clipboard.writeText) {
@@ -1426,10 +1781,10 @@
                         textArea.style.top = "-999999px";
                         textArea.setAttribute("readonly", "");
                         document.body.appendChild(textArea);
-                        
+
                         textArea.select();
                         textArea.setSelectionRange(0, 99999);
-                        
+
                         try {
                             document.execCommand('copy');
                             document.body.removeChild(textArea);
@@ -1441,15 +1796,28 @@
                     });
                 }
             };
-            
+
             performCopy().then(() => {
                 this.showNotification(message || 'Copied!');
-                
+
                 if (animateElement) {
                     animateElement.classList.add('copied');
                     setTimeout(() => {
                         animateElement.classList.remove('copied');
                     }, ANIMATION_DURATION);
+                }
+
+                // Also flash the capture button if on desktop
+                if (!this.state.isMobile) {
+                    const captureBtn = this.dom.get('pokedexCaptureBtn');
+                    if (captureBtn) {
+                        captureBtn.classList.add('captured');
+                        captureBtn.textContent = '✓ Captured!';
+                        setTimeout(() => {
+                            captureBtn.classList.remove('captured');
+                            captureBtn.textContent = '⚡ Capture Glyph';
+                        }, 1500);
+                    }
                 }
             }).catch((err) => {
                 console.error('Copy failed:', err);
@@ -1466,7 +1834,7 @@
             this.dom = new DOMManager(container);
             this.ui = null;
         }
-        
+
         init() {
             try {
                 this.detectMobile();
@@ -1480,17 +1848,17 @@
                 console.error('Unicodex initialization error:', error);
             }
         }
-        
+
         detectMobile() {
-            this.state.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) 
+            this.state.isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
                                 || ('ontouchstart' in window)
                                 || (navigator.maxTouchPoints > 0);
         }
-        
+
         createCategoryDropdown() {
             const dropdown = this.dom.get('pokedexCategoryDropdown');
             dropdown.innerHTML = '';
-            
+
             // All categories option
             const allOption = document.createElement('div');
             allOption.className = 'category-option active';
@@ -1498,11 +1866,11 @@
             allOption.dataset.category = 'all';
             allOption.onclick = () => this.filterByCategory('all');
             dropdown.appendChild(allOption);
-            
+
             // Individual categories
             SYMBOL_CATEGORIES.forEach(category => {
                 if (category.symbols.length === 0) return;
-                
+
                 const option = document.createElement('div');
                 option.className = 'category-option';
                 option.textContent = category.name;
@@ -1511,36 +1879,36 @@
                 dropdown.appendChild(option);
             });
         }
-        
+
         setupEventListeners() {
             // Category dropdown
             this.dom.get('pokedexCategoryButton').addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.dom.get('pokedexCategorySelector').classList.toggle('active');
             });
-            
+
             // Global click handler - scoped to container
             this.container.addEventListener('click', (e) => {
                 if (!e.target.closest('.category-selector')) {
                     this.dom.get('pokedexCategorySelector').classList.remove('active');
                 }
-                
-                if (!this.dom.get('pokedexInfoPopover').contains(e.target) && 
+
+                if (!this.dom.get('pokedexInfoPopover').contains(e.target) &&
                     !e.target.closest('.symbol-card')) {
                     this.ui.hideInfoPopover();
                 }
             });
-            
+
             // Search
-            this.dom.get('pokedexSearchInput').addEventListener('input', 
+            this.dom.get('pokedexSearchInput').addEventListener('input',
                 this.debounce(() => this.handleSearch(), 300)
             );
-            
+
             // Popover events
             this.dom.get('pokedexInfoPopover').addEventListener('mouseenter', () => {
                 clearTimeout(this.state.mouseLeaveTimeout);
             });
-            
+
             this.dom.get('pokedexInfoPopover').addEventListener('mouseleave', () => {
                 if (!this.state.isMobile) {
                     this.state.mouseLeaveTimeout = setTimeout(() => {
@@ -1548,33 +1916,33 @@
                     }, 300);
                 }
             });
-            
+
             // Capture button
             this.dom.get('pokedexCaptureBtn').addEventListener('click', () => {
                 if (!this.state.currentSymbol) return;
-                
+
                 this.ui.copyText(
-                    this.state.currentSymbol.char, 
+                    this.state.currentSymbol.char,
                     `${this.state.currentSymbol.char} captured!`
                 );
-                
+
                 const btn = this.dom.get('pokedexCaptureBtn');
                 btn.classList.add('captured');
                 btn.textContent = '✓ Captured!';
-                
+
                 setTimeout(() => {
                     btn.classList.remove('captured');
                     btn.textContent = '⚡ Capture Glyph';
                 }, 1500);
             });
-            
+
             // Keyboard
             this.container.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
                     this.ui.hideInfoPopover();
                 }
             });
-            
+
             // Window events
             window.addEventListener('resize', this.debounce(() => {
                 this.detectMobile();
@@ -1582,7 +1950,7 @@
                     this.ui.positionPopover(this.state.activePopover);
                 }
             }, 250));
-            
+
             // Scroll handler for wrapper
             this.container.querySelector('.unicode-pokedex-wrapper').addEventListener('scroll', () => {
                 if (this.state.activePopover && !this.state.isMobile) {
@@ -1590,52 +1958,52 @@
                 }
             }, { passive: true });
         }
-        
+
         filterByCategory(categoryId) {
             this.state.currentCategory = categoryId;
-            
+
             // Update UI
-            this.dom.get('pokedexCurrentCategory').textContent = 
-                categoryId === 'all' ? 'All Categories' : 
+            this.dom.get('pokedexCurrentCategory').textContent =
+                categoryId === 'all' ? 'All Categories' :
                 SYMBOL_CATEGORIES.find(c => c.id === categoryId)?.name || 'All Categories';
-            
+
             // Update active states
             this.container.querySelectorAll('.category-option').forEach(option => {
                 option.classList.toggle('active', option.dataset.category === categoryId);
             });
-            
+
             // Close dropdown
             this.dom.get('pokedexCategorySelector').classList.remove('active');
-            
+
             // Display filtered symbols
-            const categoriesToDisplay = categoryId === 'all' ? 
-                SYMBOL_CATEGORIES : 
+            const categoriesToDisplay = categoryId === 'all' ?
+                SYMBOL_CATEGORIES :
                 SYMBOL_CATEGORIES.filter(c => c.id === categoryId);
-            
+
             this.displayCategories(categoriesToDisplay);
         }
-        
+
         handleSearch() {
             const query = this.dom.get('pokedexSearchInput').value.toLowerCase().trim();
-            
+
             if (!query) {
                 this.filterByCategory(this.state.currentCategory);
                 return;
             }
-            
+
             // Filter symbols
             const filtered = this.state.allSymbols.filter(symbol => {
                 if (this.state.currentCategory !== 'all' && symbol.categoryId !== this.state.currentCategory) {
                     return false;
                 }
-                
+
                 return symbol.char.includes(query) ||
                        symbol.hex.toLowerCase().includes(query) ||
                        symbol.decimal.toString().includes(query) ||
                        symbol.category.toLowerCase().includes(query) ||
                        symbol.name.toLowerCase().includes(query);
             });
-            
+
             // Group by category
             const filteredCategories = [];
             SYMBOL_CATEGORIES.forEach(category => {
@@ -1647,26 +2015,26 @@
                     });
                 }
             });
-            
+
             this.displayCategories(filteredCategories);
         }
-        
+
         displayCategories(categories) {
             const container = this.dom.get('pokedexSymbolContainer');
             container.innerHTML = '';
-            
+
             if (categories.length === 0) {
                 container.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.5); padding: 2rem;">No symbols found</div>';
                 return;
             }
-            
+
             categories.forEach((category, index) => {
                 if (category.symbols.length === 0) return;
-                
+
                 const categoryDiv = document.createElement('div');
                 categoryDiv.className = 'symbol-category';
                 categoryDiv.style.animationDelay = `${Math.min(index * 0.05, 0.3)}s`;
-                
+
                 categoryDiv.innerHTML = `
                     <div class="category-header">
                         <h2 class="category-title">${category.name}</h2>
@@ -1674,9 +2042,9 @@
                     </div>
                     <div class="symbol-grid" id="grid-${category.id}"></div>
                 `;
-                
+
                 container.appendChild(categoryDiv);
-                
+
                 // Populate grid
                 const grid = categoryDiv.querySelector(`#grid-${category.id}`);
                 category.symbols.forEach(symbol => {
@@ -1684,13 +2052,14 @@
                 });
             });
         }
-        
+
         createSymbolCard(symbol) {
             const card = document.createElement('button');
             card.className = 'symbol-card';
+            // Show actual rendered Unicode symbol
             card.textContent = symbol.char;
             card.setAttribute('aria-label', `Symbol: ${symbol.name}`);
-            
+
             if (!this.state.isMobile) {
                 // Desktop: hover to show popover, click to copy
                 card.addEventListener('mouseenter', () => {
@@ -1700,14 +2069,14 @@
                         this.ui.showInfoPopover(symbol, card);
                     }, HOVER_DELAY);
                 });
-                
+
                 card.addEventListener('mouseleave', () => {
                     clearTimeout(this.state.hoverTimeout);
                     this.state.mouseLeaveTimeout = setTimeout(() => {
                         this.ui.hideInfoPopover();
                     }, HOVER_DELAY);
                 });
-                
+
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
@@ -1718,7 +2087,7 @@
                 card.addEventListener('click', (e) => {
                     e.preventDefault();
                     e.stopPropagation();
-                    
+
                     if (this.state.activePopover === card) {
                         this.ui.hideInfoPopover();
                     } else {
@@ -1726,10 +2095,10 @@
                     }
                 });
             }
-            
+
             return card;
         }
-        
+
         debounce(func, wait) {
             let timeout;
             return function executedFunction(...args) {
@@ -1745,7 +2114,7 @@
 
     // Initialize when DOM is ready
     const app = new Unicodex(container);
-    
+
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => app.init());
     } else {
