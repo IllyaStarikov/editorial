@@ -1,3 +1,6 @@
 starikov/drafts/
 CLAUDE.md
 .claude/
+
+# Minified HTML files
+*.min.html
