@@ -504,6 +504,24 @@ caption {
   background-color: var(--ghost-accent-color);
 }
 
+/* Enhanced tocbot styling for modern look */
+.toc-list a {
+  font-weight: var(--font-weight-medium);
+  padding: var(--space-050) var(--space-075);
+  border-radius: 6px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.toc-list a:hover,
+.toc-list a.is-active-link {
+  background: currentColor;
+  color: var(--color-background, white);
+  border-color: currentColor;
+  transform: translateX(2px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
 /* General code block enhancements */
 pre[class*="language-"] {
   border-radius: 8px;
@@ -724,37 +742,43 @@ code[class*="language-"] {
 
 <!-- PART 1: Add to Ghost Admin → Settings → Code injection → Site Header -->
 <style>
-/* Ghost Table of Contents - Simplified & Fixed */
+/* Ghost Table of Contents - Ultra Modern & Bold */
 .ghost-toc {
   margin: var(--space-200) 0;
-  padding: var(--space-100);
-  border: var(--border-width) var(--border-style) currentColor;
-  border-radius: var(--border-radius);
+  padding: var(--space-150);
+  border: 3px solid currentColor;
+  border-radius: 16px;
   font-family: var(--font-family-sans-serif);
   font-size: var(--font-size-100);
   line-height: var(--line-height-100);
-  /* Inherit colors from parent to match any theme */
   background: inherit;
   color: inherit;
   max-width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  position: relative;
+  overflow: hidden;
+  font-weight: var(--font-weight-medium);
 }
 
 @media (min-width: 40em) {
   .ghost-toc {
-    padding: var(--space-150);
+    padding: var(--space-200);
   }
 }
 
 .ghost-toc__title {
   font-size: var(--font-size-125);
-  font-weight: var(--font-weight-semi-bold);
+  font-weight: 900;
   text-transform: uppercase;
-  letter-spacing: var(--font-letter-spacing-tiny);
+  letter-spacing: 0.12em;
   text-align: center;
-  margin-bottom: var(--space-075);
-  padding-bottom: var(--space-075);
-  border-bottom: var(--border-width) var(--border-style) currentColor;
+  margin-bottom: var(--space-100);
+  padding-bottom: var(--space-100);
+  border-bottom: 3px solid currentColor;
   color: inherit;
+  position: relative;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
 .ghost-toc__list {
@@ -774,28 +798,35 @@ code[class*="language-"] {
 
 .ghost-toc__link {
   display: block;
-  padding: var(--space-050) var(--space-075);
+  padding: var(--space-100) var(--space-125);
   color: inherit;
   text-decoration: none;
-  border-radius: var(--border-radius-small);
-  transition: background-color 0.2s ease;
+  border-radius: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   word-break: break-word;
+  font-weight: 600;
+  position: relative;
+  border: 2px solid transparent;
+  font-size: 1.05em;
 }
 
 /* Use data attributes for numbering to avoid counter issues */
 .ghost-toc__link[data-number]::before {
   content: attr(data-number) ". ";
-  opacity: 0.5;
+  opacity: 0.8;
   margin-right: var(--space-050);
-  font-weight: var(--font-weight-medium);
+  font-weight: 800;
   color: inherit;
+  font-size: 1.1em;
 }
 
 .ghost-toc__list--nested .ghost-toc__link::before {
-  content: "–";
-  opacity: 0.3;
+  content: "▸";
+  opacity: 0.7;
   margin-right: var(--space-050);
   color: inherit;
+  font-weight: 700;
+  font-size: 1.2em;
 }
 
 .ghost-toc__link:hover,
@@ -807,17 +838,23 @@ code[class*="language-"] {
 
 /* Better hover state that works with any color scheme */
 .ghost-toc__link:hover {
-  opacity: 0.8;
-  text-decoration: underline;
-  background: transparent;
-  color: inherit;
+  opacity: 0.95;
+  text-decoration: none;
+  background: currentColor;
+  color: var(--color-background, white);
+  border-color: currentColor;
+  transform: translateX(6px) scale(1.02);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 
 .ghost-toc__link--active {
-  font-weight: var(--font-weight-semi-bold);
-  text-decoration: underline;
-  background: transparent;
-  color: inherit;
+  font-weight: 800;
+  text-decoration: none;
+  background: currentColor;
+  color: var(--color-background, white);
+  border-color: currentColor;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  transform: translateX(3px) scale(1.01);
 }
 
 .ghost-toc:empty,
