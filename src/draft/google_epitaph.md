@@ -14,6 +14,7 @@
 - 4x > 500, 1x > 100 visits
 - 53 go/ links
 - 130 gpastes
+- NNN Moma badges 
 
 ## Highlights
 
