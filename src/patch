@@ -1,0 +1,638 @@
+--- a/sorting_algorithms.html
++++ b/sorting_algorithms.html
+@@ -901,25 +901,96 @@
+ }
+ 
+ @keyframes sv-barCelebrate {
+-  0% {
+-    transform: translateY(0) scaleY(1);
+-    filter: brightness(1.3);
+-  }
+-  20% {
+-    transform: translateY(-25px) scaleY(1.3);
+-    filter: brightness(1.8);
+-  }
+-  40% {
+-    transform: translateY(0) scaleY(0.85);
+-    filter: brightness(1.5);
+-  }
+-  60% {
+-    transform: translateY(-12px) scaleY(1.15);
+-    filter: brightness(1.6);
+-  }
+-  80% {
+-    transform: translateY(0) scaleY(0.95);
+-    filter: brightness(1.4);
++  0%, 100% {
++    transform: translateY(0) scaleX(1) scaleY(1) rotateZ(0deg);
++  }
++  25% {
++    transform: translateY(-30px) scaleX(1.1) scaleY(1.2) rotateZ(-2deg);
++  }
++  50% {
++    transform: translateY(-10px) scaleX(0.9) scaleY(1.1) rotateZ(2deg);
++  }
++  75% {
++    transform: translateY(-20px) scaleX(1.05) scaleY(1.15) rotateZ(-1deg);
++  }
++}
++
++@keyframes sv-barPulse {
++  0%, 100% {
++    transform: scaleY(1) scaleX(1);
++    filter: brightness(1.4);
++  }
++  50% {
++    transform: scaleY(1.08) scaleX(1.05);
++    filter: brightness(1.8);
++  }
++}
++
++@keyframes sv-barWave {
++  0% {
++    transform: translateY(0) scaleY(1);
++  }
++  50% {
++    transform: translateY(var(--wave-height)) scaleY(var(--wave-scale));
++  }
++  100% {
++    transform: translateY(0) scaleY(1);
++  }
++}
++
++@keyframes sv-barSpiral {
++  0% {
++    transform: translateY(0) rotateY(0deg) scaleY(1);
++  }
++  50% {
++    transform: translateY(-20px) rotateY(180deg) scaleY(1.1);
++  }
++  100% {
++    transform: translateY(0) rotateY(360deg) scaleY(1);
++  }
++}
++
++@keyframes sv-barBounce {
++  0%, 20%, 50%, 80%, 100% {
++    transform: translateY(0) scaleY(1);
++  }
++  10% {
++    transform: translateY(-30px) scaleY(1.1);
++  }
++  30% {
++    transform: translateY(-15px) scaleY(1.05);
++  }
++  40% {
++    transform: translateY(-20px) scaleY(1.08);
++  }
++  60% {
++    transform: translateY(-10px) scaleY(1.03);
++  }
++  90% {
++    transform: translateY(-5px) scaleY(1.01);
++  }
++}
++
++@keyframes sv-barDance {
++  0%, 100% {
++    transform: translateY(0) translateX(0) scaleY(1) rotateZ(0deg);
++    filter: brightness(1.4) hue-rotate(0deg);
++  }
++  12.5% {
++    transform: translateY(-25px) translateX(-3px) scaleY(1.15) rotateZ(-3deg);
++    filter: brightness(1.7) hue-rotate(30deg);
++  }
++  25% {
++    transform: translateY(-35px) translateX(0) scaleY(1.25) rotateZ(0deg);
++    filter: brightness(2) hue-rotate(60deg);
++  }
++  37.5% {
++    transform: translateY(-25px) translateX(3px) scaleY(1.15) rotateZ(3deg);
++    filter: brightness(1.7) hue-rotate(90deg);
++  }
++  50% {
++    transform: translateY(0) translateX(0) scaleY(0.9) rotateZ(0deg);
++    filter: brightness(1.5) hue-rotate(120deg);
++  }
++  75% {
++    transform: translateY(-15px) translateX(0) scaleY(1.1) rotateZ(0deg);
++    filter: brightness(1.6) hue-rotate(180deg);
+   }
+   100% {
+     transform: translateY(0) scaleY(1);
+@@ -928,7 +999,11 @@
+ }
+ 
+ #sorting-visualizer-widget .sv-bar.celebrating {
+-  animation: sv-barCelebrate 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
++  animation: sv-barDance 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
++}
++
++#sorting-visualizer-widget .sv-bar.dancing {
++  animation: var(--dance-animation) var(--dance-duration) var(--dance-timing) var(--dance-delay) !important;
+ }
+ 
+ @keyframes sv-rainbowWave {
+@@ -4305,23 +4380,25 @@
+       const algorithmName = this.algorithms[algorithmKey]?.shortName || 'SORTED';
+ 
+       // Immediately mark all bars as sorted with smooth transition
+-      requestAnimationFrame(() => {
+-        bars.forEach((bar, i) => {
+-          bar.classList.remove('comparing', 'comparing-secondary');
+-          bar.classList.add('sorted');
+-          // Subtle initial glow
+-          bar.style.transition = 'all 0.3s ease-out';
+-          bar.style.filter = 'brightness(1.2) saturate(1.3)';
+-        });
++      bars.forEach((bar, i) => {
++        bar.classList.remove('comparing', 'comparing-secondary');
++        bar.classList.add('sorted');
++        bar.style.transition = 'all 0.3s ease-out';
++        bar.style.filter = 'brightness(1.2) saturate(1.3)';
+       });
+ 
++      // Start with the dancing bars immediately
++      await new Promise(resolve => setTimeout(resolve, 100));
++      await this.createEpicBarDance(bars);
++
+       // Create completion overlay
+       const overlay = document.createElement('div');
+       overlay.className = 'sv-completion-overlay';
+ 
+       const message = document.createElement('div');
+       message.className = 'sv-completion-message';
+-      message.textContent = `${algorithmName} SORTED`;
++      message.textContent = `${algorithmName} SORTED!`;
++      message.style.zIndex = '100';
+ 
+       // Add subtle entrance animation
+       message.style.opacity = '0';
+@@ -4340,33 +4417,20 @@
+       // Use requestAnimationFrame for all animations to ensure smoothness
+       const animationQueue = [];
+ 
+-      const queueAnimation = (fn, delay) => {
+-        animationQueue.push({ fn, delay });
+-      };
+-
+-      // Queue all animations
+-      queueAnimation(() => this.createRippleEffect(chart, centerX, centerY), 0);
+-      queueAnimation(() => this.createBarWave(bars), 50);
+-      queueAnimation(() => this.createFireworks(chart, chartRect), 150);
+-      queueAnimation(() => this.createConfettiRain(chart, chartRect), 300);
+-      queueAnimation(() => this.createRainbowWave(bars), 500);
+-      queueAnimation(() => this.createFinalBurst(chart, centerX, centerY), 800);
+-
+-      // Execute animations with proper timing
+-      let currentTime = 0;
+-      const executeNextAnimation = () => {
+-        if (animationQueue.length === 0) return;
+-
+-        const next = animationQueue.shift();
+-        if (currentTime >= next.delay) {
+-          requestAnimationFrame(next.fn);
+-          currentTime = 0;
+-          executeNextAnimation();
+-        } else {
+-          setTimeout(() => {
+-            currentTime = next.delay;
+-            executeNextAnimation();
+-          }, next.delay - currentTime);
++      // Create effects in parallel with the dancing
++      setTimeout(() => {
++        this.createRippleEffect(chart, centerX, centerY);
++      }, 200);
++
++      setTimeout(() => {
++        this.createFireworks(chart, chartRect);
++      }, 400);
++
++      setTimeout(() => {
++        this.createMinimalConfetti(chart, chartRect);
++      }, 600);
++
++      setTimeout(() => {
++        this.createFinalBurst(chart, centerX, centerY);
+         }
+       };
+ 
+@@ -4398,7 +4462,7 @@
+               chart.style.animation = '';
+             });
+           }, 500);
+-        });
++        }, 2000);
+       }, 3200);
+     }
+ 
+@@ -4454,125 +4518,199 @@
+       chart.appendChild(fragment);
+     }
+ 
+-    createBarWave(bars) {
+-      const waveHeight = 25;
+-      const waveDuration = 600;
++    async createEpicBarDance(bars) {
++      if (!bars || bars.length === 0) return;
++
++      // Phase 1: Quick pulse to grab attention
++      bars.forEach((bar, i) => {
++        const delay = i * 10;
++        setTimeout(() => {
++          bar.style.transition = 'all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
++          bar.style.transform = 'scaleY(1.1) scaleX(1.05)';
++          bar.style.filter = 'brightness(1.6) saturate(1.4)';
++        }, delay);
++      });
+ 
++      await new Promise(resolve => setTimeout(resolve, 250));
++
++      // Phase 2: The Wave Dance
++      const waveStyles = [
++        { height: 30, scale: 1.3, duration: 400 },
++        { height: 20, scale: 1.2, duration: 350 },
++        { height: 25, scale: 1.25, duration: 300 }
++      ];
++
++      for (let wave = 0; wave < 2; wave++) {
++        const style = waveStyles[wave % waveStyles.length];
++        
++        bars.forEach((bar, i) => {
++          const delay = i * 15;
++          const phase = (i / bars.length) * Math.PI * 2;
++          
++          setTimeout(() => {
++            bar.style.transition = `all ${style.duration}ms cubic-bezier(0.68, -0.55, 0.265, 1.55)`;
++            bar.style.transform = `translateY(-${style.height + Math.sin(phase) * 10}px) scaleY(${style.scale}) scaleX(${1 + Math.cos(phase) * 0.1})`;
++            
++            const hue = (i / bars.length) * 120 + wave * 60;
++            bar.style.filter = `brightness(1.8) saturate(1.8) hue-rotate(${hue}deg)`;
++            bar.style.boxShadow = `
++              0 0 30px hsla(${120 + hue}, 80%, 60%, 0.8),
++              0 -10px 25px hsla(${120 + hue}, 80%, 60%, 0.6) inset
++            `;
++          }, delay);
++
++          setTimeout(() => {
++            bar.style.transform = 'translateY(0) scaleY(1) scaleX(1)';
++          }, delay + style.duration);
++        });
++
++        await new Promise(resolve => setTimeout(resolve, style.duration + bars.length * 15));
++      }
++
++      // Phase 3: Synchronized Bounce
+       bars.forEach((bar, i) => {
+-        const delay = i * 12;
+-        const phase = (i / bars.length) * Math.PI * 2;
++        bar.style.transition = 'all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1)';
++        bar.style.transform = 'translateY(-40px) scaleY(1.3)';
++        bar.style.filter = 'brightness(2) saturate(2)';
++      });
++
++      await new Promise(resolve => setTimeout(resolve, 200));
++
++      // Mid-air pause and rotation
++      bars.forEach((bar, i) => {
++        const rotation = i % 2 === 0 ? 5 : -5;
++        bar.style.transition = 'all 0.2s ease-out';
++        bar.style.transform = `translateY(-40px) scaleY(1.3) rotateZ(${rotation}deg)`;
++      });
++
++      await new Promise(resolve => setTimeout(resolve, 200));
++
++      // Drop back down with stagger
++      bars.forEach((bar, i) => {
++        const delay = (bars.length - i) * 8;
++        setTimeout(() => {
++          bar.style.transition = 'all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
++          bar.style.transform = 'translateY(0) scaleY(0.9) scaleX(1.1) rotateZ(0deg)';
++        }, delay);
+ 
+         setTimeout(() => {
+-          requestAnimationFrame(() => {
+-            // Create smooth wave motion
+-            bar.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+-            bar.style.transform = `translateY(-${waveHeight}px) scaleY(1.15)`;
+-
+-            // Add dynamic glow
+-            const hue = (i / bars.length) * 120; // Green to blue gradient
+-            bar.style.boxShadow = `
+-              0 0 25px hsla(${120 + hue}, 70%, 50%, 0.7),
+-              0 -8px 20px hsla(${120 + hue}, 70%, 50%, 0.5) inset
+-            `;
+-            bar.style.filter = `brightness(1.8) saturate(1.5) hue-rotate(${hue}deg)`;
+-
+-            // Return to normal position
+-            setTimeout(() => {
+-              requestAnimationFrame(() => {
+-                bar.style.transform = 'translateY(0) scaleY(1)';
+-                bar.style.filter = 'brightness(1.4) saturate(1.3)';
+-              });
+-            }, waveDuration / 2);
+-          });
+-        }, delay);
++          bar.style.transform = 'translateY(0) scaleY(1) scaleX(1) rotateZ(0deg)';
++        }, delay + 100);
+       });
++
++      await new Promise(resolve => setTimeout(resolve, 500));
++
++      // Phase 4: Final celebration shimmer
++      bars.forEach((bar, i) => {
++        const delay = Math.random() * 200;
++        setTimeout(() => {
++          bar.classList.add('dancing');
++          const animations = ['sv-barPulse', 'sv-barCelebrate'];
++          const randomAnim = animations[i % animations.length];
++          
++          bar.style.setProperty('--dance-animation', randomAnim);
++          bar.style.setProperty('--dance-duration', '0.6s');
++          bar.style.setProperty('--dance-timing', 'ease-in-out');
++          bar.style.setProperty('--dance-delay', '0s');
++          
++          // Final glow state
++          bar.style.filter = 'brightness(1.5) saturate(1.4)';
++          bar.style.boxShadow = `
++            0 0 20px rgba(0, 255, 136, 0.6),
++            0 -8px 15px rgba(0, 255, 136, 0.4) inset,
++            0 0 40px rgba(0, 255, 136, 0.3)
++          `;
++        }, delay);
++      });
++
++      // Remove dancing class after animation
++      setTimeout(() => {
++        bars.forEach(bar => {
++          bar.classList.remove('dancing');
++          bar.style.animation = '';
++        });
++      }, 1000);
+     }
+ 
+-    createFireworks(chart, chartRect) {
+-      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28', '#9775ff', '#ff7875'];
++    createMinimalConfetti(chart, chartRect) {
++      const confettiCount = 15;
++      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28', '#9775ff'];
++      const fragment = document.createDocumentFragment();
++
++      for (let i = 0; i < confettiCount; i++) {
++        const confetti = document.createElement('div');
++        const color = colors[i % colors.length];
++        const startX = Math.random() * chartRect.width;
++        const size = 6 + Math.random() * 3;
++        
++        confetti.className = 'sv-particle';
++        confetti.style.cssText = `
++          position: absolute;
++          left: ${startX}px;
++          top: -20px;
++          width: ${size}px;
++          height: ${size}px;
++          background: ${color};
++          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
++          pointer-events: none;
++          z-index: 35;
++          opacity: 0.9;
++          animation: sv-confetti ${1500 + Math.random() * 500}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
++          animation-delay: ${Math.random() * 200}ms;
++        `;
++
++        fragment.appendChild(confetti);
++        setTimeout(() => confetti.remove(), 2500);
++      }
++
++      chart.appendChild(fragment);
++    }
++
++    createFireworks(chart, chartRect) {
++      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28'];
+       const burstPoints = [
+-        { x: chartRect.width * 0.25, y: chartRect.height * 0.35 },
+-        { x: chartRect.width * 0.75, y: chartRect.height * 0.35 },
+-        { x: chartRect.width * 0.5, y: chartRect.height * 0.5 }
++        { x: chartRect.width * 0.3, y: chartRect.height * 0.4 },
++        { x: chartRect.width * 0.7, y: chartRect.height * 0.4 }
+       ];
+ 
+       burstPoints.forEach((point, burstIndex) => {
+         setTimeout(() => {
+-          requestAnimationFrame(() => {
+-            const particleCount = 20;
+-            const fragment = document.createDocumentFragment();
+-
+-            // Create burst flash
+-            const flash = document.createElement('div');
+-            flash.style.cssText = `
+-              position: absolute;
+-              left: ${point.x}px;
+-              top: ${point.y}px;
+-              width: 30px;
+-              height: 30px;
+-              background: radial-gradient(circle, white 0%, transparent 70%);
+-              border-radius: 50%;
+-              transform: translate(-50%, -50%) scale(0);
+-              pointer-events: none;
+-              z-index: 50;
+-              will-change: transform, opacity;
+-            `;
+-            chart.appendChild(flash);
+-
+-            requestAnimationFrame(() => {
+-              flash.style.transition = 'all 0.2s ease-out';
+-              flash.style.transform = 'translate(-50%, -50%) scale(2)';
+-              flash.style.opacity = '0';
+-            });
+-
+-            setTimeout(() => flash.remove(), 200);
+-
+-            // Create particles
+-            for (let i = 0; i < particleCount; i++) {
+-              const particle = document.createElement('div');
+-              const angle = (i / particleCount) * Math.PI * 2 + Math.random() * 0.2;
+-              const velocity = 50 + Math.random() * 50;
+-              const color = colors[Math.floor(Math.random() * colors.length)];
+-              const size = 3 + Math.random() * 3;
+-
+-              particle.className = 'sv-particle';
+-              particle.style.cssText = `
+-                position: absolute;
+-                left: ${point.x}px;
+-                top: ${point.y}px;
+-                width: ${size}px;
+-                height: ${size}px;
+-                background: radial-gradient(circle, ${color} 0%, ${color}88 100%);
+-                border-radius: 50%;
+-                box-shadow: 0 0 ${size * 3}px ${color}, 0 0 ${size * 6}px ${color}66;
+-                pointer-events: none;
+-                z-index: 40;
+-                opacity: 1;
+-                will-change: transform, opacity;
+-              `;
++          const particleCount = 12;
++          const fragment = document.createDocumentFragment();
+ 
+-              fragment.appendChild(particle);
+-
+-              // Animate with physics
+-              let frame = 0;
+-              const gravity = 0.4;
+-              const friction = 0.98;
+-              let velocityX = Math.cos(angle) * velocity;
+-              let velocityY = Math.sin(angle) * velocity - 30;
+-              let posX = 0;
+-              let posY = 0;
+-              let opacity = 1;
+-
+-              const animate = () => {
+-                frame++;
+-                velocityY += gravity;
+-                velocityX *= friction;
+-                velocityY *= friction;
+-                posX += velocityX * 0.016;
+-                posY += velocityY * 0.016;
+-                opacity = Math.max(0, 1 - frame * 0.012);
+-
+-                particle.style.transform = `translate(${posX}px, ${posY}px) scale(${1 - frame * 0.008})`;
+-                particle.style.opacity = opacity;
+-
+-                if (frame < 80 && opacity > 0) {
+-                  requestAnimationFrame(animate);
+-                } else {
+-                  particle.remove();
++          for (let i = 0; i < particleCount; i++) {
++            const particle = document.createElement('div');
++            const angle = (i / particleCount) * Math.PI * 2;
++            const velocity = 40 + Math.random() * 30;
++            const color = colors[Math.floor(Math.random() * colors.length)];
++            const size = 3 + Math.random() * 2;
++
++            particle.className = 'sv-particle';
++            particle.style.cssText = `
++              position: absolute;
++              left: ${point.x}px;
++              top: ${point.y}px;
++              width: ${size}px;
++              height: ${size}px;
++              background: ${color};
++              border-radius: 50%;
++              box-shadow: 0 0 ${size * 2}px ${color};
++              pointer-events: none;
++              z-index: 40;
++            `;
++
++            fragment.appendChild(particle);
++
++            // Simple animation
++            let frame = 0;
++            const animate = () => {
++              frame++;
++              const progress = frame / 60;
++              const x = Math.cos(angle) * velocity * progress;
++              const y = Math.sin(angle) * velocity * progress + (progress * progress * 100);
++              
++              particle.style.transform = `translate(${x}px, ${y}px) scale(${1 - progress})`;
++              particle.style.opacity = 1 - progress;
++
++              if (frame < 60) {
++                requestAnimationFrame(animate);
++              } else {
++                particle.remove();
+                 }
+               };
+ 
+@@ -4581,79 +4719,13 @@
+             }
+ 
+             chart.appendChild(fragment);
+-          });
+-        }, burstIndex * 120);
+-      });
+-    }
+-
+-    createConfettiRain(chart, chartRect) {
+-      const confettiCount = 30;
+-      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28', '#9775ff', '#ff7875', '#42a5f5'];
+-      const fragment = document.createDocumentFragment();
+-
+-      for (let i = 0; i < confettiCount; i++) {
+-        const confetti = document.createElement('div');
+-        const color = colors[i % colors.length];
+-        const startX = Math.random() * chartRect.width;
+-        const size = 6 + Math.random() * 4;
+-        const shape = Math.random();
+-        const rotationSpeed = 200 + Math.random() * 400;
+-        const fallDuration = 1500 + Math.random() * 1000;
+-        const swayAmount = 30 + Math.random() * 40;
+-
+-        // Different shapes for variety
+-        let borderRadius = '2px';
+-        if (shape < 0.33) borderRadius = '50%';
+-        else if (shape < 0.66) borderRadius = '0';
+-
+-        confetti.style.cssText = `
+-          position: absolute;
+-          left: ${startX}px;
+-          top: -30px;
+-          width: ${size}px;
+-          height: ${size * (shape < 0.33 ? 1 : 1.5)}px;
+-          background: linear-gradient(45deg, ${color} 0%, ${color}dd 50%, ${color}99 100%);
+-          border-radius: ${borderRadius};
+-          box-shadow: 0 0 ${size}px ${color}40;
+-          pointer-events: none;
+-          z-index: 35;
+-          opacity: 0;
+-          transform-origin: center;
+-          will-change: transform, opacity;
+-          animation:
+-            sv-confettiFall ${fallDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+-            sv-confettiRotate ${rotationSpeed}ms linear infinite,
+-            sv-confettiSway ${2000 + Math.random() * 1000}ms ease-in-out infinite;
+-        `;
+-
+-        // Add custom properties for animation
+-        confetti.style.setProperty('--drift', `${(Math.random() - 0.5) * swayAmount}px`);
+-        confetti.style.setProperty('--start-delay', `${Math.random() * 300}ms`);
+-
+-        fragment.appendChild(confetti);
+-        setTimeout(() => confetti.remove(), fallDuration + 300);
+-      }
+-
+-      chart.appendChild(fragment);
+-
+-      // Add enhanced confetti keyframes
+-      if (!document.querySelector('#sv-confetti-keyframes')) {
+-        const style = document.createElement('style');
+-        style.id = 'sv-confetti-keyframes';
+-        style.textContent = `
+-          @keyframes sv-confettiFall {
+-            0% {
+-              transform: translateY(0) translateX(0) scale(0);
+-              opacity: 0;
+-            }
+-            10% {
+-              transform: translateY(10px) translateX(0) scale(1);
+-              opacity: 1;
+-            }
+-            90% {
+-              opacity: 1;
+             }
+             100% {
+               transform: translateY(${chartRect.height + 40}px) translateX(var(--drift)) scale(0.8);
+               opacity: 0;
+             }
+           }
++        }, burstIndex * 200);
+           @keyframes sv-confettiRotate {
+             0% { transform: rotateZ(0deg); }
+             100% { transform: rotateZ(360deg); }
+@@ -4703,6 +4775,7 @@
+               bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
+             });
+           }, 600);
++          }, 600);
+         }, delay);
+       });
+     }

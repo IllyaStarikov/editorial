@@ -1,0 +1,3786 @@
+<!-- Enhanced Sorting Visualizer Widget v4.1 - Production Ready -->
+<div id="sorting-visualizer-widget" role="application" aria-label="Sorting Algorithm Visualizer">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+/* CSS Reset and Base Styles */
+#sorting-visualizer-widget {
+  all: initial;
+  display: block !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+  color: #fff;
+  margin: 1rem auto;
+  padding: 0 0.5rem;
+  max-width: 1200px;
+  width: calc(100% - 1rem);
+  line-height: 1.5;
+  position: relative;
+  z-index: 10;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  opacity: 1 !important;
+  visibility: visible !important;
+  box-sizing: border-box;
+  contain: layout style;
+}
+
+#sorting-visualizer-widget * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+#sorting-visualizer-widget .sv-container {
+  width: 100%;
+  background: #0a0a0a;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  position: relative;
+  opacity: 1;
+  visibility: visible;
+  max-width: 100%;
+  box-sizing: border-box;
+  will-change: transform;
+}
+
+/* Loading State */
+#sorting-visualizer-widget .sv-loading {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  display: none;
+  z-index: 100;
+}
+
+#sorting-visualizer-widget.loading .sv-loading {
+  display: block;
+}
+
+/* Settings Box */
+#sorting-visualizer-widget .sv-settings-box {
+  background: #0f0f0f;
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+}
+
+/* Visualization Box */
+#sorting-visualizer-widget .sv-visualization-box {
+  background: #0a0a0a;
+  padding: 1.25rem;
+  min-height: 500px;
+  position: relative;
+}
+
+#sorting-visualizer-widget .sv-config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 0.875rem;
+}
+
+#sorting-visualizer-widget .sv-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+#sorting-visualizer-widget .sv-control-label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #bbb;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-family: 'JetBrains Mono', monospace;
+  display: block;
+}
+
+#sorting-visualizer-widget .sv-optional {
+  font-size: 0.75rem;
+  color: #666;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+}
+
+#sorting-visualizer-widget .sv-none-option {
+  color: #666;
+  font-style: italic;
+}
+
+#sorting-visualizer-widget .sv-category-label {
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: #666;
+  font-style: italic;
+  margin-top: 0.25rem;
+  font-family: 'Inter', sans-serif;
+}
+
+/* Form Controls */
+#sorting-visualizer-widget input[type="number"],
+#sorting-visualizer-widget input[type="text"],
+#sorting-visualizer-widget select {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #fff;
+  padding: 0.625rem 0.875rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  height: 46px;
+  width: 100%;
+  display: block;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+#sorting-visualizer-widget input[type="number"]:hover,
+#sorting-visualizer-widget input[type="text"]:hover,
+#sorting-visualizer-widget select:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+#sorting-visualizer-widget input[type="number"]:focus,
+#sorting-visualizer-widget input[type="text"]:focus,
+#sorting-visualizer-widget select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+#sorting-visualizer-widget select {
+  cursor: pointer;
+  padding-right: 2.5rem;
+  background-color: rgba(255, 255, 255, 0.04);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 0.875rem center;
+  background-size: 1.2em;
+}
+
+#sorting-visualizer-widget select:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+#sorting-visualizer-widget select:focus {
+  background-color: rgba(255, 255, 255, 0.08);
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%233b82f6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+}
+
+#sorting-visualizer-widget select optgroup {
+  font-weight: 600;
+  color: #ccc;
+  background: #1a1a1a;
+}
+
+#sorting-visualizer-widget select option {
+  padding: 0.5rem;
+  background: #1a1a1a;
+  color: #fff;
+  font-weight: normal;
+}
+
+/* Checkbox Styles */
+#sorting-visualizer-widget .sv-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem 0;
+}
+
+#sorting-visualizer-widget input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+#sorting-visualizer-widget .sv-checkbox-custom {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 5px;
+  transition: all 0.2s ease;
+  position: relative;
+  flex-shrink: 0;
+  display: inline-block;
+}
+
+#sorting-visualizer-widget input[type="checkbox"]:checked + .sv-checkbox-custom {
+  background: #3b82f6;
+  border-color: #3b82f6;
+}
+
+#sorting-visualizer-widget .sv-checkbox-custom::after {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.2s ease;
+}
+
+#sorting-visualizer-widget input[type="checkbox"]:checked + .sv-checkbox-custom::after {
+  transform: rotate(45deg) scale(1);
+}
+
+#sorting-visualizer-widget .sv-checkbox-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #ccc;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Grid Layout Adjustments */
+#sorting-visualizer-widget .sv-custom-array-group {
+  grid-column: 1 / -1;
+}
+
+#sorting-visualizer-widget .sv-slider-group {
+  grid-column: 1 / -1;
+  margin-top: 0.25rem;
+}
+
+#sorting-visualizer-widget .sv-slider-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+/* Range Slider */
+#sorting-visualizer-widget input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  cursor: pointer;
+}
+
+#sorting-visualizer-widget input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+#sorting-visualizer-widget input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 8px rgba(59, 130, 246, 0.1);
+}
+
+#sorting-visualizer-widget input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #3b82f6;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.3);
+}
+
+#sorting-visualizer-widget .sv-speed-value {
+  font-size: 1rem;
+  color: #3b82f6;
+  font-weight: 600;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Action Section */
+#sorting-visualizer-widget .sv-action-section {
+  margin-top: 1.25rem;
+}
+
+#sorting-visualizer-widget .sv-action-buttons {
+  display: flex;
+  gap: 0.75rem;
+}
+
+#sorting-visualizer-widget .sv-keyboard-hints {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #666;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+#sorting-visualizer-widget .sv-kbd-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#sorting-visualizer-widget .sv-kbd-key {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  padding: 0.125rem 0.375rem;
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #999;
+}
+
+/* Buttons */
+#sorting-visualizer-widget button {
+  flex: 1;
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  color: #fff;
+  border: none;
+  padding: 0.875rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px -3px rgba(59, 130, 246, 0.4);
+  letter-spacing: 0.025em;
+  position: relative;
+  overflow: hidden;
+  font-family: 'JetBrains Mono', monospace;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  text-align: center;
+  white-space: nowrap;
+  min-height: 48px;
+  text-transform: uppercase;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#sorting-visualizer-widget button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -3px rgba(59, 130, 246, 0.5);
+}
+
+#sorting-visualizer-widget button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+#sorting-visualizer-widget button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+#sorting-visualizer-widget button:focus:not(:focus-visible) {
+  box-shadow: 0 4px 12px -3px rgba(59, 130, 246, 0.4);
+}
+
+#sorting-visualizer-widget button:focus-visible {
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+#sorting-visualizer-widget button:disabled {
+  background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+  cursor: not-allowed;
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+#sorting-visualizer-widget .sv-reset-button {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  box-shadow: 0 4px 12px -3px rgba(239, 68, 68, 0.4);
+}
+
+#sorting-visualizer-widget .sv-reset-button:hover:not(:disabled) {
+  box-shadow: 0 6px 16px -3px rgba(239, 68, 68, 0.5);
+}
+
+#sorting-visualizer-widget .sv-pause-button {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  box-shadow: 0 4px 12px -3px rgba(245, 158, 11, 0.4);
+  flex: 0.5;
+}
+
+#sorting-visualizer-widget .sv-pause-button:hover:not(:disabled) {
+  box-shadow: 0 6px 16px -3px rgba(245, 158, 11, 0.5);
+}
+
+/* Preset Patterns */
+#sorting-visualizer-widget .sv-preset-patterns {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+#sorting-visualizer-widget .sv-preset-btn {
+  padding: 0.375rem 0.75rem;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  color: #999;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'JetBrains Mono', monospace;
+  flex: 0 0 auto;
+  min-height: auto;
+  box-shadow: none;
+}
+
+#sorting-visualizer-widget .sv-preset-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ccc;
+  transform: none;
+  box-shadow: none;
+}
+
+#sorting-visualizer-widget .sv-preset-btn.active {
+  background: rgba(59, 130, 246, 0.2);
+  border-color: rgba(59, 130, 246, 0.5);
+  color: #3b82f6;
+}
+
+/* Visualization Area */
+#sorting-visualizer-widget .sv-visualization-area {
+  display: flex;
+  gap: 0.75rem;
+  position: relative;
+  min-height: 400px;
+  width: 100%;
+  opacity: 1;
+  visibility: visible;
+}
+
+#sorting-visualizer-widget .sv-algorithm-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+#sorting-visualizer-widget .sv-algorithm-header {
+  padding: 0 0.25rem;
+}
+
+#sorting-visualizer-widget .sv-algorithm-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  letter-spacing: -0.02em;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+#sorting-visualizer-widget .sv-complexity-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.375rem;
+}
+
+#sorting-visualizer-widget .sv-complexity-item {
+  font-size: 0.75rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 0.375rem 0.625rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  white-space: nowrap;
+}
+
+#sorting-visualizer-widget .sv-complexity-label {
+  color: #888;
+  font-size: 0.75rem;
+}
+
+#sorting-visualizer-widget .sv-complexity-value {
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Stats Container */
+#sorting-visualizer-widget .sv-stats-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.375rem;
+  flex-wrap: wrap;
+}
+
+#sorting-visualizer-widget .sv-stat-item {
+  font-size: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  padding: 0.375rem 0.625rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#sorting-visualizer-widget .sv-stat-label {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+#sorting-visualizer-widget .sv-stat-value {
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 1.125rem;
+  display: inline-block;
+  min-width: 3ch;
+  text-align: right;
+  transition: all 0.2s ease;
+}
+
+#sorting-visualizer-widget .sv-stat-value.changed {
+  transform: scale(1.1);
+  color: #60a5fa;
+}
+
+/* Timer specific styles */
+#sorting-visualizer-widget .sv-timer .sv-timer-label {
+  color: #888;
+  font-size: 0.875rem;
+}
+
+#sorting-visualizer-widget .sv-timer .sv-timer-value {
+  color: #3b82f6;
+  font-weight: 600;
+  font-size: 1.125rem;
+  display: inline-block;
+  min-width: 5ch;
+  text-align: right;
+  transition: color 0.3s ease;
+}
+
+#sorting-visualizer-widget .sv-timer-value.active {
+  color: #3b82f6;
+  text-shadow: 0 0 4px rgba(59, 130, 246, 0.4);
+}
+
+/* Chart Container */
+#sorting-visualizer-widget .sv-chart-container {
+  position: relative;
+  height: 300px;
+  background: linear-gradient(180deg, rgba(20, 20, 20, 0.8) 0%, rgba(10, 10, 10, 0.9) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+  width: 100%;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+  opacity: 1;
+  visibility: visible;
+  padding-bottom: 5px;
+  contain: layout paint;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+#sorting-visualizer-widget .sv-chart-container * {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+#sorting-visualizer-widget .sv-chart-placeholder {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: #666;
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-family: 'JetBrains Mono', monospace;
+  opacity: 0.8;
+}
+
+/* Performance Indicator */
+#sorting-visualizer-widget .sv-performance-warning {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  color: #f59e0b;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.625rem;
+  font-family: 'JetBrains Mono', monospace;
+  display: none;
+}
+
+#sorting-visualizer-widget .sv-performance-warning.show {
+  display: block;
+}
+
+/* Epic Completion Effects */
+@keyframes sv-epicPulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.8; }
+}
+
+@keyframes sv-waveExpand {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 1;
+  }
+  100% {
+    width: 300%;
+    height: 300%;
+    opacity: 0;
+  }
+}
+
+@keyframes sv-starBurst {
+  0% {
+    transform: translate(-50%, -50%) rotate(var(--rotation)) scale(0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) rotate(var(--rotation)) scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) rotate(calc(var(--rotation) + 180deg)) scale(0);
+    opacity: 0;
+  }
+}
+
+@keyframes sv-sparkle {
+  0% {
+    transform: translate(-50%, -50%) scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1) rotate(180deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(0) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+@keyframes sv-completionGlow {
+  0% {
+    box-shadow: inset 0 0 0 rgba(59, 130, 246, 0),
+                0 0 0 0 rgba(59, 130, 246, 0.8);
+  }
+  50% {
+    box-shadow: inset 0 0 30px rgba(59, 130, 246, 0.3),
+                0 0 30px 10px rgba(59, 130, 246, 0.4);
+  }
+  100% {
+    box-shadow: inset 0 0 0 rgba(59, 130, 246, 0),
+                0 0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+@keyframes sv-barCelebrate {
+  0% {
+    transform: translateY(0) scaleY(1);
+    filter: brightness(1.3);
+  }
+  20% {
+    transform: translateY(-25px) scaleY(1.3);
+    filter: brightness(1.8);
+  }
+  40% {
+    transform: translateY(0) scaleY(0.85);
+    filter: brightness(1.5);
+  }
+  60% {
+    transform: translateY(-12px) scaleY(1.15);
+    filter: brightness(1.6);
+  }
+  80% {
+    transform: translateY(0) scaleY(0.95);
+    filter: brightness(1.4);
+  }
+  100% {
+    transform: translateY(0) scaleY(1);
+    filter: brightness(1.3);
+  }
+}
+
+#sorting-visualizer-widget .sv-bar.celebrating {
+  animation: sv-barCelebrate 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+}
+
+@keyframes sv-rainbowWave {
+  0% {
+    filter: hue-rotate(0deg) brightness(2) saturate(2);
+  }
+  50% {
+    filter: hue-rotate(180deg) brightness(2.5) saturate(2.5);
+  }
+  100% {
+    filter: hue-rotate(360deg) brightness(2) saturate(2);
+  }
+}
+
+@keyframes sv-confetti {
+  0% {
+    transform: translateY(0) rotateZ(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  85% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(400px) rotateZ(720deg);
+    opacity: 0;
+  }
+}
+
+/* Particle system */
+#sorting-visualizer-widget .sv-particle {
+  position: absolute;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* Completion Effects */
+#sorting-visualizer-widget .sv-sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: #fff;
+  border-radius: 50%;
+  animation: sv-sparkle 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+  pointer-events: none;
+  z-index: 45;
+  box-shadow: 0 0 6px #fff, 0 0 12px #fff;
+  will-change: transform, opacity;
+}
+
+#sorting-visualizer-widget .sv-wave-effect {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.6) 0%, transparent 70%);
+  animation: sv-waveExpand 1.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+  pointer-events: none;
+  z-index: 30;
+  will-change: transform, opacity;
+}
+
+#sorting-visualizer-widget .sv-star-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100px;
+  height: 4px;
+  background: linear-gradient(90deg, transparent 0%, #3b82f6 20%, #3b82f6 80%, transparent 100%);
+  animation: sv-starBurst 1.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  pointer-events: none;
+  z-index: 35;
+  will-change: transform, opacity;
+  transform-origin: center;
+}
+
+#sorting-visualizer-widget .sv-confetti-piece {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: var(--confetti-color);
+  animation: sv-confetti 2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  pointer-events: none;
+  z-index: 40;
+  will-change: transform, opacity;
+  transform-origin: center;
+}
+
+#sorting-visualizer-widget .sv-completion-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 50;
+  perspective: 1000px;
+  background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.2) 100%);
+}
+
+#sorting-visualizer-widget .sv-completion-message {
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: #fff;
+  text-shadow:
+    0 0 30px rgba(59, 130, 246, 1),
+    0 0 60px rgba(59, 130, 246, 0.8),
+    0 0 90px rgba(59, 130, 246, 0.6),
+    0 0 120px rgba(59, 130, 246, 0.4);
+  opacity: 0;
+  animation: sv-messageReveal 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.3em;
+  text-align: center;
+  background: linear-gradient(45deg, #3b82f6, #00ff88, #ffca28, #ff0080, #3b82f6);
+  background-size: 200% 200%;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  animation: sv-messageReveal 2.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), sv-gradientShift 2.5s linear;
+  transform-style: preserve-3d;
+}
+
+@keyframes sv-gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes sv-messageReveal {
+  0% {
+    opacity: 0;
+    transform: scale(0) translateY(50px) rotateX(90deg);
+  }
+  25% {
+    opacity: 1;
+    transform: scale(1.2) translateY(-20px) rotateX(-10deg);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(0.95) translateY(5px) rotateX(5deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-2px) rotateX(-2deg);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(1) translateY(0) rotateX(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9) translateY(0) rotateX(0deg);
+  }
+}
+
+@keyframes sv-chartGlow {
+  0% {
+    box-shadow: inset 0 0 0 rgba(59, 130, 246, 0),
+                0 0 0 rgba(59, 130, 246, 0);
+  }
+  50% {
+    box-shadow: inset 0 0 40px rgba(59, 130, 246, 0.4),
+                0 0 50px rgba(59, 130, 246, 0.3);
+  }
+  100% {
+    box-shadow: inset 0 0 0 rgba(59, 130, 246, 0),
+                0 0 0 rgba(59, 130, 246, 0);
+  }
+}
+
+/* Bar Styles - Fixed for better visibility */
+#sorting-visualizer-widget .sv-bar {
+  position: absolute !important;
+  bottom: 5px !important;
+  border-radius: 2px 2px 0 0;
+  opacity: 1 !important;
+  transform-origin: bottom center;
+  will-change: transform, height, left, filter;
+  display: block !important;
+  visibility: visible !important;
+  contain: layout paint;
+  pointer-events: none;
+  backface-visibility: hidden;
+  transform: translateZ(0);
+  transition: none !important; /* Disable transitions by default for discrete changes */
+}
+
+#sorting-visualizer-widget .sv-bar.animating {
+  transition: height 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              left 0.2s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Current index (main comparing bar) - will be styled per theme */
+#sorting-visualizer-widget .sv-bar.comparing {
+  transform: scaleY(1.1) scaleX(1.15) !important;
+  z-index: 10 !important;
+  transition: none !important; /* Instant highlight changes */
+}
+
+/* Comparison operator (secondary) - will be styled per theme */
+#sorting-visualizer-widget .sv-bar.comparing-secondary {
+  transform: scaleY(1.05) scaleX(1.08) !important;
+  z-index: 9 !important;
+  transition: none !important; /* Instant highlight changes */
+}
+
+/* Sorted bars will be styled per theme */
+#sorting-visualizer-widget .sv-bar.sorted {
+  opacity: 1;
+  transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+#sorting-visualizer-widget .sv-bar.celebrating {
+  animation: sv-barCelebrate 0.8s ease-out;
+}
+
+/* Code Container */
+#sorting-visualizer-widget details {
+  margin-top: 0.5rem;
+}
+
+#sorting-visualizer-widget summary {
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #999;
+  font-family: 'JetBrains Mono', monospace;
+  list-style: none;
+}
+
+#sorting-visualizer-widget summary:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #ccc;
+}
+
+#sorting-visualizer-widget summary::before {
+  content: '▸';
+  font-size: 0.75rem;
+  transition: transform 0.2s ease;
+  display: inline-block;
+}
+
+#sorting-visualizer-widget details[open] summary::before {
+  transform: rotate(90deg);
+}
+
+#sorting-visualizer-widget summary::-webkit-details-marker {
+  display: none;
+}
+
+#sorting-visualizer-widget .sv-code-container {
+  background: #050505;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 0.5rem;
+}
+
+#sorting-visualizer-widget .sv-code-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#sorting-visualizer-widget .sv-code-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+#sorting-visualizer-widget .sv-code-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+#sorting-visualizer-widget .sv-code-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+#sorting-visualizer-widget pre {
+  margin: 0;
+  font-family: 'JetBrains Mono', 'Consolas', 'Monaco', monospace;
+  font-size: 0.7rem;
+  line-height: 1.4;
+  color: #d4d4d4;
+  white-space: pre;
+  overflow-x: auto;
+}
+
+/* Warning Text */
+#sorting-visualizer-widget .sv-warning-text {
+  font-size: 0.7rem;
+  color: #f59e0b;
+  margin-top: 0.5rem;
+  padding: 0.375rem 0.5rem;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Color Schemes - Bright and Visible with Distinct Highlight Colors */
+/* Neon Dreams Theme */
+#sorting-visualizer-widget .sv-color-scheme-1 .sv-bar {
+  background: linear-gradient(180deg, #00d9ff 0%, #00b8e6 50%, #0099cc 100%);
+  box-shadow: 0 0 10px rgba(0, 217, 255, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-1 .sv-bar.comparing {
+  background: linear-gradient(180deg, #ff0080 0%, #ff1a8c 50%, #cc0066 100%);
+  box-shadow: 0 0 20px rgba(255, 0, 128, 0.8),
+              0 0 40px rgba(255, 0, 128, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-1 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #ffb700 0%, #ff9500 50%, #ff7300 100%);
+  box-shadow: 0 0 15px rgba(255, 149, 0, 0.7),
+              0 0 25px rgba(255, 149, 0, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-1 .sv-bar.sorted {
+  background: linear-gradient(180deg, #00ff88 0%, #00e67a 50%, #00cc6a 100%);
+  box-shadow: 0 0 15px rgba(0, 255, 136, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Sunset Boulevard Theme */
+#sorting-visualizer-widget .sv-color-scheme-2 .sv-bar {
+  background: linear-gradient(180deg, #ff9b7d 0%, #ff7b54 50%, #ff5722 100%);
+  box-shadow: 0 0 10px rgba(255, 123, 84, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-2 .sv-bar.comparing {
+  background: linear-gradient(180deg, #ffe366 0%, #ffd93d 50%, #ffb800 100%);
+  box-shadow: 0 0 20px rgba(255, 217, 61, 0.8),
+              0 0 40px rgba(255, 217, 61, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-2 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #e74c3c 0%, #c0392b 50%, #a93226 100%);
+  box-shadow: 0 0 15px rgba(231, 76, 60, 0.7),
+              0 0 25px rgba(231, 76, 60, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-2 .sv-bar.sorted {
+  background: linear-gradient(180deg, #8ce99a 0%, #6bcf7f 50%, #4caf50 100%);
+  box-shadow: 0 0 15px rgba(107, 207, 127, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Aurora Borealis Theme */
+#sorting-visualizer-widget .sv-color-scheme-3 .sv-bar {
+  background: linear-gradient(180deg, #9775ff 0%, #7c4dff 50%, #651fff 100%);
+  box-shadow: 0 0 10px rgba(124, 77, 255, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-3 .sv-bar.comparing {
+  background: linear-gradient(180deg, #ff6090 0%, #ff4081 50%, #f50057 100%);
+  box-shadow: 0 0 20px rgba(255, 64, 129, 0.8),
+              0 0 40px rgba(255, 64, 129, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-3 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #00e5ff 0%, #00acc1 50%, #00838f 100%);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.7),
+              0 0 25px rgba(0, 229, 255, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-3 .sv-bar.sorted {
+  background: linear-gradient(180deg, #66ffff 0%, #18ffff 50%, #00e5ff 100%);
+  box-shadow: 0 0 15px rgba(24, 255, 255, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Forest Mist Theme */
+#sorting-visualizer-widget .sv-color-scheme-4 .sv-bar {
+  background: linear-gradient(180deg, #00e863 0%, #00c853 50%, #00a040 100%);
+  box-shadow: 0 0 10px rgba(0, 200, 83, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-4 .sv-bar.comparing {
+  background: linear-gradient(180deg, #ff8f00 0%, #ff6f00 50%, #ff5722 100%);
+  box-shadow: 0 0 20px rgba(255, 111, 0, 0.8),
+              0 0 40px rgba(255, 111, 0, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-4 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #ffc107 0%, #ff9800 50%, #f57c00 100%);
+  box-shadow: 0 0 15px rgba(255, 152, 0, 0.7),
+              0 0 25px rgba(255, 152, 0, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-4 .sv-bar.sorted {
+  background: linear-gradient(180deg, #00d8f4 0%, #00b8d4 50%, #0097a7 100%);
+  box-shadow: 0 0 15px rgba(0, 184, 212, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Cosmic Dust Theme */
+#sorting-visualizer-widget .sv-color-scheme-5 .sv-bar {
+  background: linear-gradient(180deg, #ff4e83 0%, #e91e63 50%, #c2185b 100%);
+  box-shadow: 0 0 10px rgba(233, 30, 99, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-5 .sv-bar.comparing {
+  background: linear-gradient(180deg, #ff7043 0%, #ff5722 50%, #d84315 100%);
+  box-shadow: 0 0 20px rgba(255, 87, 34, 0.8),
+              0 0 40px rgba(255, 87, 34, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-5 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #7e57c2 0%, #673ab7 50%, #5e35b1 100%);
+  box-shadow: 0 0 15px rgba(103, 58, 183, 0.7),
+              0 0 25px rgba(103, 58, 183, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-5 .sv-bar.sorted {
+  background: linear-gradient(180deg, #ba68c8 0%, #9c27b0 50%, #7b1fa2 100%);
+  box-shadow: 0 0 15px rgba(156, 39, 176, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Ocean Depths Theme */
+#sorting-visualizer-widget .sv-color-scheme-6 .sv-bar {
+  background: linear-gradient(180deg, #42a5f5 0%, #1e88e5 50%, #1565c0 100%);
+  box-shadow: 0 0 10px rgba(30, 136, 229, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-6 .sv-bar.comparing {
+  background: linear-gradient(180deg, #4db6ac 0%, #26a69a 50%, #00897b 100%);
+  box-shadow: 0 0 20px rgba(38, 166, 154, 0.8),
+              0 0 40px rgba(38, 166, 154, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-6 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #00acc1 0%, #0097a7 50%, #00838f 100%);
+  box-shadow: 0 0 15px rgba(0, 151, 167, 0.7),
+              0 0 25px rgba(0, 151, 167, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-6 .sv-bar.sorted {
+  background: linear-gradient(180deg, #ff7875 0%, #ef5350 50%, #e53935 100%);
+  box-shadow: 0 0 15px rgba(239, 83, 80, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Midnight City Theme */
+#sorting-visualizer-widget .sv-color-scheme-7 .sv-bar {
+  background: linear-gradient(180deg, #ffca28 0%, #ffc107 50%, #ffa000 100%);
+  box-shadow: 0 0 10px rgba(255, 193, 7, 0.4), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-7 .sv-bar.comparing {
+  background: linear-gradient(180deg, #ff7043 0%, #ff5722 50%, #d84315 100%);
+  box-shadow: 0 0 20px rgba(255, 87, 34, 0.8),
+              0 0 40px rgba(255, 87, 34, 0.5),
+              inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+#sorting-visualizer-widget .sv-color-scheme-7 .sv-bar.comparing-secondary {
+  background: linear-gradient(180deg, #e91e63 0%, #c2185b 50%, #ad1457 100%);
+  box-shadow: 0 0 15px rgba(233, 30, 99, 0.7),
+              0 0 25px rgba(233, 30, 99, 0.4),
+              inset 0 0 8px rgba(255, 255, 255, 0.2);
+}
+#sorting-visualizer-widget .sv-color-scheme-7 .sv-bar.sorted {
+  background: linear-gradient(180deg, #42a5f5 0%, #2196f3 50%, #1976d2 100%);
+  box-shadow: 0 0 15px rgba(33, 150, 243, 0.5), inset 0 0 5px rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  #sorting-visualizer-widget .sv-config-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  #sorting-visualizer-widget .sv-visualization-area {
+    flex-direction: column;
+  }
+
+  #sorting-visualizer-widget .sv-action-buttons {
+    flex-direction: column;
+  }
+
+  #sorting-visualizer-widget .sv-keyboard-hints {
+    display: none; /* Hide on mobile */
+  }
+
+  #sorting-visualizer-widget .sv-settings-box {
+    padding: 0.875rem;
+  }
+
+  #sorting-visualizer-widget .sv-visualization-box {
+    padding: 0.875rem;
+    min-height: 400px;
+  }
+
+  #sorting-visualizer-widget .sv-chart-container {
+    height: 250px;
+  }
+
+  #sorting-visualizer-widget .sv-stats-container {
+    justify-content: center;
+  }
+
+  #sorting-visualizer-widget .sv-complexity-info {
+    justify-content: center;
+  }
+
+  #sorting-visualizer-widget .sv-completion-message {
+    font-size: 2.5rem;
+  }
+
+  #sorting-visualizer-widget .sv-algorithm-title {
+    font-size: 1.375rem;
+  }
+
+  #sorting-visualizer-widget button {
+    font-size: 0.95rem;
+    padding: 0.75rem 1.25rem;
+  }
+
+  #sorting-visualizer-widget input[type="number"],
+  #sorting-visualizer-widget input[type="text"],
+  #sorting-visualizer-widget select {
+    font-size: 0.95rem;
+    height: 44px;
+    padding: 0.625rem 0.875rem;
+  }
+
+  #sorting-visualizer-widget .sv-control-label {
+    font-size: 0.8rem;
+  }
+
+  #sorting-visualizer-widget .sv-stat-value {
+    font-size: 1rem;
+  }
+
+  #sorting-visualizer-widget .sv-timer-value {
+    font-size: 1rem;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  #sorting-visualizer-widget .sv-container {
+    border: 2px solid #fff;
+  }
+
+  #sorting-visualizer-widget button:focus {
+    outline: 3px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  #sorting-visualizer-widget * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  #sorting-visualizer-widget .sv-bar.animating {
+    transition: none !important;
+  }
+}
+
+/* Print Styles */
+@media print {
+  #sorting-visualizer-widget {
+    display: none;
+  }
+}
+</style>
+
+<div class="sv-container" role="main">
+  <div class="sv-loading" aria-live="polite" aria-atomic="true">INITIALIZING...</div>
+
+  <!-- Settings Box -->
+  <div class="sv-settings-box" role="region" aria-label="Settings">
+    <div class="sv-config-grid">
+      <div class="sv-control-group">
+        <label class="sv-control-label" for="sv-algorithm-select">ALGORITHM</label>
+        <select id="sv-algorithm-select">
+          <optgroup label="Comparison O(n²)">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+          </optgroup>
+          <optgroup label="Divide and Conquer">
+            <option value="merge" selected>Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+          </optgroup>
+          <optgroup label="Heap-based">
+            <option value="heap">Heap Sort</option>
+          </optgroup>
+          <optgroup label="Non-comparison">
+            <option value="counting">Counting Sort</option>
+          </optgroup>
+          <optgroup label="Hybrid">
+            <option value="shell">Shell Sort</option>
+            <option value="tim">Tim Sort</option>
+          </optgroup>
+          <optgroup label="Educational">
+            <option value="bogo">Bogo Sort</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="sv-control-group">
+        <label class="sv-control-label" for="sv-array-size">ARRAY SIZE</label>
+        <input type="number" id="sv-array-size" value="42" min="5" max="200">
+      </div>
+
+      <div class="sv-control-group">
+        <label class="sv-control-label" for="sv-pattern-select">ARRAY PATTERN</label>
+        <select id="sv-pattern-select">
+          <option value="random" selected>Random</option>
+          <option value="sorted">Sorted (Ascending)</option>
+          <option value="reverse">Reverse (Descending)</option>
+          <option value="nearly">Nearly Sorted</option>
+          <option value="few-unique">Few Unique Values</option>
+          <option value="mountain">Mountain (Peak)</option>
+          <option value="valley">Valley (Trough)</option>
+          <option value="sawtooth">Sawtooth Wave</option>
+        </select>
+      </div>
+
+      <div class="sv-control-group">
+        <label class="sv-control-label" for="sv-color-scheme">THEME</label>
+        <select id="sv-color-scheme">
+          <option value="sv-color-scheme-1" selected>Neon Dreams</option>
+          <option value="sv-color-scheme-2">Sunset Boulevard</option>
+          <option value="sv-color-scheme-3">Aurora Borealis</option>
+          <option value="sv-color-scheme-4">Forest Mist</option>
+          <option value="sv-color-scheme-5">Cosmic Dust</option>
+          <option value="sv-color-scheme-6">Ocean Depths</option>
+          <option value="sv-color-scheme-7">Midnight City</option>
+        </select>
+      </div>
+
+      <div class="sv-control-group">
+        <label class="sv-control-label" for="sv-comparison-algorithm">COMPARE WITH <span class="sv-optional">(OPTIONAL)</span></label>
+        <select id="sv-comparison-algorithm">
+          <option value="" class="sv-none-option">None</option>
+          <optgroup label="Comparison O(n²)">
+            <option value="bubble">Bubble Sort</option>
+            <option value="selection">Selection Sort</option>
+            <option value="insertion">Insertion Sort</option>
+          </optgroup>
+          <optgroup label="Divide and Conquer">
+            <option value="merge">Merge Sort</option>
+            <option value="quick">Quick Sort</option>
+          </optgroup>
+          <optgroup label="Heap-based">
+            <option value="heap">Heap Sort</option>
+          </optgroup>
+          <optgroup label="Non-comparison">
+            <option value="counting">Counting Sort</option>
+          </optgroup>
+          <optgroup label="Hybrid">
+            <option value="shell">Shell Sort</option>
+            <option value="tim">Tim Sort</option>
+          </optgroup>
+          <optgroup label="Educational">
+            <option value="bogo">Bogo Sort</option>
+          </optgroup>
+        </select>
+      </div>
+
+      <div class="sv-control-group sv-custom-array-group">
+        <label class="sv-control-label" for="sv-array-input">CUSTOM ARRAY <span class="sv-optional">(OPTIONAL)</span></label>
+        <input type="text" id="sv-array-input" placeholder="Enter comma-separated values (e.g., 5,3,8,1,9)">
+      </div>
+
+      <div class="sv-control-group sv-slider-group">
+        <div class="sv-slider-header">
+          <label class="sv-control-label" for="sv-speed-slider">ANIMATION SPEED</label>
+          <span class="sv-speed-value"><span id="sv-speed-value">50</span>%</span>
+        </div>
+        <input type="range" id="sv-speed-slider" min="1" max="100" value="50" aria-valuemin="1" aria-valuemax="100" aria-valuenow="50" aria-label="Animation speed">
+      </div>
+    </div>
+
+    <div class="sv-action-section">
+      <div class="sv-action-buttons">
+        <button id="sv-start-button" title="Start sorting" aria-label="Start sorting visualization">
+          START
+        </button>
+        <button id="sv-pause-button" class="sv-pause-button" title="Pause/Resume" aria-label="Pause or resume sorting" disabled>
+          PAUSE
+        </button>
+        <button id="sv-reset-button" class="sv-reset-button" title="Reset visualization" aria-label="Reset sorting visualization">
+          RESET
+        </button>
+      </div>
+      <div class="sv-keyboard-hints" id="sv-keyboard-hints" aria-label="Keyboard shortcuts">
+        <div class="sv-kbd-hint">
+          <span class="sv-kbd-key">Enter</span>
+          <span>Start</span>
+        </div>
+        <div class="sv-kbd-hint">
+          <span class="sv-kbd-key">Space</span>
+          <span>Pause</span>
+        </div>
+        <div class="sv-kbd-hint">
+          <span class="sv-kbd-key">Esc</span>
+          <span>Reset</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Visualization Box -->
+  <div class="sv-visualization-box" role="region" aria-label="Visualization">
+    <div class="sv-performance-warning" id="sv-performance-warning" role="alert">
+      High array size may impact performance
+    </div>
+    <div class="sv-visualization-area sv-color-scheme-1" id="sv-visualization-area" aria-live="polite">
+      <div class="sv-algorithm-section" id="sv-algo1">
+        <div class="sv-algorithm-header">
+          <div class="sv-algorithm-title">Select Algorithm</div>
+          <div class="sv-complexity-info">
+            <span class="sv-complexity-item">
+              <span class="sv-complexity-label">READY TO</span>
+              <span class="sv-complexity-value">VISUALIZE</span>
+            </span>
+          </div>
+          <div class="sv-stats-container">
+            <div class="sv-timer sv-stat-item" id="sv-algo1-timer">
+              <span class="sv-timer-label">Time:</span>
+              <span class="sv-timer-value">0.000s</span>
+            </div>
+            <div class="sv-stat-item">
+              <span class="sv-stat-label">Comparisons:</span>
+              <span class="sv-stat-value" id="sv-algo1-comparisons">0</span>
+            </div>
+            <div class="sv-stat-item">
+              <span class="sv-stat-label">Swaps:</span>
+              <span class="sv-stat-value" id="sv-algo1-swaps">0</span>
+            </div>
+          </div>
+        </div>
+        <div class="sv-chart-container" id="sv-algo1-chart" role="img" aria-label="Sorting visualization chart">
+          <div class="sv-chart-placeholder">WAITING TO START</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Screen Reader Only Content -->
+<div class="sr-only" aria-live="assertive" aria-atomic="true" id="sv-sr-announcements"></div>
+
+<script>
+(function() {
+  'use strict';
+
+  // Constants
+  const CONSTANTS = {
+    MIN_ARRAY_SIZE: 5,
+    MAX_ARRAY_SIZE: 200,
+    MIN_BAR_WIDTH: 2,
+    MAX_BAR_WIDTH_SMALL: 80,
+    MAX_BAR_WIDTH_LARGE: 60,
+    DEFAULT_ARRAY_SIZE: 42,
+    DEFAULT_SPEED: 50,
+    BOGO_MAX_SIZE: 6,
+    BOGO_MAX_ATTEMPTS: 500000,
+    PERFORMANCE_THRESHOLD: 100,
+    DEBOUNCE_DELAY: 250,
+    ANIMATION_FRAME_RATE: 16,
+    VALUE_MIN: 20,
+    VALUE_MAX: 99,
+    MAX_VALUE_RANGE: 1000
+  };
+
+  // Browser compatibility check
+  const checkBrowserCompatibility = () => {
+    const required = ['requestAnimationFrame', 'cancelAnimationFrame', 'performance'];
+    const missing = required.filter(feature => !(feature in window));
+
+    if (missing.length > 0) {
+      console.warn(`Missing browser features: ${missing.join(', ')}`);
+      return false;
+    }
+
+    return true;
+  };
+
+  // Ensure this runs only once per widget
+  const widgetId = 'sorting-visualizer-widget';
+  if (window[`${widgetId}-initialized`]) return;
+  window[`${widgetId}-initialized`] = true;
+
+  // Browser compatibility check
+  if (!checkBrowserCompatibility()) {
+    console.error('Browser does not support required features for sorting visualizer');
+    return;
+  }
+
+  // Performance monitoring
+  const performanceMonitor = {
+    frameCount: 0,
+    lastFrameTime: performance.now(),
+    fps: 60,
+
+    update() {
+      this.frameCount++;
+      const currentTime = performance.now();
+      const elapsed = currentTime - this.lastFrameTime;
+
+      if (elapsed >= 1000) {
+        this.fps = Math.round((this.frameCount * 1000) / elapsed);
+        this.frameCount = 0;
+        this.lastFrameTime = currentTime;
+      }
+    },
+
+    isPerformanceGood() {
+      return this.fps > 30;
+    }
+  };
+
+  // Utility functions
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  const requestIdleCallback = window.requestIdleCallback || function(cb) {
+    const start = Date.now();
+    return setTimeout(function() {
+      cb({
+        didTimeout: false,
+        timeRemaining: function() {
+          return Math.max(0, 50 - (Date.now() - start));
+        }
+      });
+    }, 1);
+  };
+
+  const isMobileDevice = () => {
+    return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+           (window.matchMedia && window.matchMedia('(max-width: 768px)').matches && 'ontouchstart' in window);
+  };
+
+  // Screen reader announcements
+  const announceToScreenReader = (message) => {
+    const announcement = document.getElementById('sv-sr-announcements');
+    if (announcement) {
+      announcement.textContent = message;
+      setTimeout(() => {
+        announcement.textContent = '';
+      }, 1000);
+    }
+  };
+
+  // Ensure unique scope for this widget
+  const widget = document.getElementById('sorting-visualizer-widget');
+  if (!widget) return;
+
+  // Hide keyboard hints on mobile
+  if (isMobileDevice()) {
+    const kbdHints = widget.querySelector('#sv-keyboard-hints');
+    if (kbdHints) kbdHints.style.display = 'none';
+  }
+
+  class SortingVisualizerWidget {
+    constructor() {
+      this.widget = widget;
+      this.isRunning = false;
+      this.isPaused = false;
+      this.shouldAbort = false;
+      this.animationSpeed = CONSTANTS.DEFAULT_SPEED;
+      this.activeTimeouts = new Map();
+      this.algorithms = this.initializeAlgorithms();
+      this.currentArray = [];
+      this.hasBeenRun = false;
+      this.resizeTimeout = null;
+      this.bogoSortMaxAttempts = CONSTANTS.BOGO_MAX_ATTEMPTS;
+      this.isMobile = isMobileDevice();
+      this.maxArrayValue = 0;
+      this.finishedAlgorithms = new Set();
+      this.animationFrameId = null;
+      this.pendingRenders = new Map();
+      this.renderBatchSize = 10;
+      this.lastRenderTime = 0;
+      this.currentAlgorithmKeys = {}; // Store current algorithm keys for completion message
+
+      // Statistics tracking
+      this.stats = {
+        'sv-algo1': { comparisons: 0, swaps: 0, iterations: 0 },
+        'sv-algo2': { comparisons: 0, swaps: 0, iterations: 0 }
+      };
+
+      this.algorithmSpeedMultipliers = {
+        bubble: 1,
+        selection: 1,
+        insertion: 1,
+        merge: 1,
+        quick: 1,
+        counting: 0.8,
+        heap: 1,
+        shell: 1,
+        tim: 1,
+        bogo: 0.5
+      };
+
+      this.algorithmCategories = {
+        bubble: 'Comparison O(n²)',
+        selection: 'Comparison O(n²)',
+        insertion: 'Comparison O(n²)',
+        merge: 'Divide and Conquer',
+        quick: 'Divide and Conquer',
+        heap: 'Heap-based',
+        counting: 'Non-comparison',
+        shell: 'Hybrid',
+        tim: 'Hybrid',
+        bogo: 'Educational'
+      };
+
+      // Ensure merge sort is selected by default
+      const algorithmSelect = this.widget.querySelector('#sv-algorithm-select');
+      if (algorithmSelect && !algorithmSelect.value) {
+        algorithmSelect.value = 'merge';
+      }
+
+      // Set defaults and initial button states
+      this.setupEventListeners();
+      this.initializeVisualization();
+      this.updateButtonStates();
+
+      // Remove loading state
+      widget.classList.remove('loading');
+    }
+
+    initializeAlgorithms() {
+      return {
+        bubble: {
+          name: 'Bubble Sort',
+          shortName: 'BUBBLE',
+          complexity: {
+            best: 'Ω(n)',
+            average: 'Θ(n²)',
+            worst: 'O(n²)',
+            space: 'O(1)',
+            stable: 'Yes'
+          }
+        },
+        selection: {
+          name: 'Selection Sort',
+          shortName: 'SELECTION',
+          complexity: {
+            best: 'Ω(n²)',
+            average: 'Θ(n²)',
+            worst: 'O(n²)',
+            space: 'O(1)',
+            stable: 'No'
+          }
+        },
+        insertion: {
+          name: 'Insertion Sort',
+          shortName: 'INSERTION',
+          complexity: {
+            best: 'Ω(n)',
+            average: 'Θ(n²)',
+            worst: 'O(n²)',
+            space: 'O(1)',
+            stable: 'Yes'
+          }
+        },
+        merge: {
+          name: 'Merge Sort',
+          shortName: 'MERGE',
+          complexity: {
+            best: 'Ω(n log n)',
+            average: 'Θ(n log n)',
+            worst: 'O(n log n)',
+            space: 'O(n)',
+            stable: 'Yes'
+          }
+        },
+        quick: {
+          name: 'Quick Sort',
+          shortName: 'QUICK',
+          complexity: {
+            best: 'Ω(n log n)',
+            average: 'Θ(n log n)',
+            worst: 'O(n²)',
+            space: 'O(log n)',
+            stable: 'No'
+          }
+        },
+        counting: {
+          name: 'Counting Sort',
+          shortName: 'COUNTING',
+          complexity: {
+            best: 'Ω(n + k)',
+            average: 'Θ(n + k)',
+            worst: 'O(n + k)',
+            space: 'O(k)',
+            stable: 'Yes'
+          }
+        },
+        heap: {
+          name: 'Heap Sort',
+          shortName: 'HEAP',
+          complexity: {
+            best: 'Ω(n log n)',
+            average: 'Θ(n log n)',
+            worst: 'O(n log n)',
+            space: 'O(1)',
+            stable: 'No'
+          }
+        },
+        shell: {
+          name: 'Shell Sort',
+          shortName: 'SHELL',
+          complexity: {
+            best: 'Ω(n log n)',
+            average: 'Θ(n^4/3)',
+            worst: 'O(n²)',
+            space: 'O(1)',
+            stable: 'No'
+          }
+        },
+        tim: {
+          name: 'Tim Sort',
+          shortName: 'TIM',
+          complexity: {
+            best: 'Ω(n)',
+            average: 'Θ(n log n)',
+            worst: 'O(n log n)',
+            space: 'O(n)',
+            stable: 'Yes'
+          }
+        },
+        bogo: {
+          name: 'Bogo Sort',
+          shortName: 'BOGO',
+          complexity: {
+            best: 'Ω(n)',
+            average: 'Θ((n+1)!)',
+            worst: '∞',
+            space: 'O(1)',
+            stable: 'No'
+          }
+        }
+      };
+    }
+
+    setupEventListeners() {
+      // Speed slider
+      const speedSlider = this.widget.querySelector('#sv-speed-slider');
+      const speedValue = this.widget.querySelector('#sv-speed-value');
+
+      if (speedSlider && speedValue) {
+        speedSlider.addEventListener('input', (e) => {
+          this.animationSpeed = parseInt(e.target.value, 10);
+          speedValue.textContent = e.target.value;
+          speedSlider.setAttribute('aria-valuenow', e.target.value);
+        });
+      }
+
+      // Buttons
+      const startButton = this.widget.querySelector('#sv-start-button');
+      const pauseButton = this.widget.querySelector('#sv-pause-button');
+      const resetButton = this.widget.querySelector('#sv-reset-button');
+
+      if (startButton) {
+        startButton.addEventListener('click', () => {
+          announceToScreenReader('Starting sorting visualization');
+          this.startSorting();
+        });
+      }
+
+      if (pauseButton) {
+        pauseButton.addEventListener('click', () => {
+          const state = this.isPaused ? 'Resuming' : 'Pausing';
+          announceToScreenReader(`${state} sorting visualization`);
+          this.togglePause();
+        });
+      }
+
+      if (resetButton) {
+        resetButton.addEventListener('click', () => {
+          announceToScreenReader('Resetting visualization');
+          this.reset();
+        });
+      }
+
+      // Color scheme
+      const colorScheme = this.widget.querySelector('#sv-color-scheme');
+      if (colorScheme) {
+        colorScheme.addEventListener('change', (e) => {
+          this.updateColorScheme(e.target.value);
+        });
+      }
+
+      // Algorithm selections
+      const algorithmSelect = this.widget.querySelector('#sv-algorithm-select');
+      const comparisonAlgorithm = this.widget.querySelector('#sv-comparison-algorithm');
+
+      if (algorithmSelect) {
+        algorithmSelect.addEventListener('change', (e) => {
+          if (!this.isRunning) {
+            // Auto-reduce array size for bogo sort
+            if (e.target.value === 'bogo') {
+              const arraySizeInput = this.widget.querySelector('#sv-array-size');
+              if (arraySizeInput && parseInt(arraySizeInput.value) > CONSTANTS.BOGO_MAX_SIZE) {
+                arraySizeInput.value = CONSTANTS.BOGO_MAX_SIZE;
+                alert(`Array size automatically reduced to ${CONSTANTS.BOGO_MAX_SIZE} for Bogo Sort`);
+                const patternSelect = this.widget.querySelector('#sv-pattern-select');
+                if (patternSelect && patternSelect.value !== 'random') {
+                  this.applyPresetPattern(patternSelect.value);
+                }
+              }
+            }
+            this.updateVisualizationLayout();
+          }
+        });
+      }
+
+      if (comparisonAlgorithm) {
+        comparisonAlgorithm.addEventListener('change', (e) => {
+          if (!this.isRunning) {
+            // Auto-reduce array size for bogo sort
+            if (e.target.value === 'bogo') {
+              const arraySizeInput = this.widget.querySelector('#sv-array-size');
+              if (arraySizeInput && parseInt(arraySizeInput.value) > CONSTANTS.BOGO_MAX_SIZE) {
+                arraySizeInput.value = CONSTANTS.BOGO_MAX_SIZE;
+                alert(`Array size automatically reduced to ${CONSTANTS.BOGO_MAX_SIZE} for Bogo Sort comparison`);
+                const patternSelect = this.widget.querySelector('#sv-pattern-select');
+                if (patternSelect && patternSelect.value !== 'random') {
+                  this.applyPresetPattern(patternSelect.value);
+                }
+              }
+            }
+            this.updateVisualizationLayout();
+          }
+        });
+      }
+
+      // Array size validation
+      const arraySize = this.widget.querySelector('#sv-array-size');
+      if (arraySize) {
+        arraySize.addEventListener('change', (e) => {
+          const value = parseInt(e.target.value, 10);
+          if (value < CONSTANTS.MIN_ARRAY_SIZE) e.target.value = CONSTANTS.MIN_ARRAY_SIZE;
+          if (value > CONSTANTS.MAX_ARRAY_SIZE) e.target.value = CONSTANTS.MAX_ARRAY_SIZE;
+
+          // Show performance warning for large arrays
+          this.updatePerformanceWarning(value);
+
+          // Auto-apply current pattern when size changes
+          const patternSelect = this.widget.querySelector('#sv-pattern-select');
+          if (patternSelect && patternSelect.value !== 'random') {
+            this.applyPresetPattern(patternSelect.value);
+          }
+        });
+      }
+
+      // Array pattern select
+      const patternSelect = this.widget.querySelector('#sv-pattern-select');
+      if (patternSelect) {
+        patternSelect.addEventListener('change', (e) => {
+          this.applyPresetPattern(e.target.value);
+        });
+      }
+
+      // Keyboard shortcuts (only on desktop)
+      if (!this.isMobile) {
+        this.keydownHandler = (e) => {
+          // Ignore if typing in an input
+          if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
+            return;
+          }
+
+          // Check if the event is from within our widget
+          let element = e.target;
+          let isFromWidget = false;
+          while (element) {
+            if (element === this.widget) {
+              isFromWidget = true;
+              break;
+            }
+            element = element.parentElement;
+          }
+
+          // Handle Enter key - start sorting
+          if (e.key === 'Enter' && !this.isRunning) {
+            e.preventDefault();
+            announceToScreenReader('Starting sorting visualization');
+            this.startSorting();
+          }
+
+          // Handle Escape key - reset
+          if (e.key === 'Escape') {
+            e.preventDefault();
+            announceToScreenReader('Resetting visualization');
+            this.reset();
+          }
+
+          // Handle Space key - pause/resume
+          if (e.key === ' ' && this.isRunning) {
+            e.preventDefault();
+            const state = this.isPaused ? 'Resuming' : 'Pausing';
+            announceToScreenReader(`${state} sorting visualization`);
+            this.togglePause();
+          }
+        };
+
+        document.addEventListener('keydown', this.keydownHandler);
+      }
+
+      // Handle visibility change to pause when tab is hidden
+      this.visibilityHandler = () => {
+        if (document.hidden && this.isRunning && !this.isPaused) {
+          this.togglePause();
+        }
+      };
+      document.addEventListener('visibilitychange', this.visibilityHandler);
+
+      // Window resize handler with debouncing
+      this.resizeHandler = debounce(() => {
+        if (!this.isRunning) {
+          this.handleResize();
+        }
+      }, CONSTANTS.DEBOUNCE_DELAY);
+      window.addEventListener('resize', this.resizeHandler);
+
+      // Handle focus for accessibility
+      this.widget.addEventListener('focusin', (e) => {
+        if (e.target.matches('button, input, select')) {
+          e.target.classList.add('keyboard-focus');
+        }
+      });
+
+      this.widget.addEventListener('focusout', (e) => {
+        if (e.target.matches('button, input, select')) {
+          e.target.classList.remove('keyboard-focus');
+        }
+      });
+    }
+
+    updatePerformanceWarning(arraySize) {
+      const warning = this.widget.querySelector('#sv-performance-warning');
+      if (!warning) return;
+
+      if (arraySize > CONSTANTS.PERFORMANCE_THRESHOLD) {
+        warning.classList.add('show');
+        warning.textContent = `High array size (${arraySize}) may impact performance`;
+      } else {
+        warning.classList.remove('show');
+      }
+    }
+
+    applyPresetPattern(pattern) {
+      const size = parseInt(this.widget.querySelector('#sv-array-size')?.value || CONSTANTS.DEFAULT_ARRAY_SIZE, 10);
+      const arrayInput = this.widget.querySelector('#sv-array-input');
+      if (!arrayInput) return;
+
+      let arr = [];
+
+      switch (pattern) {
+        case 'random':
+          arrayInput.value = '';
+          arrayInput.placeholder = 'Enter comma-separated values (e.g., 5,3,8,1,9) or leave empty for generated array';
+          break;
+
+        case 'sorted':
+          arr = Array.from({length: size}, (_, i) => i + 1);
+          arrayInput.value = arr.join(',');
+          break;
+
+        case 'reverse':
+          arr = Array.from({length: size}, (_, i) => size - i);
+          arrayInput.value = arr.join(',');
+          break;
+
+        case 'nearly':
+          arr = Array.from({length: size}, (_, i) => i + 1);
+          // Swap a few random pairs
+          for (let i = 0; i < Math.max(2, size / 10); i++) {
+            const idx1 = Math.floor(Math.random() * size);
+            const idx2 = Math.floor(Math.random() * size);
+            [arr[idx1], arr[idx2]] = [arr[idx2], arr[idx1]];
+          }
+          arrayInput.value = arr.join(',');
+          break;
+
+        case 'few-unique':
+          const uniqueCount = Math.min(5, Math.max(2, Math.floor(size / 5)));
+          const values = Array.from({length: uniqueCount}, (_, i) => (i + 1) * 10);
+          arr = Array.from({length: size}, () => values[Math.floor(Math.random() * values.length)]);
+          arrayInput.value = arr.join(',');
+          break;
+
+        case 'mountain':
+          const peak = Math.floor(size / 2);
+          arr = Array.from({length: size}, (_, i) => {
+            if (i <= peak) return i + 1;
+            return size - i;
+          });
+          arrayInput.value = arr.join(',');
+          break;
+
+        case 'valley':
+          const valley = Math.floor(size / 2);
+          arr = Array.from({length: size}, (_, i) => {
+            if (i <= valley) return valley - i + 1;
+            return i - valley + 1;
+          });
+          arrayInput.value = arr.join(',');
+          break;
+
+        case 'sawtooth':
+          const teeth = Math.max(3, Math.floor(size / 10));
+          const toothSize = Math.floor(size / teeth);
+          arr = Array.from({length: size}, (_, i) => {
+            const toothIndex = Math.floor(i / toothSize);
+            const positionInTooth = i % toothSize;
+            return (toothIndex % 2 === 0) ? positionInTooth + 1 : toothSize - positionInTooth;
+          });
+          arrayInput.value = arr.join(',');
+          break;
+      }
+    }
+
+    togglePause() {
+      this.isPaused = !this.isPaused;
+      this.updateButtonStates();
+    }
+
+    handleResize() {
+      if (this.currentArray.length > 0 && !this.isRunning) {
+        const sections = this.widget.querySelectorAll('.sv-algorithm-section');
+        sections.forEach((section) => {
+          const sectionId = section.id;
+          const chart = this.widget.querySelector(`#${sectionId}-chart`);
+          if (chart && chart.querySelector('.sv-bar')) {
+            this.renderBars(sectionId, this.currentArray, [], [], true);
+          }
+        });
+      }
+    }
+
+    initializeVisualization() {
+      // Set default color scheme
+      const colorSchemeSelect = this.widget.querySelector('#sv-color-scheme');
+      if (colorSchemeSelect && !colorSchemeSelect.value) {
+        colorSchemeSelect.value = 'sv-color-scheme-1';
+      }
+
+      // Set default pattern
+      const patternSelect = this.widget.querySelector('#sv-pattern-select');
+      if (patternSelect && !patternSelect.value) {
+        patternSelect.value = 'random';
+      }
+
+      // Ensure merge sort is selected
+      const algorithmSelect = this.widget.querySelector('#sv-algorithm-select');
+      if (algorithmSelect) {
+        algorithmSelect.value = 'merge';
+      }
+
+      this.updateVisualizationLayout();
+    }
+
+    updateVisualizationLayout() {
+      const visualizationArea = this.widget.querySelector('#sv-visualization-area');
+      const algorithmKey = this.widget.querySelector('#sv-algorithm-select')?.value || 'merge';
+      const comparisonKey = this.widget.querySelector('#sv-comparison-algorithm')?.value || '';
+      const colorScheme = this.widget.querySelector('#sv-color-scheme')?.value || 'sv-color-scheme-1';
+
+      // Clear and set classes
+      visualizationArea.className = 'sv-visualization-area';
+      visualizationArea.classList.add(colorScheme);
+      visualizationArea.innerHTML = '';
+
+      // Always create primary algorithm section
+      const section1 = this.createAlgorithmSection('sv-algo1', algorithmKey);
+      visualizationArea.appendChild(section1);
+
+      // Create comparison section only if selected
+      if (comparisonKey && comparisonKey !== '') {
+        const section2 = this.createAlgorithmSection('sv-algo2', comparisonKey);
+        visualizationArea.appendChild(section2);
+      }
+    }
+
+    createAlgorithmSection(sectionId, algorithmKey) {
+      const algorithm = this.algorithms[algorithmKey];
+      const section = document.createElement('div');
+      section.className = 'sv-algorithm-section';
+      section.id = sectionId;
+
+      // Ensure algorithm exists before accessing properties
+      const complexityItems = algorithm && algorithm.complexity ?
+        Object.entries(algorithm.complexity).map(([key, value]) => {
+          return `<span class="sv-complexity-item">
+            <span class="sv-complexity-label">${key.toUpperCase()}:</span>
+            <span class="sv-complexity-value">${value}</span>
+          </span>`;
+        }).join('') :
+        '<span class="sv-complexity-item"><span class="sv-complexity-label">SELECT</span> <span class="sv-complexity-value">ALGORITHM</span></span>';
+
+      const warningText = algorithmKey === 'bogo' ?
+        `<div class="sv-warning-text">⚠️ WARNING: Bogo sort is extremely inefficient. Recommended for arrays ≤ ${CONSTANTS.BOGO_MAX_SIZE} elements.</div>` : '';
+
+      const iterationsHtml = algorithmKey === 'bogo' ?
+        `<div class="sv-stat-item">
+          <span class="sv-stat-label">Iterations:</span>
+          <span class="sv-stat-value" id="${sectionId}-iterations">0</span>
+        </div>` : '';
+
+      const algorithmName = algorithm ? algorithm.name : 'Select Algorithm';
+
+      section.innerHTML = `
+        <div class="sv-algorithm-header">
+          <div class="sv-algorithm-title">${algorithmName}</div>
+          <div class="sv-complexity-info">${complexityItems}</div>
+          <div class="sv-stats-container">
+            <div class="sv-timer sv-stat-item" id="${sectionId}-timer">
+              <span class="sv-timer-label">Time:</span>
+              <span class="sv-timer-value">0.000s</span>
+            </div>
+            <div class="sv-stat-item">
+              <span class="sv-stat-label">Comparisons:</span>
+              <span class="sv-stat-value" id="${sectionId}-comparisons">0</span>
+            </div>
+            <div class="sv-stat-item">
+              <span class="sv-stat-label">Swaps:</span>
+              <span class="sv-stat-value" id="${sectionId}-swaps">0</span>
+            </div>
+            ${iterationsHtml}
+          </div>
+        </div>
+        <div class="sv-chart-container" id="${sectionId}-chart" role="img" aria-label="Sorting visualization chart">
+          <div class="sv-chart-placeholder">WAITING TO START</div>
+        </div>
+        ${warningText}
+      `;
+
+      return section;
+    }
+
+    generateArray() {
+      const arrayInput = this.widget.querySelector('#sv-array-input')?.value.trim() || '';
+
+      if (arrayInput) {
+        const parsed = arrayInput.split(',')
+          .map(n => parseInt(n.trim(), 10))
+          .filter(n => !isNaN(n) && isFinite(n));
+
+        if (parsed.length === 0) {
+          alert('Invalid array format. Please use comma-separated numbers.');
+          return [];
+        }
+
+        if (parsed.length > CONSTANTS.MAX_ARRAY_SIZE) {
+          alert(`Array size must be ${CONSTANTS.MAX_ARRAY_SIZE} or less`);
+          return [];
+        }
+
+        const min = Math.min(...parsed);
+        const max = Math.max(...parsed);
+        if (max - min > CONSTANTS.MAX_VALUE_RANGE) {
+          alert(`Array values must be within a range of ${CONSTANTS.MAX_VALUE_RANGE}`);
+          return [];
+        }
+
+        return parsed;
+      }
+
+      const size = parseInt(this.widget.querySelector('#sv-array-size')?.value || CONSTANTS.DEFAULT_ARRAY_SIZE, 10);
+      const validSize = Math.max(CONSTANTS.MIN_ARRAY_SIZE, Math.min(CONSTANTS.MAX_ARRAY_SIZE, size));
+
+      // Generate values from VALUE_MIN to VALUE_MAX for better visibility
+      const arr = Array.from({length: validSize}, () =>
+        Math.floor(Math.random() * (CONSTANTS.VALUE_MAX - CONSTANTS.VALUE_MIN + 1)) + CONSTANTS.VALUE_MIN
+      );
+
+      return arr;
+    }
+
+    updateColorScheme(scheme) {
+      const visualizationArea = this.widget.querySelector('#sv-visualization-area');
+      if (!visualizationArea) return;
+
+      const currentClasses = visualizationArea.className.split(' ')
+        .filter(c => !c.startsWith('sv-color-scheme-'));
+      currentClasses.push(scheme);
+      visualizationArea.className = currentClasses.join(' ');
+    }
+
+    updateButtonStates() {
+      const startButton = this.widget.querySelector('#sv-start-button');
+      const pauseButton = this.widget.querySelector('#sv-pause-button');
+      const resetButton = this.widget.querySelector('#sv-reset-button');
+
+      if (this.isRunning) {
+        // Running state
+        if (startButton) startButton.disabled = true;
+        if (pauseButton) {
+          pauseButton.disabled = false;
+          pauseButton.textContent = this.isPaused ? 'RESUME' : 'PAUSE';
+        }
+        if (resetButton) resetButton.disabled = false;
+      } else {
+        // Not running state
+        if (startButton) startButton.disabled = false;
+        if (pauseButton) {
+          pauseButton.disabled = true;
+          pauseButton.textContent = 'PAUSE';
+        }
+        // Reset only enabled if there's been activity
+        if (resetButton) {
+          resetButton.disabled = this.currentArray.length === 0 && !this.hasBeenRun;
+        }
+      }
+    }
+
+    isSorted(arr) {
+      for (let i = 0; i < arr.length - 1; i++) {
+        if (arr[i] > arr[i + 1]) {
+          return false;
+        }
+      }
+      return true;
+    }
+
+    updateStats(sectionId, type, increment = 1) {
+      if (this.stats[sectionId] && this.stats[sectionId].hasOwnProperty(type)) {
+        this.stats[sectionId][type] += increment;
+        const element = this.widget.querySelector(`#${sectionId}-${type}`);
+        if (element) {
+          element.textContent = this.stats[sectionId][type];
+
+          // Add visual feedback for changes
+          element.classList.add('changed');
+          setTimeout(() => {
+            element.classList.remove('changed');
+          }, 200);
+        }
+      }
+    }
+
+    resetStats(sectionId) {
+      this.stats[sectionId] = { comparisons: 0, swaps: 0, iterations: 0 };
+      ['comparisons', 'swaps', 'iterations'].forEach(type => {
+        const element = this.widget.querySelector(`#${sectionId}-${type}`);
+        if (element) {
+          element.textContent = '0';
+          element.style.opacity = '1';
+          element.style.visibility = 'visible';
+        }
+      });
+    }
+
+    renderBars(sectionId, array, highlights = [], secondaryHighlights = [], useTransition = false) {
+      if (this.shouldAbort) return;
+
+      // Queue render for next frame
+      this.pendingRenders.set(sectionId, { array: [...array], highlights, secondaryHighlights, useTransition });
+
+      if (!this.animationFrameId) {
+        this.animationFrameId = requestAnimationFrame(() => this.processPendingRenders());
+      }
+    }
+
+    processPendingRenders() {
+      this.animationFrameId = null;
+      performanceMonitor.update();
+
+      // Process all pending renders in one frame
+      for (const [sectionId, renderData] of this.pendingRenders) {
+        this.doRenderBars(sectionId, renderData.array, renderData.highlights, renderData.secondaryHighlights, renderData.useTransition);
+      }
+
+      this.pendingRenders.clear();
+    }
+
+    doRenderBars(sectionId, array, highlights = [], secondaryHighlights = [], useTransition = false) {
+      const chart = this.widget.querySelector(`#${sectionId}-chart`);
+      if (!chart) return;
+
+      // Remove placeholder if exists
+      const placeholder = chart.querySelector('.sv-chart-placeholder');
+      if (placeholder) placeholder.remove();
+
+      // Calculate max value once at the start of sorting
+      const maxValue = this.maxArrayValue || Math.max(...array, 1);
+      if (!this.maxArrayValue && array.length > 0) {
+        this.maxArrayValue = maxValue;
+      }
+
+      const chartRect = chart.getBoundingClientRect();
+      const chartWidth = Math.max(100, chartRect.width || chart.offsetWidth);
+      const chartHeight = Math.max(100, (chartRect.height || chart.offsetHeight) - 10); // Account for padding
+
+      // Get existing bars for reuse
+      const existingBars = chart.querySelectorAll('.sv-bar');
+
+      // If array is empty, clear and return
+      if (!array || array.length === 0) {
+        chart.innerHTML = '';
+        return;
+      }
+
+      // Calculate bar dimensions
+      const totalGaps = array.length + 1;
+      const minBarWidth = CONSTANTS.MIN_BAR_WIDTH;
+      const maxBarWidth = array.length < 20 ? CONSTANTS.MAX_BAR_WIDTH_SMALL : CONSTANTS.MAX_BAR_WIDTH_LARGE;
+      const preferredGap = array.length < 10 ? 4 : 2;
+
+      let barWidth = Math.floor((chartWidth - totalGaps * preferredGap) / array.length);
+      barWidth = Math.max(minBarWidth, Math.min(maxBarWidth, barWidth));
+
+      const actualGap = Math.floor((chartWidth - array.length * barWidth) / totalGaps);
+
+      // Update existing bars and create new ones in a single pass
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < array.length; i++) {
+        let bar;
+
+        if (i < existingBars.length) {
+          // Reuse existing bar
+          bar = existingBars[i];
+        } else {
+          // Create new bar
+          bar = document.createElement('div');
+          bar.className = 'sv-bar';
+          fragment.appendChild(bar);
+        }
+
+        // Update bar properties
+        const value = array[i];
+        const heightPercent = value / maxValue;
+        const height = Math.max(15, Math.floor(heightPercent * chartHeight * 0.8));
+        const left = actualGap + i * (barWidth + actualGap);
+
+        bar.setAttribute('data-value', value);
+        bar.setAttribute('data-index', i);
+
+        // Apply styles directly for instant updates
+        bar.style.height = `${height}px`;
+        bar.style.width = `${barWidth}px`;
+        bar.style.left = `${left}px`;
+        bar.style.position = 'absolute';
+        bar.style.bottom = '5px';
+        bar.style.opacity = '1';
+        bar.style.visibility = 'visible';
+
+        // Clear all highlighting classes first
+        bar.classList.remove('comparing', 'comparing-secondary', 'sorted', 'animating');
+
+        // Apply new highlighting classes
+        if (highlights.includes(i)) {
+          bar.classList.add('comparing');
+        } else if (secondaryHighlights.includes(i)) {
+          bar.classList.add('comparing-secondary');
+        }
+
+        // Add animating class only for position changes
+        if (useTransition) {
+          bar.classList.add('animating');
+        }
+      }
+
+      // Remove extra bars
+      for (let i = array.length; i < existingBars.length; i++) {
+        existingBars[i].remove();
+      }
+
+      // Add new bars to chart
+      if (fragment.hasChildNodes()) {
+        chart.appendChild(fragment);
+      }
+
+      // Ensure chart is visible
+      chart.style.opacity = '1';
+      chart.style.visibility = 'visible';
+    }
+
+    async delay(arraySize = 30, algorithmKey = 'bubble') {
+      if (this.shouldAbort) {
+        throw new Error('Operation aborted');
+      }
+
+      // Wait while paused
+      while (this.isPaused && !this.shouldAbort) {
+        await new Promise(resolve => setTimeout(resolve, CONSTANTS.ANIMATION_FRAME_RATE));
+      }
+
+      if (this.shouldAbort) {
+        throw new Error('Operation aborted');
+      }
+
+      const speedMultiplier = this.algorithmSpeedMultipliers[algorithmKey] || 1;
+      const baseDelay = 101 - this.animationSpeed;
+      const adjustedDelay = baseDelay * speedMultiplier;
+
+      // Adaptive delay based on array size
+      let sizeFactor = 1;
+      if (arraySize > 100) {
+        sizeFactor = 0.2; // Much faster for large arrays
+      } else if (arraySize > 50) {
+        sizeFactor = 0.5;
+      } else if (arraySize < 10) {
+        sizeFactor = 1.5; // Slower for small arrays to see animation
+      }
+
+      // Dynamic delay based on performance
+      if (!performanceMonitor.isPerformanceGood()) {
+        sizeFactor *= 0.5; // Speed up if performance is poor
+      }
+
+      const finalDelay = Math.max(20, Math.min(adjustedDelay * sizeFactor, 500));
+
+      return new Promise((resolve, reject) => {
+        const timeoutId = setTimeout(() => {
+          this.activeTimeouts.delete(timeoutId);
+          if (this.shouldAbort) {
+            reject(new Error('Operation aborted'));
+          } else {
+            resolve();
+          }
+        }, finalDelay);
+
+        this.activeTimeouts.set(timeoutId, true);
+      });
+    }
+
+    async startSorting() {
+      if (this.isRunning) return;
+
+      this.isRunning = true;
+      this.isPaused = false;
+      this.shouldAbort = false;
+      this.hasBeenRun = true;
+      this.finishedAlgorithms.clear();
+
+      this.updateButtonStates();
+
+      const array = this.generateArray();
+      if (array.length === 0) {
+        this.reset();
+        return;
+      }
+
+      // Set max array value for consistent heights
+      this.maxArrayValue = Math.max(...array, 1);
+
+      if (array.length < 2) {
+        alert('Array must have at least 2 elements to sort');
+        this.reset();
+        return;
+      }
+
+      if (array.length > CONSTANTS.MAX_ARRAY_SIZE) {
+        alert(`Array size must be ${CONSTANTS.MAX_ARRAY_SIZE} or less for optimal performance`);
+        this.reset();
+        return;
+      }
+
+      const algorithmKey = this.widget.querySelector('#sv-algorithm-select')?.value || 'merge';
+      const comparisonKey = this.widget.querySelector('#sv-comparison-algorithm')?.value || '';
+
+      // Store current algorithm keys for completion message
+      this.currentAlgorithmKeys['sv-algo1'] = algorithmKey;
+      this.currentAlgorithmKeys['sv-algo2'] = comparisonKey;
+
+      // Check for inefficient algorithms with large arrays
+      if (algorithmKey === 'bogo' && array.length > CONSTANTS.BOGO_MAX_SIZE) {
+        const userConfirm = window.confirm(`Bogo sort is extremely inefficient! With ${array.length} elements, it could take millions of attempts. Recommended size is ${CONSTANTS.BOGO_MAX_SIZE} or less. Continue anyway?`);
+        if (!userConfirm) {
+          this.reset();
+          return;
+        }
+      }
+
+      if (comparisonKey === 'bogo' && array.length > CONSTANTS.BOGO_MAX_SIZE) {
+        const userConfirm = window.confirm(`Bogo sort is extremely inefficient! With ${array.length} elements, it could take millions of attempts. Recommended size is ${CONSTANTS.BOGO_MAX_SIZE} or less. Continue anyway?`);
+        if (!userConfirm) {
+          this.reset();
+          return;
+        }
+      }
+
+      this.currentArray = array;
+      this.updateVisualizationLayout();
+
+      // Announce to screen reader
+      const algorithmName = this.algorithms[algorithmKey]?.name || algorithmKey;
+      let announcement = `Starting ${algorithmName} on array of ${array.length} elements`;
+
+      try {
+        if (comparisonKey && comparisonKey !== '') {
+          if (algorithmKey === comparisonKey) {
+            alert('Please select different algorithms for comparison');
+            this.reset();
+            return;
+          }
+
+          const comparisonName = this.algorithms[comparisonKey]?.name || comparisonKey;
+          announcement += ` compared with ${comparisonName}`;
+
+          const array1 = [...array];
+          const array2 = [...array];
+
+          this.resetStats('sv-algo1');
+          this.resetStats('sv-algo2');
+
+          this.renderBars('sv-algo1', array1, [], [], true);
+          this.renderBars('sv-algo2', array2, [], [], true);
+
+          await Promise.all([
+            this.runAlgorithm(algorithmKey, array1, 'sv-algo1').catch((e) => {
+              console.error('Algorithm 1 error:', e);
+            }),
+            this.runAlgorithm(comparisonKey, array2, 'sv-algo2').catch((e) => {
+              console.error('Algorithm 2 error:', e);
+            })
+          ]);
+        } else {
+          const arrayCopy = [...array];
+          this.resetStats('sv-algo1');
+          this.renderBars('sv-algo1', arrayCopy, [], [], true);
+          await this.runAlgorithm(algorithmKey, arrayCopy, 'sv-algo1').catch((e) => {
+            console.error('Algorithm error:', e);
+          });
+        }
+
+        announceToScreenReader(announcement);
+      } catch (error) {
+        console.error('Sorting error:', error);
+        if (error.message !== 'Operation aborted') {
+          alert('An error occurred during sorting. Please try again.');
+        }
+      } finally {
+        if (!this.shouldAbort) {
+          // Short wait for final animations to complete
+          await new Promise(resolve => setTimeout(resolve, 500));
+
+          this.isRunning = false;
+          this.updateButtonStates();
+          announceToScreenReader('Sorting complete');
+        }
+      }
+    }
+
+    async runAlgorithm(algorithmKey, array, sectionId) {
+      const startTime = performance.now();
+      const timerElement = this.widget.querySelector(`#${sectionId}-timer .sv-timer-value`);
+      const arraySize = array.length;
+
+      let attemptCount = 0;
+      let pausedTime = 0;
+      let pauseStartTime = 0;
+      let timerInterval = null;
+      let sortingComplete = false;
+
+      // Store reference to the array being sorted
+      const originalArray = [...array];
+
+      const updateTimer = () => {
+        if (!timerElement || this.shouldAbort || sortingComplete) return false;
+        const currentTime = performance.now();
+        const activePauseTime = pauseStartTime ? currentTime - pauseStartTime : 0;
+        const elapsed = (currentTime - startTime - pausedTime - activePauseTime) / 1000;
+        timerElement.textContent = `${Math.max(0, elapsed).toFixed(3)}s`;
+        timerElement.classList.add('active');
+        return true;
+      };
+
+      // Monitor pause state changes
+      const checkPauseState = setInterval(() => {
+        if (this.isPaused && !pauseStartTime) {
+          pauseStartTime = performance.now();
+        } else if (!this.isPaused && pauseStartTime) {
+          pausedTime += performance.now() - pauseStartTime;
+          pauseStartTime = 0;
+        }
+      }, 10);
+
+      timerInterval = setInterval(() => {
+        if (!updateTimer()) {
+          clearInterval(timerInterval);
+        }
+      }, 50);
+
+      try {
+        // Validate array before sorting
+        if (!Array.isArray(array) || array.length === 0) {
+          throw new Error('Invalid array provided');
+        }
+
+        switch (algorithmKey) {
+          case 'bubble':
+            await this.bubbleSort(array, sectionId, arraySize);
+            break;
+          case 'selection':
+            await this.selectionSort(array, sectionId, arraySize);
+            break;
+          case 'insertion':
+            await this.insertionSort(array, sectionId, arraySize, 0, array.length - 1, 'insertion');
+            break;
+          case 'merge':
+            await this.mergeSort(array, 0, array.length - 1, sectionId, arraySize);
+            break;
+          case 'quick':
+            await this.quickSort(array, 0, array.length - 1, sectionId, arraySize);
+            break;
+          case 'counting':
+            await this.countingSort(array, sectionId, arraySize);
+            break;
+          case 'heap':
+            await this.heapSort(array, sectionId, arraySize);
+            break;
+          case 'shell':
+            await this.shellSort(array, sectionId, arraySize);
+            break;
+          case 'tim':
+            await this.timSort(array, sectionId, arraySize);
+            break;
+          case 'bogo':
+            attemptCount = await this.bogoSort(array, sectionId, arraySize);
+            break;
+          default:
+            throw new Error(`Unknown algorithm: ${algorithmKey}`);
+        }
+
+        // Mark sorting as complete and stop timer immediately
+        sortingComplete = true;
+        clearInterval(timerInterval);
+        clearInterval(checkPauseState);
+        updateTimer(); // Final update
+
+        // Remove active class from timer
+        if (timerElement) {
+          timerElement.classList.remove('active');
+        }
+
+        // Epic completion animation
+        if (!this.shouldAbort) {
+          this.finishedAlgorithms.add(sectionId);
+          await this.playEpicCompletionAnimation(sectionId, array, algorithmKey);
+        }
+      } catch (e) {
+        if (e.message !== 'Operation aborted') {
+          console.error('Algorithm error:', e);
+        }
+      } finally {
+        clearInterval(timerInterval);
+        clearInterval(checkPauseState);
+      }
+    }
+
+    async playEpicCompletionAnimation(sectionId, sortedArray, algorithmKey) {
+      const chart = this.widget.querySelector(`#${sectionId}-chart`);
+      if (!chart) return;
+
+      const bars = Array.from(chart.querySelectorAll('.sv-bar'));
+      if (bars.length === 0) return;
+
+      // Get algorithm name for completion message
+      const algorithmName = this.algorithms[algorithmKey]?.shortName || 'SORTED';
+
+      // Immediately mark all bars as sorted with smooth transition
+      requestAnimationFrame(() => {
+        bars.forEach((bar, i) => {
+          bar.classList.remove('comparing', 'comparing-secondary');
+          bar.classList.add('sorted');
+          // Subtle initial glow
+          bar.style.transition = 'all 0.3s ease-out';
+          bar.style.filter = 'brightness(1.2) saturate(1.3)';
+        });
+      });
+
+      // Create completion overlay
+      const overlay = document.createElement('div');
+      overlay.className = 'sv-completion-overlay';
+
+      const message = document.createElement('div');
+      message.className = 'sv-completion-message';
+      message.textContent = `${algorithmName} SORTED`;
+
+      // Add subtle entrance animation
+      message.style.opacity = '0';
+      overlay.appendChild(message);
+
+      chart.appendChild(overlay);
+
+      // Animate message entrance
+      requestAnimationFrame(() => {
+        message.style.opacity = '1';
+      });
+
+      const chartRect = chart.getBoundingClientRect();
+      const centerX = chartRect.width / 2;
+      const centerY = chartRect.height / 2;
+
+      // Use requestAnimationFrame for all animations to ensure smoothness
+      const animationQueue = [];
+
+      const queueAnimation = (fn, delay) => {
+        animationQueue.push({ fn, delay });
+      };
+
+      // Queue all animations
+      queueAnimation(() => this.createRippleEffect(chart, centerX, centerY), 0);
+      queueAnimation(() => this.createBarWave(bars), 50);
+      queueAnimation(() => this.createFireworks(chart, chartRect), 150);
+      queueAnimation(() => this.createConfettiRain(chart, chartRect), 300);
+      queueAnimation(() => this.createRainbowWave(bars), 500);
+      queueAnimation(() => this.createFinalBurst(chart, centerX, centerY), 800);
+
+      // Execute animations with proper timing
+      let currentTime = 0;
+      const executeNextAnimation = () => {
+        if (animationQueue.length === 0) return;
+
+        const next = animationQueue.shift();
+        if (currentTime >= next.delay) {
+          requestAnimationFrame(next.fn);
+          currentTime = 0;
+          executeNextAnimation();
+        } else {
+          setTimeout(() => {
+            currentTime = next.delay;
+            executeNextAnimation();
+          }, next.delay - currentTime);
+        }
+      };
+
+      executeNextAnimation();
+
+      // Apply chart glow after initial effects
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          chart.style.animation = 'sv-chartGlow 2s cubic-bezier(0.25, 0.8, 0.25, 1)';
+        });
+      }, 300);
+
+      // Cleanup after animation
+      setTimeout(() => {
+        requestAnimationFrame(() => {
+          overlay.style.opacity = '0';
+          overlay.style.transition = 'opacity 0.5s ease-out';
+
+          setTimeout(() => {
+            overlay.remove();
+
+            // Final state with smooth transition
+            requestAnimationFrame(() => {
+              bars.forEach((bar, i) => {
+                setTimeout(() => {
+                  bar.style.transition = 'all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
+                  bar.style.animation = '';
+                  bar.style.filter = 'brightness(1.4) saturate(1.3)';
+                  bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
+                }, i * 5);
+              });
+
+              chart.style.animation = '';
+            });
+          }, 500);
+        });
+      }, 3200);
+    }
+
+    createRippleEffect(chart, x, y) {
+      const rippleCount = 3;
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < rippleCount; i++) {
+        const ripple = document.createElement('div');
+        const delay = i * 120;
+
+        ripple.style.cssText = `
+          position: absolute;
+          left: ${x}px;
+          top: ${y}px;
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 2px solid rgba(59, 130, 246, 0.9);
+          background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+          transform: translate(-50%, -50%) scale(0);
+          opacity: 0;
+          pointer-events: none;
+          z-index: 30;
+          will-change: transform, opacity;
+        `;
+
+        fragment.appendChild(ripple);
+
+        // Animate ripple expansion
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            ripple.style.transition = 'all 1.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            ripple.style.transform = 'translate(-50%, -50%) scale(1)';
+            ripple.style.opacity = '1';
+
+            requestAnimationFrame(() => {
+              setTimeout(() => {
+                ripple.style.transform = 'translate(-50%, -50%) scale(15)';
+                ripple.style.opacity = '0';
+                ripple.style.borderWidth = '0.5px';
+              }, 50);
+            });
+          });
+        }, delay);
+
+        setTimeout(() => ripple.remove(), 2000 + delay);
+      }
+
+      chart.appendChild(fragment);
+    }
+
+    createBarWave(bars) {
+      const waveHeight = 25;
+      const waveDuration = 600;
+
+      bars.forEach((bar, i) => {
+        const delay = i * 12;
+        const phase = (i / bars.length) * Math.PI * 2;
+
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            // Create smooth wave motion
+            bar.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+            bar.style.transform = `translateY(-${waveHeight}px) scaleY(1.15)`;
+
+            // Add dynamic glow
+            const hue = (i / bars.length) * 120; // Green to blue gradient
+            bar.style.boxShadow = `
+              0 0 25px hsla(${120 + hue}, 70%, 50%, 0.7),
+              0 -8px 20px hsla(${120 + hue}, 70%, 50%, 0.5) inset
+            `;
+            bar.style.filter = `brightness(1.8) saturate(1.5) hue-rotate(${hue}deg)`;
+
+            // Return to normal position
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                bar.style.transform = 'translateY(0) scaleY(1)';
+                bar.style.filter = 'brightness(1.4) saturate(1.3)';
+              });
+            }, waveDuration / 2);
+          });
+        }, delay);
+      });
+    }
+
+    createFireworks(chart, chartRect) {
+      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28', '#9775ff', '#ff7875'];
+      const burstPoints = [
+        { x: chartRect.width * 0.25, y: chartRect.height * 0.35 },
+        { x: chartRect.width * 0.75, y: chartRect.height * 0.35 },
+        { x: chartRect.width * 0.5, y: chartRect.height * 0.5 }
+      ];
+
+      burstPoints.forEach((point, burstIndex) => {
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            const particleCount = 20;
+            const fragment = document.createDocumentFragment();
+
+            // Create burst flash
+            const flash = document.createElement('div');
+            flash.style.cssText = `
+              position: absolute;
+              left: ${point.x}px;
+              top: ${point.y}px;
+              width: 30px;
+              height: 30px;
+              background: radial-gradient(circle, white 0%, transparent 70%);
+              border-radius: 50%;
+              transform: translate(-50%, -50%) scale(0);
+              pointer-events: none;
+              z-index: 50;
+              will-change: transform, opacity;
+            `;
+            chart.appendChild(flash);
+
+            requestAnimationFrame(() => {
+              flash.style.transition = 'all 0.2s ease-out';
+              flash.style.transform = 'translate(-50%, -50%) scale(2)';
+              flash.style.opacity = '0';
+            });
+
+            setTimeout(() => flash.remove(), 200);
+
+            // Create particles
+            for (let i = 0; i < particleCount; i++) {
+              const particle = document.createElement('div');
+              const angle = (i / particleCount) * Math.PI * 2 + Math.random() * 0.2;
+              const velocity = 50 + Math.random() * 50;
+              const color = colors[Math.floor(Math.random() * colors.length)];
+              const size = 3 + Math.random() * 3;
+
+              particle.className = 'sv-particle';
+              particle.style.cssText = `
+                position: absolute;
+                left: ${point.x}px;
+                top: ${point.y}px;
+                width: ${size}px;
+                height: ${size}px;
+                background: radial-gradient(circle, ${color} 0%, ${color}88 100%);
+                border-radius: 50%;
+                box-shadow: 0 0 ${size * 3}px ${color}, 0 0 ${size * 6}px ${color}66;
+                pointer-events: none;
+                z-index: 40;
+                opacity: 1;
+                will-change: transform, opacity;
+              `;
+
+              fragment.appendChild(particle);
+
+              // Animate with physics
+              let frame = 0;
+              const gravity = 0.4;
+              const friction = 0.98;
+              let velocityX = Math.cos(angle) * velocity;
+              let velocityY = Math.sin(angle) * velocity - 30;
+              let posX = 0;
+              let posY = 0;
+              let opacity = 1;
+
+              const animate = () => {
+                frame++;
+                velocityY += gravity;
+                velocityX *= friction;
+                velocityY *= friction;
+                posX += velocityX * 0.016;
+                posY += velocityY * 0.016;
+                opacity = Math.max(0, 1 - frame * 0.012);
+
+                particle.style.transform = `translate(${posX}px, ${posY}px) scale(${1 - frame * 0.008})`;
+                particle.style.opacity = opacity;
+
+                if (frame < 80 && opacity > 0) {
+                  requestAnimationFrame(animate);
+                } else {
+                  particle.remove();
+                }
+              };
+
+              // Slight delay for staggered effect
+              setTimeout(() => requestAnimationFrame(animate), i * 2);
+            }
+
+            chart.appendChild(fragment);
+          });
+        }, burstIndex * 120);
+      });
+    }
+
+    createConfettiRain(chart, chartRect) {
+      const confettiCount = 30;
+      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28', '#9775ff', '#ff7875', '#42a5f5'];
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < confettiCount; i++) {
+        const confetti = document.createElement('div');
+        const color = colors[i % colors.length];
+        const startX = Math.random() * chartRect.width;
+        const size = 6 + Math.random() * 4;
+        const shape = Math.random();
+        const rotationSpeed = 200 + Math.random() * 400;
+        const fallDuration = 1500 + Math.random() * 1000;
+        const swayAmount = 30 + Math.random() * 40;
+
+        // Different shapes for variety
+        let borderRadius = '2px';
+        if (shape < 0.33) borderRadius = '50%';
+        else if (shape < 0.66) borderRadius = '0';
+
+        confetti.style.cssText = `
+          position: absolute;
+          left: ${startX}px;
+          top: -30px;
+          width: ${size}px;
+          height: ${size * (shape < 0.33 ? 1 : 1.5)}px;
+          background: linear-gradient(45deg, ${color} 0%, ${color}dd 50%, ${color}99 100%);
+          border-radius: ${borderRadius};
+          box-shadow: 0 0 ${size}px ${color}40;
+          pointer-events: none;
+          z-index: 35;
+          opacity: 0;
+          transform-origin: center;
+          will-change: transform, opacity;
+          animation:
+            sv-confettiFall ${fallDuration}ms cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards,
+            sv-confettiRotate ${rotationSpeed}ms linear infinite,
+            sv-confettiSway ${2000 + Math.random() * 1000}ms ease-in-out infinite;
+        `;
+
+        // Add custom properties for animation
+        confetti.style.setProperty('--drift', `${(Math.random() - 0.5) * swayAmount}px`);
+        confetti.style.setProperty('--start-delay', `${Math.random() * 300}ms`);
+
+        fragment.appendChild(confetti);
+        setTimeout(() => confetti.remove(), fallDuration + 300);
+      }
+
+      chart.appendChild(fragment);
+
+      // Add enhanced confetti keyframes
+      if (!document.querySelector('#sv-confetti-keyframes')) {
+        const style = document.createElement('style');
+        style.id = 'sv-confetti-keyframes';
+        style.textContent = `
+          @keyframes sv-confettiFall {
+            0% {
+              transform: translateY(0) translateX(0) scale(0);
+              opacity: 0;
+            }
+            10% {
+              transform: translateY(10px) translateX(0) scale(1);
+              opacity: 1;
+            }
+            90% {
+              opacity: 1;
+            }
+            100% {
+              transform: translateY(${chartRect.height + 40}px) translateX(var(--drift)) scale(0.8);
+              opacity: 0;
+            }
+          }
+          @keyframes sv-confettiRotate {
+            0% { transform: rotateZ(0deg); }
+            100% { transform: rotateZ(360deg); }
+          }
+          @keyframes sv-confettiSway {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+          }
+        `;
+        document.head.appendChild(style);
+      }
+    }
+
+    createRainbowWave(bars) {
+      const totalDuration = 2000;
+      const delayPerBar = totalDuration / bars.length / 3;
+
+      bars.forEach((bar, i) => {
+        const delay = i * delayPerBar;
+        const hue = (i / bars.length) * 360;
+        const brightness = 1.8 + Math.sin((i / bars.length) * Math.PI) * 0.4;
+
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            bar.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+            bar.style.filter = `
+              brightness(${brightness})
+              saturate(2)
+              hue-rotate(${hue}deg)
+            `;
+            bar.style.transform = 'scaleY(1.05)';
+
+            // Create a subtle glow effect
+            const glowColor = `hsl(${120 + hue % 240}, 70%, 50%)`;
+            bar.style.boxShadow = `
+              0 0 30px ${glowColor},
+              0 -10px 20px ${glowColor} inset,
+              0 0 50px ${glowColor}40
+            `;
+
+            // Return to elegant final state
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                bar.style.transition = 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
+                bar.style.filter = 'brightness(1.4) saturate(1.3)';
+                bar.style.transform = 'scaleY(1)';
+                bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
+              });
+            }, 600);
+          });
+        }, delay);
+      });
+    }
+
+    createFinalBurst(chart, x, y) {
+      // Create expanding glow with multiple layers
+      const glowLayers = 3;
+      for (let layer = 0; layer < glowLayers; layer++) {
+        const glow = document.createElement('div');
+        const delay = layer * 100;
+        const size = 60 + layer * 20;
+
+        glow.style.cssText = `
+          position: absolute;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${size}px;
+          height: ${size}px;
+          background: radial-gradient(circle,
+            rgba(255, 255, 255, ${0.8 - layer * 0.2}) 0%,
+            rgba(59, 130, 246, ${0.6 - layer * 0.15}) 30%,
+            transparent 70%);
+          border-radius: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          pointer-events: none;
+          z-index: ${25 - layer};
+          will-change: transform, opacity;
+        `;
+
+        chart.appendChild(glow);
+
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            glow.style.transition = 'all 1.2s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            glow.style.transform = `translate(-50%, -50%) scale(${4 + layer})`;
+            glow.style.opacity = '0';
+          });
+        }, delay);
+
+        setTimeout(() => glow.remove(), 1200 + delay);
+      }
+
+      // Elegant sparkle burst
+      const sparkleCount = 24;
+      const fragment = document.createDocumentFragment();
+
+      for (let i = 0; i < sparkleCount; i++) {
+        const sparkle = document.createElement('div');
+        const angle = (i / sparkleCount) * Math.PI * 2;
+        const distance = 40 + Math.random() * 60;
+        const size = 2 + Math.random() * 2;
+        const delay = Math.random() * 200;
+
+        sparkle.className = 'sv-sparkle';
+        sparkle.style.cssText = `
+          position: absolute;
+          left: ${x}px;
+          top: ${y}px;
+          width: ${size}px;
+          height: ${size}px;
+          background: white;
+          border-radius: 50%;
+          box-shadow: 0 0 ${size * 3}px white, 0 0 ${size * 6}px rgba(59, 130, 246, 0.8);
+          pointer-events: none;
+          z-index: 45;
+          opacity: 0;
+          transform: scale(0);
+          will-change: transform, opacity;
+        `;
+
+        fragment.appendChild(sparkle);
+
+        setTimeout(() => {
+          requestAnimationFrame(() => {
+            sparkle.style.transition = 'all 1s cubic-bezier(0.25, 0.8, 0.25, 1)';
+            sparkle.style.transform = `translate(${Math.cos(angle) * distance}px, ${Math.sin(angle) * distance}px) scale(1)`;
+            sparkle.style.opacity = '1';
+
+            setTimeout(() => {
+              requestAnimationFrame(() => {
+                sparkle.style.opacity = '0';
+                sparkle.style.transform = `translate(${Math.cos(angle) * distance * 1.5}px, ${Math.sin(angle) * distance * 1.5}px) scale(0.5)`;
+              });
+            }, 500);
+          });
+        }, delay);
+
+        setTimeout(() => sparkle.remove(), 1000 + delay);
+      }
+
+      chart.appendChild(fragment);
+    }
+
+    // Sorting Algorithms
+    async bubbleSort(arr, sectionId, arraySize) {
+      const n = arr.length;
+
+      for (let i = 0; i < n && !this.shouldAbort; i++) {
+        let swapped = false;
+
+        for (let j = 0; j < n - i - 1 && !this.shouldAbort; j++) {
+          this.updateStats(sectionId, 'comparisons');
+          this.renderBars(sectionId, arr, [j], [j + 1]);
+          await this.delay(arraySize, 'bubble');
+
+          if (arr[j] > arr[j + 1]) {
+            [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
+            this.updateStats(sectionId, 'swaps');
+            swapped = true;
+            this.renderBars(sectionId, arr, [j], [j + 1]);
+            await this.delay(arraySize, 'bubble');
+          }
+        }
+
+        if (!swapped) break;
+      }
+
+      if (!this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async selectionSort(arr, sectionId, arraySize) {
+      const n = arr.length;
+
+      for (let i = 0; i < n && !this.shouldAbort; i++) {
+        let minIdx = i;
+
+        for (let j = i + 1; j < n && !this.shouldAbort; j++) {
+          this.updateStats(sectionId, 'comparisons');
+          this.renderBars(sectionId, arr, [minIdx], [j]);
+          await this.delay(arraySize, 'selection');
+
+          if (arr[j] < arr[minIdx]) {
+            minIdx = j;
+          }
+        }
+
+        if (minIdx !== i && !this.shouldAbort) {
+          [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
+          this.updateStats(sectionId, 'swaps');
+          this.renderBars(sectionId, arr, [i], [minIdx]);
+          await this.delay(arraySize, 'selection');
+        }
+      }
+
+      if (!this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async insertionSort(arr, sectionId, arraySize, start = 0, end = arr.length - 1, algorithmKey = 'insertion') {
+      for (let i = start + 1; i <= end && !this.shouldAbort; i++) {
+        const key = arr[i];
+        let j = i - 1;
+
+        this.renderBars(sectionId, arr, [i], []);
+        await this.delay(arraySize, algorithmKey);
+
+        while (j >= start && arr[j] > key && !this.shouldAbort) {
+          this.updateStats(sectionId, 'comparisons');
+          arr[j + 1] = arr[j];
+          this.updateStats(sectionId, 'swaps');
+          this.renderBars(sectionId, arr, [j + 1], [j]);
+          await this.delay(arraySize, algorithmKey);
+          j--;
+        }
+
+        if (j >= start) {
+          this.updateStats(sectionId, 'comparisons');
+        }
+
+        if (!this.shouldAbort) {
+          arr[j + 1] = key;
+          this.renderBars(sectionId, arr, [j + 1], []);
+          await this.delay(arraySize, algorithmKey);
+        }
+      }
+
+      if (start === 0 && end === arr.length - 1 && !this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async mergeSort(arr, left, right, sectionId, arraySize) {
+      if (left >= right || this.shouldAbort) return;
+
+      const mid = Math.floor((left + right) / 2);
+
+      await this.mergeSort(arr, left, mid, sectionId, arraySize);
+      await this.mergeSort(arr, mid + 1, right, sectionId, arraySize);
+      await this.merge(arr, left, mid, right, sectionId, arraySize);
+
+      if (left === 0 && right === arr.length - 1 && !this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async merge(arr, left, mid, right, sectionId, arraySize) {
+      const leftArr = arr.slice(left, mid + 1);
+      const rightArr = arr.slice(mid + 1, right + 1);
+
+      let i = 0, j = 0, k = left;
+
+      while (i < leftArr.length && j < rightArr.length && !this.shouldAbort) {
+        this.updateStats(sectionId, 'comparisons');
+        this.renderBars(sectionId, arr, [k], []);
+        await this.delay(arraySize, 'merge');
+
+        if (leftArr[i] <= rightArr[j]) {
+          arr[k++] = leftArr[i++];
+        } else {
+          arr[k++] = rightArr[j++];
+        }
+
+        this.updateStats(sectionId, 'swaps');
+      }
+
+      while (i < leftArr.length && !this.shouldAbort) {
+        arr[k] = leftArr[i++];
+        this.updateStats(sectionId, 'swaps');
+        this.renderBars(sectionId, arr, [k], []);
+        await this.delay(arraySize, 'merge');
+        k++;
+      }
+
+      while (j < rightArr.length && !this.shouldAbort) {
+        arr[k] = rightArr[j++];
+        this.updateStats(sectionId, 'swaps');
+        this.renderBars(sectionId, arr, [k], []);
+        await this.delay(arraySize, 'merge');
+        k++;
+      }
+    }
+
+    async quickSort(arr, low, high, sectionId, arraySize) {
+      if (low < high && !this.shouldAbort) {
+        const pi = await this.partition(arr, low, high, sectionId, arraySize);
+        await this.quickSort(arr, low, pi - 1, sectionId, arraySize);
+        await this.quickSort(arr, pi + 1, high, sectionId, arraySize);
+      }
+
+      if (low === 0 && high === arr.length - 1 && !this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async partition(arr, low, high, sectionId, arraySize) {
+      // Use median-of-three pivot selection for better performance
+      const mid = Math.floor((low + high) / 2);
+
+      // Sort low, mid, high
+      if (arr[low] > arr[mid]) {
+        [arr[low], arr[mid]] = [arr[mid], arr[low]];
+        this.updateStats(sectionId, 'swaps');
+      }
+      if (arr[mid] > arr[high]) {
+        [arr[mid], arr[high]] = [arr[high], arr[mid]];
+        this.updateStats(sectionId, 'swaps');
+      }
+      if (arr[low] > arr[mid]) {
+        [arr[low], arr[mid]] = [arr[mid], arr[low]];
+        this.updateStats(sectionId, 'swaps');
+      }
+
+      // Move pivot to high position
+      [arr[mid], arr[high]] = [arr[high], arr[mid]];
+      this.updateStats(sectionId, 'swaps');
+
+      const pivot = arr[high];
+      let i = low - 1;
+
+      for (let j = low; j < high && !this.shouldAbort; j++) {
+        this.updateStats(sectionId, 'comparisons');
+        this.renderBars(sectionId, arr, [j], [high]);
+        await this.delay(arraySize, 'quick');
+
+        if (arr[j] < pivot) {
+          i++;
+          if (i !== j) {
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+            this.updateStats(sectionId, 'swaps');
+            this.renderBars(sectionId, arr, [i], [j]);
+            await this.delay(arraySize, 'quick');
+          }
+        }
+      }
+
+      if (!this.shouldAbort) {
+        [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+        this.updateStats(sectionId, 'swaps');
+        this.renderBars(sectionId, arr, [i + 1], [high]);
+        await this.delay(arraySize, 'quick');
+      }
+
+      return i + 1;
+    }
+
+    async countingSort(arr, sectionId, arraySize) {
+      if (arr.length === 0 || this.shouldAbort) return;
+
+      const min = Math.min(...arr);
+      const max = Math.max(...arr);
+      const range = max - min + 1;
+
+      if (range > 10000) {
+        alert('Range too large for counting sort. Using alternative algorithm.');
+        await this.insertionSort(arr, sectionId, arraySize);
+        return;
+      }
+
+      const count = new Array(range).fill(0);
+
+      for (let i = 0; i < arr.length && !this.shouldAbort; i++) {
+        count[arr[i] - min]++;
+        this.renderBars(sectionId, arr, [i], []);
+        await this.delay(arraySize, 'counting');
+      }
+
+      let idx = 0;
+      for (let i = 0; i < range && !this.shouldAbort; i++) {
+        while (count[i] > 0 && !this.shouldAbort) {
+          arr[idx] = i + min;
+          this.updateStats(sectionId, 'swaps');
+          this.renderBars(sectionId, arr, [idx], []);
+          await this.delay(arraySize, 'counting');
+          idx++;
+          count[i]--;
+        }
+      }
+
+      if (!this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async heapSort(arr, sectionId, arraySize) {
+      const n = arr.length;
+
+      for (let i = Math.floor(n / 2) - 1; i >= 0 && !this.shouldAbort; i--) {
+        await this.heapify(arr, n, i, sectionId, arraySize);
+      }
+
+      for (let i = n - 1; i > 0 && !this.shouldAbort; i--) {
+        [arr[0], arr[i]] = [arr[i], arr[0]];
+        this.updateStats(sectionId, 'swaps');
+        this.renderBars(sectionId, arr, [0], [i]);
+        await this.delay(arraySize, 'heap');
+
+        await this.heapify(arr, i, 0, sectionId, arraySize);
+      }
+
+      if (!this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async heapify(arr, n, i, sectionId, arraySize) {
+      let largest = i;
+      const left = 2 * i + 1;
+      const right = 2 * i + 2;
+
+      if (left < n) {
+        this.updateStats(sectionId, 'comparisons');
+        if (arr[left] > arr[largest]) {
+          largest = left;
+        }
+      }
+
+      if (right < n) {
+        this.updateStats(sectionId, 'comparisons');
+        if (arr[right] > arr[largest]) {
+          largest = right;
+        }
+      }
+
+      if (largest !== i && !this.shouldAbort) {
+        [arr[i], arr[largest]] = [arr[largest], arr[i]];
+        this.updateStats(sectionId, 'swaps');
+        this.renderBars(sectionId, arr, [i], [largest]);
+        await this.delay(arraySize, 'heap');
+
+        await this.heapify(arr, n, largest, sectionId, arraySize);
+      }
+    }
+
+    async shellSort(arr, sectionId, arraySize) {
+      const n = arr.length;
+      let gap = Math.floor(n / 2);
+
+      while (gap > 0 && !this.shouldAbort) {
+        for (let i = gap; i < n && !this.shouldAbort; i++) {
+          const temp = arr[i];
+          let j = i;
+
+          while (j >= gap && arr[j - gap] > temp && !this.shouldAbort) {
+            this.updateStats(sectionId, 'comparisons');
+            arr[j] = arr[j - gap];
+            this.updateStats(sectionId, 'swaps');
+            this.renderBars(sectionId, arr, [j], [j - gap]);
+            await this.delay(arraySize, 'shell');
+            j -= gap;
+          }
+
+          if (j >= gap) {
+            this.updateStats(sectionId, 'comparisons');
+          }
+
+          if (!this.shouldAbort) {
+            arr[j] = temp;
+            this.renderBars(sectionId, arr, [j], []);
+            await this.delay(arraySize, 'shell');
+          }
+        }
+
+        gap = Math.floor(gap / 2);
+      }
+
+      if (!this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async timSort(arr, sectionId, arraySize) {
+      const minMerge = 32;
+      const n = arr.length;
+
+      for (let start = 0; start < n && !this.shouldAbort; start += minMerge) {
+        const end = Math.min(start + minMerge - 1, n - 1);
+        await this.insertionSort(arr, sectionId, arraySize, start, end, 'tim');
+      }
+
+      let size = minMerge;
+      while (size < n && !this.shouldAbort) {
+        for (let start = 0; start < n && !this.shouldAbort; start += size * 2) {
+          const mid = start + size - 1;
+          const end = Math.min(start + size * 2 - 1, n - 1);
+
+          if (mid < end) {
+            await this.merge(arr, start, mid, end, sectionId, arraySize);
+          }
+        }
+        size *= 2;
+      }
+
+      if (!this.shouldAbort) {
+        this.renderBars(sectionId, arr);
+      }
+    }
+
+    async bogoSort(arr, sectionId, arraySize) {
+      let attempts = 0;
+      const iterElement = this.widget.querySelector(`#${sectionId}-iterations`);
+
+      // Initial render to show the starting state
+      this.renderBars(sectionId, arr);
+      await this.delay(arraySize * 2, 'bogo');
+
+      // Check if already sorted
+      if (this.isSorted(arr)) {
+        if (iterElement) {
+          this.stats[sectionId].iterations = 1;
+          iterElement.textContent = '1';
+        }
+        return 1;
+      }
+
+      while (!this.isSorted(arr) && attempts < this.bogoSortMaxAttempts && !this.shouldAbort) {
+        attempts++;
+
+        // Update iteration counter
+        if (iterElement) {
+          this.stats[sectionId].iterations = attempts;
+          iterElement.textContent = attempts;
+        }
+
+        // Fisher-Yates shuffle
+        for (let i = arr.length - 1; i > 0 && !this.shouldAbort; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+          this.updateStats(sectionId, 'swaps');
+        }
+
+        // Render the shuffled array
+        this.renderBars(sectionId, arr);
+        await this.delay(arraySize * 3, 'bogo'); // Slower for bogo to see shuffles
+
+        // Check if sorted
+        let sorted = true;
+        for (let i = 0; i < arr.length - 1; i++) {
+          this.updateStats(sectionId, 'comparisons');
+          if (arr[i] > arr[i + 1]) {
+            sorted = false;
+            break;
+          }
+        }
+
+        if (sorted) {
+          // Final render to show sorted state
+          this.renderBars(sectionId, arr);
+          break;
+        }
+      }
+
+      if (attempts >= this.bogoSortMaxAttempts && !this.isSorted(arr)) {
+        const timerValue = this.widget.querySelector(`#${sectionId}-timer .sv-timer-value`);
+        if (timerValue) {
+          const currentText = timerValue.textContent;
+          const timeOnly = currentText.replace(' (Max!)', '');
+          timerValue.textContent = timeOnly + ' (Max!)';
+          timerValue.style.color = '#f59e0b';
+        }
+      }
+
+      return attempts;
+    }
+
+    reset() {
+      this.shouldAbort = true;
+      this.isPaused = false;
+      this.finishedAlgorithms.clear();
+
+      // Cancel pending renders
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+        this.animationFrameId = null;
+      }
+      this.pendingRenders.clear();
+
+      this.activeTimeouts.forEach((_, timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+      this.activeTimeouts.clear();
+
+      setTimeout(() => {
+        this.isRunning = false;
+        this.shouldAbort = false;
+        this.hasBeenRun = false;
+
+        this.updateButtonStates();
+
+        const sections = this.widget.querySelectorAll('.sv-algorithm-section');
+        sections.forEach(section => {
+          const timerValue = section.querySelector('#' + section.id + '-timer .sv-timer-value');
+          if (timerValue) {
+            timerValue.textContent = '0.000s';
+            timerValue.style.color = ''; // Reset color
+            timerValue.classList.remove('active');
+          }
+
+          const chart = section.querySelector('.sv-chart-container');
+          if (chart) {
+            chart.innerHTML = '<div class="sv-chart-placeholder">WAITING TO START</div>';
+          }
+
+          // Reset stats
+          this.resetStats(section.id);
+        });
+
+        this.currentArray = [];
+        this.maxArrayValue = 0;
+        this.currentAlgorithmKeys = {};
+        this.updateVisualizationLayout();
+        this.updateButtonStates(); // Ensure button states are updated after reset
+      }, 100);
+    }
+
+    cleanup() {
+      this.reset();
+
+      // Cancel any pending animation frames
+      if (this.animationFrameId) {
+        cancelAnimationFrame(this.animationFrameId);
+        this.animationFrameId = null;
+      }
+
+      // Remove event listeners
+      if (this.keydownHandler) {
+        document.removeEventListener('keydown', this.keydownHandler);
+      }
+      if (this.visibilityHandler) {
+        document.removeEventListener('visibilitychange', this.visibilityHandler);
+      }
+      if (this.resizeHandler) {
+        window.removeEventListener('resize', this.resizeHandler);
+      }
+
+      // Clear all timeouts
+      this.activeTimeouts.forEach((_, timeoutId) => {
+        clearTimeout(timeoutId);
+      });
+      this.activeTimeouts.clear();
+    }
+  }
+
+  // Initialize when DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      try {
+        const widgetInstance = new SortingVisualizerWidget();
+
+        // Ensure widget is visible
+        widget.style.display = 'block';
+        widget.style.opacity = '1';
+        widget.style.visibility = 'visible';
+
+        // Store instance for cleanup
+        widget._sortingVisualizerInstance = widgetInstance;
+      } catch (error) {
+        console.error('Error initializing sorting visualizer:', error);
+      }
+    });
+  } else {
+    try {
+      const widgetInstance = new SortingVisualizerWidget();
+
+      // Ensure widget is visible
+      widget.style.display = 'block';
+      widget.style.opacity = '1';
+      widget.style.visibility = 'visible';
+
+      // Store instance for cleanup
+      widget._sortingVisualizerInstance = widgetInstance;
+
+      // Cleanup on page unload
+      window.addEventListener('beforeunload', () => {
+        if (widgetInstance) {
+          widgetInstance.cleanup();
+        }
+      });
+    } catch (error) {
+      console.error('Error initializing sorting visualizer:', error);
+    }
+  }
+})();
+</script>
+</div>

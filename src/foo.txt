@@ -1,0 +1,534 @@
+--- sorting_algorithms.html
++++ sorting_algorithms.html
+
+ /* Epic Completion Effects */
+ @keyframes sv-epicPulse {
+-  0%, 100% { transform: scale(1); opacity: 1; }
+-  50% { transform: scale(1.15); opacity: 0.8; }
++  0%, 100% {
++    transform: scale(1) translateY(0);
++    opacity: 1;
++  }
++  25% {
++    transform: scale(1.05) translateY(-10px);
++    opacity: 0.9;
++  }
++  50% {
++    transform: scale(1.15) translateY(-20px);
++    opacity: 0.8;
++  }
++  75% {
++    transform: scale(1.05) translateY(-10px);
++    opacity: 0.9;
++  }
++}
++
++@keyframes sv-barDance {
++  0% {
++    transform: translateY(0) scaleY(1) rotateZ(0deg);
++  }
++  20% {
++    transform: translateY(-20px) scaleY(1.2) rotateZ(-2deg);
++  }
++  40% {
++    transform: translateY(0) scaleY(0.8) rotateZ(2deg);
++  }
++  60% {
++    transform: translateY(-10px) scaleY(1.1) rotateZ(-1deg);
++  }
++  80% {
++    transform: translateY(0) scaleY(0.95) rotateZ(1deg);
++  }
++  100% {
++    transform: translateY(0) scaleY(1) rotateZ(0deg);
++  }
++}
++
++@keyframes sv-smoothWave {
++  0% {
++    transform: translateY(0) scaleX(1);
++  }
++  50% {
++    transform: translateY(calc(var(--wave-height) * -1px)) scaleX(1.1);
++  }
++  100% {
++    transform: translateY(0) scaleX(1);
++  }
++}
++
++@keyframes sv-gentleGlow {
++  0%, 100% {
++    box-shadow:
++      0 0 20px rgba(var(--glow-color), 0.6),
++      0 -10px 20px rgba(var(--glow-color), 0.4) inset;
++  }
++  50% {
++    box-shadow:
++      0 0 40px rgba(var(--glow-color), 0.8),
++      0 -15px 30px rgba(var(--glow-color), 0.6) inset;
++  }
++}
++
++@keyframes sv-colorFlow {
++  0% { filter: hue-rotate(0deg) brightness(1.5) saturate(1.5); }
++  100% { filter: hue-rotate(360deg) brightness(1.5) saturate(1.5); }
+ }
+
+ @keyframes sv-waveExpand {
++  0% {
++    width: 10px;
++    height: 10px;
++    opacity: 0.8;
++  }
+   0% {
+     width: 0;
+     height: 0;
+ }
+
+ @keyframes sv-completionGlow {
+-  0% {
++  0%, 100% {
+     box-shadow: inset 0 0 0 rgba(59, 130, 246, 0),
+                 0 0 0 0 rgba(59, 130, 246, 0.8);
+   }
+   50% {
+-    box-shadow: inset 0 0 30px rgba(59, 130, 246, 0.3),
+-                0 0 30px 10px rgba(59, 130, 246, 0.4);
+-  }
+-  100% {
+-    box-shadow: inset 0 0 0 rgba(59, 130, 246, 0),
+-                0 0 0 0 rgba(59, 130, 246, 0);
++    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.2),
++                0 0 20px 5px rgba(59, 130, 246, 0.3);
+   }
+ }
+
+ @keyframes sv-barCelebrate {
+   0% {
+-    transform: translateY(0) scaleY(1);
+-    filter: brightness(1.3);
++    transform: translateY(0) scaleY(1) rotateZ(0deg);
++    filter: brightness(1.3) saturate(1.2);
++  }
++  10% {
++    transform: translateY(-5px) scaleY(1.05) rotateZ(-0.5deg);
++    filter: brightness(1.4) saturate(1.3);
++  }
++  20% {
++    transform: translateY(-15px) scaleY(1.15) rotateZ(1deg);
++    filter: brightness(1.6) saturate(1.5);
+   }
++  30% {
++    transform: translateY(-20px) scaleY(1.2) rotateZ(-1.5deg);
++    filter: brightness(1.8) saturate(1.7);
+   20% {
+     transform: translateY(-25px) scaleY(1.3);
+     filter: brightness(1.8);
+     transform: translateY(0) scaleY(0.85);
+     filter: brightness(1.5);
+   }
++  50% {
++    transform: translateY(-8px) scaleY(1.1) rotateZ(0.5deg);
++    filter: brightness(1.6) saturate(1.5);
++  }
+   60% {
+-    transform: translateY(-12px) scaleY(1.15);
+-    filter: brightness(1.6);
++    transform: translateY(-12px) scaleY(1.12) rotateZ(-0.8deg);
++    filter: brightness(1.7) saturate(1.6);
++  }
++  70% {
++    transform: translateY(-5px) scaleY(1.05) rotateZ(0.3deg);
++    filter: brightness(1.5) saturate(1.4);
+   }
+   80% {
+-    transform: translateY(0) scaleY(0.95);
+-    filter: brightness(1.4);
++    transform: translateY(0) scaleY(0.95) rotateZ(-0.2deg);
++    filter: brightness(1.4) saturate(1.3);
++  }
++  90% {
++    transform: translateY(-2px) scaleY(1.02) rotateZ(0.1deg);
++    filter: brightness(1.35) saturate(1.25);
+   }
+   100% {
+-    transform: translateY(0) scaleY(1);
+-    filter: brightness(1.3);
++    transform: translateY(0) scaleY(1) rotateZ(0deg);
++    filter: brightness(1.3) saturate(1.2);
+   }
+ }
+
+ #sorting-visualizer-widget .sv-bar.celebrating {
+-  animation: sv-barCelebrate 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
++  animation: sv-barCelebrate 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+ }
+
+ @keyframes sv-rainbowWave {
+     }
+
+     createRainbowWave(bars) {
+-      const totalDuration = 2000;
+-      const delayPerBar = totalDuration / bars.length / 3;
++      const totalDuration = 1200;
++      const delayPerBar = totalDuration / bars.length / 4;
+
+       bars.forEach((bar, i) => {
+         const delay = i * delayPerBar;
+         const hue = (i / bars.length) * 360;
+-        const brightness = 1.8 + Math.sin((i / bars.length) * Math.PI) * 0.4;
++        const brightness = 1.6 + Math.sin((i / bars.length) * Math.PI) * 0.3;
++        const waveHeight = 15 + Math.sin((i / bars.length) * Math.PI * 2) * 10;
+
+         setTimeout(() => {
+           requestAnimationFrame(() => {
+-            bar.style.transition = 'all 0.6s cubic-bezier(0.4, 0, 0.2, 1)';
+-            bar.style.filter = `
+-              brightness(${brightness})
+-              saturate(2)
+-              hue-rotate(${hue}deg)
+-            `;
+-            bar.style.transform = 'scaleY(1.05)';
++            // Store original height for wave animation
++            bar.style.setProperty('--wave-height', waveHeight);
++            bar.style.setProperty('--glow-color', `${120 + (hue % 240)}, 70%, 50%`);
++
++            // Apply smooth wave animation
++            bar.style.animation = `
++              sv-smoothWave ${600 + Math.random() * 200}ms cubic-bezier(0.4, 0, 0.2, 1) ${Math.random() * 100}ms,
++              sv-gentleGlow 1s ease-in-out ${delay}ms
++            `;
++
++            bar.style.filter = `brightness(${brightness}) saturate(1.8) hue-rotate(${hue}deg)`;
+
+             // Create a subtle glow effect
+             const glowColor = `hsl(${120 + hue % 240}, 70%, 50%)`;
+             bar.style.boxShadow = `
+-              0 0 30px ${glowColor},
+-              0 -10px 20px ${glowColor} inset,
+-              0 0 50px ${glowColor}40
++              0 0 25px ${glowColor},
++              0 -8px 15px ${glowColor} inset,
++              0 0 40px ${glowColor}40
+             `;
+
+             // Return to elegant final state
+             setTimeout(() => {
+               requestAnimationFrame(() => {
+-                bar.style.transition = 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
++                bar.style.transition = 'all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1)';
++                bar.style.animation = '';
++                bar.style.filter = 'brightness(1.4) saturate(1.3)';
++                bar.style.transform = 'scaleY(1) translateY(0)';
++                bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
++              });
++            }, 400);
++          });
++        }, delay);
++      });
++    }
++
++    createElegantDance(bars) {
++      // Create a synchronized dance effect
++      const groupSize = Math.max(3, Math.floor(bars.length / 10));
++      const groups = Math.ceil(bars.length / groupSize);
++
++      for (let g = 0; g < groups; g++) {
++        const startIdx = g * groupSize;
++        const endIdx = Math.min(startIdx + groupSize, bars.length);
++        const groupDelay = g * 100;
++
++        for (let i = startIdx; i < endIdx; i++) {
++          const bar = bars[i];
++          const localDelay = (i - startIdx) * 20 + groupDelay;
++          const phase = ((i - startIdx) / groupSize) * Math.PI * 2;
++
++          setTimeout(() => {
++            requestAnimationFrame(() => {
++              // Apply dancing animation with phase offset
++              bar.style.transformOrigin = 'bottom center';
++              bar.style.animation = `sv-barDance 0.6s cubic-bezier(0.68, -0.25, 0.265, 1.25) ${phase * 50}ms`;
++
++              // Add color flow for extra elegance
++              setTimeout(() => {
++                bar.style.animation += `, sv-colorFlow 2s linear`;
++              }, 300);
++
++              // Clean up after animation
++              setTimeout(() => {
++                bar.style.animation = '';
++                bar.style.transform = '';
+                 bar.style.filter = 'brightness(1.4) saturate(1.3)';
+                 bar.style.transform = 'scaleY(1)';
+                 bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
+         bars.forEach((bar, i) => {
+           bar.classList.remove('comparing', 'comparing-secondary');
+           bar.classList.add('sorted');
+-          // Subtle initial glow
+-          bar.style.transition = 'all 0.3s ease-out';
+-          bar.style.filter = 'brightness(1.2) saturate(1.3)';
++          // Quick initial pulse
++          bar.style.transition = 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)';
++          bar.style.filter = 'brightness(1.3) saturate(1.4)';
++          bar.style.transform = 'scaleY(1.02)';
+         });
+       });
+
++      // Wait a tiny bit for the initial state to register
++      await new Promise(resolve => setTimeout(resolve, 50));
++
+       // Create completion overlay
+       const overlay = document.createElement('div');
+       overlay.className = 'sv-completion-overlay';
+
+       const message = document.createElement('div');
+       message.className = 'sv-completion-message';
++      message.style.cssText = `
++        ${message.style.cssText}
++        animation: sv-messageReveal 1.8s cubic-bezier(0.34, 1.56, 0.64, 1), sv-gradientShift 1.8s linear;
++      `;
+       message.textContent = `${algorithmName} SORTED`;
+
+       // Add subtle entrance animation
+         animationQueue.push({ fn, delay });
+       };
+
+-      // Queue all animations
++      // Simplified, elegant animation sequence
+       queueAnimation(() => this.createRippleEffect(chart, centerX, centerY), 0);
+-      queueAnimation(() => this.createBarWave(bars), 50);
+-      queueAnimation(() => this.createFireworks(chart, chartRect), 150);
+-      queueAnimation(() => this.createConfettiRain(chart, chartRect), 300);
+-      queueAnimation(() => this.createRainbowWave(bars), 500);
+-      queueAnimation(() => this.createFinalBurst(chart, centerX, centerY), 800);
++      queueAnimation(() => this.createElegantDance(bars), 100);
++      queueAnimation(() => this.createBarWave(bars), 300);
++      queueAnimation(() => this.createMiniFireworks(chart, chartRect), 500);
++      queueAnimation(() => this.createRainbowWave(bars), 700);
++
++      // Add a subtle confetti at the end
++      queueAnimation(() => {
++        const confettiCount = Math.min(20, Math.max(10, Math.floor(bars.length / 3)));
++        this.createSubtleConfetti(chart, chartRect, confettiCount);
++      }, 900);
+
+       // Execute animations with proper timing
+-      let currentTime = 0;
+-      const executeNextAnimation = () => {
+-        if (animationQueue.length === 0) return;
+-
+-        const next = animationQueue.shift();
+-        if (currentTime >= next.delay) {
+-          requestAnimationFrame(next.fn);
+-          currentTime = 0;
+-          executeNextAnimation();
+-        } else {
+-          setTimeout(() => {
+-            currentTime = next.delay;
+-            executeNextAnimation();
++      animationQueue.forEach(({ fn, delay }) => {
++        setTimeout(() => requestAnimationFrame(fn), delay);
++      });
++
++      // Subtle chart glow
++      setTimeout(() => {
++        requestAnimationFrame(() => {
++          chart.style.animation = 'sv-completionGlow 1.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
++        });
++      }, 200);
++
++      // Cleanup after animation (quicker)
++      setTimeout(() => {
++        requestAnimationFrame(() => {
++          overlay.style.opacity = '0';
++          overlay.style.transition = 'opacity 0.4s ease-out';
++
++          setTimeout(() => {
++            overlay.remove();
++
++            // Final elegant state
++            requestAnimationFrame(() => {
++              bars.forEach((bar, i) => {
++                setTimeout(() => {
++                  bar.style.transition = 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
++                  bar.style.animation = '';
++                  bar.style.filter = 'brightness(1.4) saturate(1.3)';
++                  bar.style.transform = 'translateY(0) scaleY(1)';
++                  bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
++                }, i * 2);
++              });
+           }, next.delay - currentTime);
+         }
+       };
+           }, 500);
+         });
+       }, 3200);
++      }, 2200); // Reduced from 3200 to make it snappier
+     }
+
+     createRippleEffect(chart, x, y) {
+           opacity: 0;
+           pointer-events: none;
+           z-index: 30;
+-          will-change: transform, opacity;
++          will-change: transform, opacity, border-width;
+         `;
+
+         fragment.appendChild(ripple);
+         // Animate ripple expansion
+         setTimeout(() => {
+           requestAnimationFrame(() => {
+-            ripple.style.transition = 'all 1.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
++            ripple.style.transition = 'all 1.2s cubic-bezier(0.25, 0.8, 0.25, 1)';
+             ripple.style.transform = 'translate(-50%, -50%) scale(1)';
+             ripple.style.opacity = '1';
+
+             requestAnimationFrame(() => {
+               setTimeout(() => {
+-                ripple.style.transform = 'translate(-50%, -50%) scale(15)';
++                ripple.style.transform = 'translate(-50%, -50%) scale(12)';
+                 ripple.style.opacity = '0';
+-                ripple.style.borderWidth = '0.5px';
++                ripple.style.borderWidth = '0.25px';
++                ripple.style.borderColor = 'rgba(59, 130, 246, 0.4)';
+               }, 50);
+             });
+           });
+     }
+
+     createBarWave(bars) {
+-      const waveHeight = 25;
+-      const waveDuration = 600;
++      const waveHeight = 20;
++      const waveDuration = 400;
++      const totalDuration = 800;
+
+       bars.forEach((bar, i) => {
+-        const delay = i * 12;
++        const delay = (i / bars.length) * totalDuration * 0.5;
+         const phase = (i / bars.length) * Math.PI * 2;
++        const waveOffset = Math.sin(phase) * waveHeight;
+
+         setTimeout(() => {
+           requestAnimationFrame(() => {
+             // Create smooth wave motion
+-            bar.style.transition = 'transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55)';
+-            bar.style.transform = `translateY(-${waveHeight}px) scaleY(1.15)`;
++            bar.style.transition = 'transform 0.25s cubic-bezier(0.4, 0, 0.2, 1)';
++            bar.style.transform = `translateY(${-Math.abs(waveOffset)}px) scaleY(${1.1 + Math.abs(Math.sin(phase) * 0.1)})`;
+
+             // Add dynamic glow
+             const hue = (i / bars.length) * 120; // Green to blue gradient
+             bar.style.boxShadow = `
+-              0 0 25px hsla(${120 + hue}, 70%, 50%, 0.7),
+-              0 -8px 20px hsla(${120 + hue}, 70%, 50%, 0.5) inset
++              0 0 20px hsla(${120 + hue}, 70%, 50%, 0.6),
++              0 -6px 15px hsla(${120 + hue}, 70%, 50%, 0.4) inset
+             `;
+-            bar.style.filter = `brightness(1.8) saturate(1.5) hue-rotate(${hue}deg)`;
++            bar.style.filter = `brightness(1.6) saturate(1.4) hue-rotate(${hue}deg)`;
+
+             // Return to normal position
+             setTimeout(() => {
+               requestAnimationFrame(() => {
+                 bar.style.transform = 'translateY(0) scaleY(1)';
+                 bar.style.filter = 'brightness(1.4) saturate(1.3)';
++                bar.style.boxShadow = '0 0 15px rgba(0, 255, 136, 0.5), 0 -5px 10px rgba(0, 255, 136, 0.3) inset';
+               });
+             }, waveDuration / 2);
+           });
+         }, delay);
++      });
++    }
++
++    createMiniFireworks(chart, chartRect) {
++      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28'];
++      const burstCount = 2;
++
++      for (let burst = 0; burst < burstCount; burst++) {
++        const x = chartRect.width * (0.3 + burst * 0.4);
++        const y = chartRect.height * 0.4;
++
++        setTimeout(() => {
++          const particleCount = 8;
++          const fragment = document.createDocumentFragment();
++
++          for (let i = 0; i < particleCount; i++) {
++            const particle = document.createElement('div');
++            const angle = (i / particleCount) * Math.PI * 2;
++            const velocity = 30 + Math.random() * 20;
++            const color = colors[i % colors.length];
++
++            particle.style.cssText = `
++              position: absolute;
++              left: ${x}px;
++              top: ${y}px;
++              width: 3px;
++              height: 3px;
++              background: ${color};
++              border-radius: 50%;
++              box-shadow: 0 0 6px ${color};
++              pointer-events: none;
++              z-index: 40;
++            `;
++
++            fragment.appendChild(particle);
++
++            // Simple animation
++            requestAnimationFrame(() => {
++              particle.style.transition = 'all 0.8s cubic-bezier(0.25, 0.8, 0.25, 1)';
++              particle.style.transform = `translate(${Math.cos(angle) * velocity}px, ${Math.sin(angle) * velocity}px) scale(0)`;
++              particle.style.opacity = '0';
++            });
++
++            setTimeout(() => particle.remove(), 800);
++          }
++
++          chart.appendChild(fragment);
++        }, burst * 150);
+       });
+     }
+
+       });
+     }
+
++    createSubtleConfetti(chart, chartRect, count) {
++      const colors = ['#ff0080', '#00ff88', '#00d9ff', '#ffca28', '#9775ff'];
++      const fragment = document.createDocumentFragment();
++
++      for (let i = 0; i < count; i++) {
++        const confetti = document.createElement('div');
++        const color = colors[i % colors.length];
++        const startX = Math.random() * chartRect.width;
++        const size = 4 + Math.random() * 2;
++
++        confetti.style.cssText = `
++          position: absolute;
++          left: ${startX}px;
++          top: 0;
++          width: ${size}px;
++          height: ${size}px;
++          background: ${color};
++          border-radius: ${Math.random() > 0.5 ? '50%' : '2px'};
++          pointer-events: none;
++          z-index: 35;
++          opacity: 0.8;
++        `;
++
++        fragment.appendChild(confetti);
++
++        // Simple falling animation
++        requestAnimationFrame(() => {
++          confetti.style.transition = `all ${1000 + Math.random() * 500}ms cubic-bezier(0.25, 0.46, 0.45, 0.94)`;
++          confetti.style.transform = `translateY(${chartRect.height}px) translateX(${(Math.random() - 0.5) * 30}px) rotate(${Math.random() * 360}deg)`;
++          confetti.style.opacity = '0';
++        });
++
++        setTimeout(() => confetti.remove(), 1500);
++      }
++
++      chart.appendChild(fragment);
++    }
+   }
+
+   // Initialize when DOM is ready

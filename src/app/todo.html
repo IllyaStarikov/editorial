@@ -1,0 +1,1972 @@
+<div id="todo-app-container" style="max-width: min(100%, 1200px); margin: 0 auto;">
+    <style>
+        #todo-app-container {
+            --bg-primary: #000000;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-hover: #222222;
+            --text-primary: #ffffff;
+            --text-secondary: #999999;
+            --text-muted: #666666;
+            --accent: #4a90e2;
+            --accent-hover: #357abd;
+            --accent-light: rgba(74, 144, 226, 0.1);
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --star: #ffd700;
+            --border: #2a2a2a;
+            --border-light: #333333;
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.2);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+            --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
+
+            width: 100%;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            padding: 2rem;
+            box-sizing: border-box;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+            position: relative;
+            min-height: 600px;
+            border: 1px solid var(--border);
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        #todo-app-container * {
+            box-sizing: border-box;
+        }
+
+        /* Header Section */
+        #todo-app-container .todo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        #todo-app-container .todo-title {
+            font-size: 2.5rem;
+            font-weight: 200;
+            letter-spacing: -0.03em;
+            margin: 0;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        #todo-app-container .todo-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        /* Button Styles */
+        #todo-app-container .btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.625rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9375rem;
+            transition: all var(--transition-base);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #todo-app-container .btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 0%, rgba(255, 255, 255, 0.05) 100%);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        #todo-app-container .btn:hover {
+            background: var(--bg-hover);
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #todo-app-container .btn:hover::before {
+            opacity: 1;
+        }
+
+        #todo-app-container .btn:active {
+            transform: translateY(0);
+            box-shadow: none;
+        }
+
+        #todo-app-container .btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+        }
+
+        #todo-app-container .btn-primary:hover {
+            background: var(--accent-hover);
+            border-color: var(--accent-hover);
+        }
+
+        /* Filter Tabs */
+        #todo-app-container .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 0;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            flex-wrap: wrap;
+        }
+
+        #todo-app-container .filter-tab {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.25rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            border: 1px solid transparent;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #todo-app-container .filter-tab::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity var(--transition-base);
+        }
+
+        #todo-app-container .filter-tab:hover {
+            background: var(--bg-hover);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #todo-app-container .filter-tab.active {
+            background: var(--bg-tertiary);
+            border-color: var(--accent);
+            box-shadow: inset 0 0 0 1px var(--accent), 0 0 12px var(--accent-light);
+        }
+
+        #todo-app-container .filter-tab.active::before {
+            opacity: 0.05;
+        }
+
+        #todo-app-container .filter-tab-icon {
+            font-size: 1.125rem;
+        }
+
+        #todo-app-container .filter-tab-count {
+            background: var(--bg-tertiary);
+            padding: 0.125rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            min-width: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        #todo-app-container .filter-tab.active .filter-tab-count {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* Main Content Area */
+        #todo-app-container .main-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            min-height: 400px;
+            border: 1px solid var(--border);
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Add Task Section */
+        #todo-app-container .add-task-section {
+            margin-bottom: 2rem;
+        }
+
+        #todo-app-container .add-task-form {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        #todo-app-container .task-input {
+            flex: 1;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 1rem 1.25rem;
+            border-radius: 8px;
+            font-size: 1.05rem;
+            transition: all var(--transition-base);
+            font-weight: 400;
+        }
+
+        #todo-app-container .task-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        #todo-app-container .task-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            background: var(--bg-hover);
+        }
+
+        #todo-app-container .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        #todo-app-container .quick-action {
+            padding: 0.5rem 1rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        #todo-app-container .quick-action:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--border-light);
+            transform: translateY(-1px);
+        }
+
+        #todo-app-container .quick-action:active {
+            transform: translateY(0);
+        }
+
+        /* Advanced Filter Panel */
+        #todo-app-container .filter-panel {
+            background: var(--bg-tertiary);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            display: none;
+            border: 1px solid var(--border);
+            animation: slideDown var(--transition-slow) ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #todo-app-container .filter-panel.active {
+            display: block;
+        }
+
+        #todo-app-container .filter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.25rem;
+        }
+
+        #todo-app-container .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.375rem;
+        }
+
+        #todo-app-container .filter-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 600;
+        }
+
+        #todo-app-container .filter-input {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.625rem 0.875rem;
+            border-radius: 6px;
+            font-size: 0.9375rem;
+            width: 100%;
+            transition: all var(--transition-fast);
+        }
+
+        #todo-app-container .filter-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: var(--bg-hover);
+        }
+
+        /* Task List */
+        #todo-app-container .task-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        #todo-app-container .task-item {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            transition: all var(--transition-base);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #todo-app-container .task-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: transparent;
+            transition: background var(--transition-base);
+        }
+
+        #todo-app-container .task-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+            border-color: var(--border-light);
+        }
+
+        #todo-app-container .task-item.starred::before {
+            background: var(--star);
+        }
+
+        #todo-app-container .task-item.starred {
+            border-color: rgba(255, 215, 0, 0.3);
+            background: linear-gradient(135deg, var(--bg-tertiary) 0%, rgba(255, 215, 0, 0.05) 100%);
+        }
+
+        #todo-app-container .task-item.completed {
+            opacity: 0.5;
+        }
+
+        #todo-app-container .task-item.completed .task-text {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+
+        #todo-app-container .task-item-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        /* Task Checkbox */
+        #todo-app-container .task-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--border-light);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            position: relative;
+            flex-shrink: 0;
+            background: var(--bg-secondary);
+        }
+
+        #todo-app-container .task-checkbox:hover {
+            border-color: var(--accent);
+            transform: scale(1.1);
+            box-shadow: 0 0 0 4px var(--accent-light);
+        }
+
+        #todo-app-container .task-item.completed .task-checkbox {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        #todo-app-container .task-item.completed .task-checkbox::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Task Star - Fixed visibility */
+        #todo-app-container .task-star {
+            font-size: 1.25rem;
+            cursor: pointer;
+            user-select: none;
+            transition: all var(--transition-fast);
+            color: var(--text-muted);
+            opacity: 0.4;
+            filter: grayscale(1);
+        }
+
+        #todo-app-container .task-star:hover {
+            opacity: 0.8;
+            transform: scale(1.15);
+            filter: grayscale(0.5);
+        }
+
+        #todo-app-container .task-item.starred .task-star {
+            color: var(--star);
+            opacity: 1;
+            filter: grayscale(0);
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+        }
+
+        #todo-app-container .task-text {
+            flex: 1;
+            font-size: 1.125rem;
+            cursor: text;
+            line-height: 1.5;
+            font-weight: 400;
+            color: var(--text-primary);
+        }
+
+        #todo-app-container .task-meta {
+            display: flex;
+            gap: 0.625rem;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        #todo-app-container .task-label {
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.8125rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+
+        #todo-app-container .task-label:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #todo-app-container .task-due,
+        #todo-app-container .task-defer {
+            display: flex;
+            align-items: center;
+            gap: 0.3125rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 16px;
+            font-size: 0.8125rem;
+            font-weight: 500;
+        }
+
+        #todo-app-container .task-due {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        #todo-app-container .task-due.overdue {
+            background: rgba(244, 67, 54, 0.15);
+            color: var(--danger);
+            border-color: rgba(244, 67, 54, 0.3);
+        }
+
+        #todo-app-container .task-due.today {
+            background: rgba(255, 152, 0, 0.15);
+            color: var(--warning);
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+
+        #todo-app-container .task-defer {
+            background: rgba(74, 144, 226, 0.1);
+            color: var(--accent);
+            border: 1px solid rgba(74, 144, 226, 0.3);
+        }
+
+        #todo-app-container .task-actions {
+            display: flex;
+            gap: 0.375rem;
+            margin-left: auto;
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+
+        #todo-app-container .task-item:hover .task-actions {
+            opacity: 1;
+        }
+
+        #todo-app-container .task-action {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.375rem;
+            border-radius: 6px;
+            transition: all var(--transition-fast);
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+
+        #todo-app-container .task-action:hover {
+            color: var(--text-primary);
+            background: var(--bg-hover);
+            transform: scale(1.1);
+        }
+
+        /* Modal Styles */
+        #todo-app-container .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(4px);
+        }
+
+        #todo-app-container .modal.active {
+            display: flex;
+            animation: fadeIn var(--transition-base) ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        #todo-app-container .modal-content {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 2rem;
+            max-width: 600px;
+            width: 90%;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            animation: slideUp var(--transition-slow) ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        #todo-app-container .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        #todo-app-container .modal-title {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin: 0;
+        }
+
+        #todo-app-container .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        #todo-app-container .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #todo-app-container .form-input,
+        #todo-app-container .form-select,
+        #todo-app-container .form-textarea {
+            width: 100%;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.875rem 1.125rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+            font-weight: 400;
+        }
+
+        #todo-app-container .form-input:focus,
+        #todo-app-container .form-select:focus,
+        #todo-app-container .form-textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+            background: var(--bg-hover);
+        }
+
+        #todo-app-container .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        #todo-app-container .form-hint {
+            color: var(--text-muted);
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.8125rem;
+        }
+
+        /* Completion Animation */
+        #todo-app-container .completion-animation {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, var(--success), transparent);
+            transform: translateX(-100%);
+            animation: completion-sweep 0.5s ease-out;
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        @keyframes completion-sweep {
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Notification */
+        #todo-app-container .notification {
+            position: fixed;
+            bottom: 3rem;
+            right: 3rem;
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-lg);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all var(--transition-slow);
+            z-index: 10001;
+            font-size: 0.9375rem;
+            font-weight: 500;
+            max-width: 400px;
+        }
+
+        @media (max-width: 768px) {
+            #todo-app-container .notification {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                left: 1.5rem;
+                max-width: calc(100% - 3rem);
+            }
+        }
+
+        #todo-app-container .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Empty State */
+        #todo-app-container .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        #todo-app-container .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        #todo-app-container .empty-state p {
+            font-size: 1.125rem;
+            margin: 0;
+        }
+
+        /* Label Color Picker */
+        #todo-app-container .label-color {
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid var(--border);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+
+        #todo-app-container .label-color:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #todo-app-container .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+        }
+
+        #todo-app-container .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--accent);
+        }
+
+        #todo-app-container .checkbox-wrapper label {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Labels Section */
+        #todo-app-container .labels-section {
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        #todo-app-container .labels-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        #todo-app-container .labels-title {
+            font-size: 1.125rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        #todo-app-container .labels-grid {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        #todo-app-container .label-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border: 1px solid transparent;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #todo-app-container .label-chip:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-sm);
+        }
+
+        #todo-app-container .label-delete {
+            background: transparent;
+            border: none;
+            color: currentColor;
+            cursor: pointer;
+            padding: 0.125rem;
+            border-radius: 50%;
+            transition: all var(--transition-fast);
+            opacity: 0.6;
+            font-size: 0.875rem;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #todo-app-container .label-delete:hover {
+            opacity: 1;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Loading State */
+        #todo-app-container .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        /* Scrollbar Styling */
+        #todo-app-container ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        #todo-app-container ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        #todo-app-container ::-webkit-scrollbar-thumb {
+            background: var(--border-light);
+            border-radius: 4px;
+        }
+
+        #todo-app-container ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            #todo-app-container {
+                padding: 1.5rem;
+            }
+
+            #todo-app-container .todo-title {
+                font-size: 2rem;
+            }
+
+            #todo-app-container .main-content {
+                padding: 1.5rem;
+            }
+
+            #todo-app-container .filter-tabs {
+                gap: 0.375rem;
+            }
+
+            #todo-app-container .filter-tab {
+                padding: 0.625rem 1rem;
+                font-size: 0.875rem;
+            }
+
+            #todo-app-container .task-actions {
+                opacity: 1;
+            }
+
+            #todo-app-container .modal-content {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Accessibility */
+        #todo-app-container .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+
+        #todo-app-container :focus-visible {
+            outline: 2px solid var(--accent);
+            outline-offset: 2px;
+        }
+
+        /* Print Styles */
+        @media print {
+            #todo-app-container {
+                box-shadow: none;
+                border: 1px solid #000;
+            }
+
+            #todo-app-container .btn,
+            #todo-app-container .task-actions,
+            #todo-app-container .quick-actions,
+            #todo-app-container .filter-panel {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <div class="todo-header">
+        <h1 class="todo-title">TODO</h1>
+        <div class="todo-actions">
+            <button class="btn" onclick="todoApp.exportData()" aria-label="Export tasks">
+                <span aria-hidden="true">📤</span> Export
+            </button>
+            <button class="btn" onclick="todoApp.importData()" aria-label="Import tasks">
+                <span aria-hidden="true">📥</span> Import
+            </button>
+            <button class="btn" onclick="todoApp.clearCompleted()" aria-label="Clear completed tasks">
+                Clear Completed
+            </button>
+        </div>
+    </div>
+
+    <nav class="filter-tabs" role="tablist" aria-label="Task filters">
+        <div class="filter-tab" data-filter="all" role="tab" aria-selected="false" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">🔍</span>
+            <span>All Tasks</span>
+            <span class="filter-tab-count" aria-label="All tasks count">0</span>
+        </div>
+        <div class="filter-tab active" data-filter="inbox" role="tab" aria-selected="true" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">📥</span>
+            <span>Inbox</span>
+            <span class="filter-tab-count" aria-label="Inbox count">0</span>
+        </div>
+        <div class="filter-tab" data-filter="starred" role="tab" aria-selected="false" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">⭐</span>
+            <span>Starred</span>
+            <span class="filter-tab-count" aria-label="Starred count">0</span>
+        </div>
+        <div class="filter-tab" data-filter="today" role="tab" aria-selected="false" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">📅</span>
+            <span>Today</span>
+            <span class="filter-tab-count" aria-label="Today count">0</span>
+        </div>
+        <div class="filter-tab" data-filter="upcoming" role="tab" aria-selected="false" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">📆</span>
+            <span>Upcoming</span>
+            <span class="filter-tab-count" aria-label="Upcoming count">0</span>
+        </div>
+        <div class="filter-tab" data-filter="deferred" role="tab" aria-selected="false" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">⏸️</span>
+            <span>Deferred</span>
+            <span class="filter-tab-count" aria-label="Deferred count">0</span>
+        </div>
+        <div class="filter-tab" data-filter="completed" role="tab" aria-selected="false" tabindex="0">
+            <span class="filter-tab-icon" aria-hidden="true">✅</span>
+            <span>Completed</span>
+            <span class="filter-tab-count" aria-label="Completed count">0</span>
+        </div>
+    </nav>
+
+    <main class="main-content">
+        <div class="add-task-section">
+            <form class="add-task-form" onsubmit="todoApp.addTask(event)">
+                <label for="taskInput" class="visually-hidden">New task</label>
+                <input type="text" id="taskInput" class="task-input" placeholder="What needs to be done?" required>
+                <button type="submit" class="btn btn-primary">Add Task</button>
+            </form>
+            <div class="quick-actions">
+                <button class="quick-action" onclick="todoApp.quickAddTask('today')" aria-label="Add task due today">
+                    <span aria-hidden="true">+</span> Due Today
+                </button>
+                <button class="quick-action" onclick="todoApp.quickAddTask('tomorrow')" aria-label="Add task due tomorrow">
+                    <span aria-hidden="true">+</span> Due Tomorrow
+                </button>
+                <button class="quick-action" onclick="todoApp.quickAddTask('starred')" aria-label="Add starred task">
+                    <span aria-hidden="true">+</span> Starred
+                </button>
+            </div>
+        </div>
+
+        <div class="filter-panel" id="filterPanel" role="region" aria-label="Advanced filters">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; font-weight: 500; font-size: 1.125rem;">Advanced Filters</h3>
+                <button class="btn" onclick="todoApp.clearFilters()">Clear All</button>
+            </div>
+            <div class="filter-grid">
+                <div class="filter-item">
+                    <label class="filter-label" for="filterText">Search</label>
+                    <input type="text" class="filter-input" id="filterText" placeholder="Search tasks..." oninput="todoApp.applyFilters()">
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterLabel">Label</label>
+                    <select class="filter-input" id="filterLabel" onchange="todoApp.applyFilters()">
+                        <option value="">All Labels</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterDueDate">Due Date</label>
+                    <input type="date" class="filter-input" id="filterDueDate" onchange="todoApp.applyFilters()">
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterDeferDate">Defer Date</label>
+                    <input type="date" class="filter-input" id="filterDeferDate" onchange="todoApp.applyFilters()">
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterHasDue">Has Due Date</label>
+                    <select class="filter-input" id="filterHasDue" onchange="todoApp.applyFilters()">
+                        <option value="">Any</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterHasDefer">Has Defer Date</label>
+                    <select class="filter-input" id="filterHasDefer" onchange="todoApp.applyFilters()">
+                        <option value="">Any</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterStarred">Is Starred</label>
+                    <select class="filter-input" id="filterStarred" onchange="todoApp.applyFilters()">
+                        <option value="">Any</option>
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                    </select>
+                </div>
+                <div class="filter-item">
+                    <label class="filter-label" for="filterStatus">Status</label>
+                    <select class="filter-input" id="filterStatus" onchange="todoApp.applyFilters()">
+                        <option value="">Any</option>
+                        <option value="active">Active</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <ul class="task-list" id="taskList" role="list" aria-label="Task list">
+            <!-- Tasks will be dynamically added here -->
+        </ul>
+
+        <div class="empty-state" style="display: none;" role="status">
+            <div class="empty-state-icon" aria-hidden="true">📝</div>
+            <p>No tasks yet. Add one to get started!</p>
+        </div>
+
+        <section class="labels-section" aria-label="Labels">
+            <div class="labels-header">
+                <h3 class="labels-title">Labels</h3>
+                <button class="btn" onclick="todoApp.showLabelModal()" aria-label="Add new label">
+                    <span aria-hidden="true">+</span> Add Label
+                </button>
+            </div>
+            <div class="labels-grid" id="labelsGrid" role="list" aria-label="Label list">
+                <!-- Labels will be dynamically added here -->
+            </div>
+        </section>
+    </main>
+
+    <!-- Task Edit Modal -->
+    <div class="modal" id="editModal" role="dialog" aria-labelledby="editModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="editModalTitle">Edit Task</h2>
+                <button class="task-action" style="font-size: 1.5rem;" onclick="todoApp.closeEditModal()" aria-label="Close modal">
+                    <span aria-hidden="true">✕</span>
+                </button>
+            </div>
+            <form onsubmit="todoApp.updateTask(event)">
+                <div class="form-group">
+                    <label class="form-label" for="editTaskText">Task</label>
+                    <input type="text" class="form-input" id="editTaskText" required>
+                </div>
+                <div class="form-group">
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" id="editTaskStarred">
+                        <label for="editTaskStarred">
+                            <span aria-hidden="true">⭐</span> Star this task
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editTaskDue">Due Date</label>
+                    <input type="datetime-local" class="form-input" id="editTaskDue">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editTaskDefer">Defer Until</label>
+                    <input type="datetime-local" class="form-input" id="editTaskDefer">
+                    <small class="form-hint">Task will be hidden until this date</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editTaskLabel">Label</label>
+                    <select class="form-select" id="editTaskLabel">
+                        <option value="">No Label</option>
+                        <!-- Dynamic labels will be added here -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editTaskNotes">Notes</label>
+                    <textarea class="form-textarea" id="editTaskNotes" placeholder="Add notes..."></textarea>
+                </div>
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn" onclick="todoApp.closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Label Modal -->
+    <div class="modal" id="labelModal" role="dialog" aria-labelledby="labelModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="labelModalTitle">Add Label</h2>
+                <button class="task-action" style="font-size: 1.5rem;" onclick="todoApp.closeLabelModal()" aria-label="Close modal">
+                    <span aria-hidden="true">✕</span>
+                </button>
+            </div>
+            <form onsubmit="todoApp.addLabel(event)">
+                <div class="form-group">
+                    <label class="form-label" for="labelName">Label Name</label>
+                    <input type="text" class="form-input" id="labelName" required maxlength="30">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="labelColor">Color</label>
+                    <input type="color" class="label-color" id="labelColor" value="#4a90e2">
+                </div>
+                <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button type="button" class="btn" onclick="todoApp.closeLabelModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Add Label</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification" role="alert" aria-live="polite"></div>
+
+    <script>
+        const todoApp = {
+            tasks: [],
+            labels: [],
+            currentFilter: 'inbox',
+            editingTaskId: null,
+            notificationTimeout: null,
+
+            init() {
+                this.loadData();
+                this.setupEventListeners();
+                this.render();
+                this.checkDueDates();
+                setInterval(() => this.checkDueDates(), 60000);
+                this.setupKeyboardShortcuts();
+            },
+
+            setupEventListeners() {
+                // Filter tabs
+                document.querySelectorAll('#todo-app-container .filter-tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const filter = e.currentTarget.dataset.filter;
+                        if (filter) {
+                            this.setFilter(filter);
+                        }
+                    });
+
+                    // Keyboard navigation
+                    tab.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            const filter = e.currentTarget.dataset.filter;
+                            if (filter) {
+                                this.setFilter(filter);
+                            }
+                        }
+                    });
+                });
+
+                // Modal close on ESC
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        this.closeEditModal();
+                        this.closeLabelModal();
+                    }
+                });
+
+                // Click outside modal to close
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            this.closeEditModal();
+                            this.closeLabelModal();
+                        }
+                    });
+                });
+            },
+
+            setupKeyboardShortcuts() {
+                document.addEventListener('keydown', (e) => {
+                    // Only work when not typing in an input
+                    if (document.activeElement.tagName === 'INPUT' ||
+                        document.activeElement.tagName === 'TEXTAREA') {
+                        return;
+                    }
+
+                    // Ctrl/Cmd + N: New task
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'n') {
+                        e.preventDefault();
+                        document.getElementById('taskInput').focus();
+                    }
+
+                    // Ctrl/Cmd + E: Export
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'e') {
+                        e.preventDefault();
+                        this.exportData();
+                    }
+                });
+            },
+
+            setFilter(filter) {
+                this.currentFilter = filter;
+                document.querySelectorAll('#todo-app-container .filter-tab').forEach(tab => {
+                    const isActive = tab.dataset.filter === filter;
+                    tab.classList.toggle('active', isActive);
+                    tab.setAttribute('aria-selected', isActive);
+                });
+
+                // Show filter panel only for "all" view
+                const filterPanel = document.getElementById('filterPanel');
+                filterPanel.classList.toggle('active', filter === 'all');
+
+                this.render();
+            },
+
+            addTask(event) {
+                event.preventDefault();
+                const input = event.target.querySelector('.task-input');
+                const text = input.value.trim();
+
+                if (!text) return;
+
+                const task = {
+                    id: Date.now(),
+                    text: this.sanitizeInput(text),
+                    completed: false,
+                    starred: false,
+                    createdAt: new Date().toISOString(),
+                    dueDate: null,
+                    deferDate: null,
+                    label: null,
+                    notes: '',
+                    subtasks: []
+                };
+
+                this.tasks.unshift(task);
+                this.saveData();
+                this.render();
+                input.value = '';
+                this.showNotification('Task added successfully! 🎉');
+            },
+
+            quickAddTask(type) {
+                const input = document.getElementById('taskInput');
+                const text = input.value.trim() || 'New Task';
+
+                const task = {
+                    id: Date.now(),
+                    text: this.sanitizeInput(text),
+                    completed: false,
+                    starred: type === 'starred',
+                    createdAt: new Date().toISOString(),
+                    dueDate: null,
+                    deferDate: null,
+                    label: null,
+                    notes: '',
+                    subtasks: []
+                };
+
+                if (type === 'today') {
+                    task.dueDate = new Date().toISOString();
+                } else if (type === 'tomorrow') {
+                    const tomorrow = new Date();
+                    tomorrow.setDate(tomorrow.getDate() + 1);
+                    task.dueDate = tomorrow.toISOString();
+                }
+
+                this.tasks.unshift(task);
+                this.saveData();
+                this.render();
+                input.value = '';
+                this.showNotification(`Task added ${type === 'starred' ? 'with star' : 'for ' + type}! 🎯`);
+            },
+
+            toggleTask(id) {
+                const task = this.findTask(id);
+                if (!task) return;
+
+                task.completed = !task.completed;
+                if (task.completed) {
+                    const taskEl = document.querySelector(`#todo-app-container [data-task-id="${id}"]`);
+                    if (taskEl && !taskEl.querySelector('.completion-animation')) {
+                        const animation = document.createElement('div');
+                        animation.className = 'completion-animation';
+                        taskEl.appendChild(animation);
+                        setTimeout(() => animation.remove(), 500);
+                    }
+                    this.showNotification('Great job! Task completed! 🎊');
+                }
+                this.saveData();
+                this.render();
+            },
+
+            toggleStar(id) {
+                const task = this.findTask(id);
+                if (!task) return;
+
+                task.starred = !task.starred;
+                this.saveData();
+                this.render();
+                this.showNotification(task.starred ? 'Task starred! ⭐' : 'Star removed');
+            },
+
+            deleteTask(id) {
+                if (!confirm('Are you sure you want to delete this task?')) return;
+
+                this.tasks = this.tasks.filter(task => task.id !== id);
+                this.saveData();
+                this.render();
+                this.showNotification('Task deleted');
+            },
+
+            findTask(id, tasks = this.tasks) {
+                for (const task of tasks) {
+                    if (task.id === id) return task;
+                    const found = this.findTask(id, task.subtasks || []);
+                    if (found) return found;
+                }
+                return null;
+            },
+
+            showEditModal(id) {
+                const task = this.findTask(id);
+                if (!task) return;
+
+                this.editingTaskId = id;
+                document.getElementById('editTaskText').value = task.text;
+                document.getElementById('editTaskStarred').checked = task.starred || false;
+                document.getElementById('editTaskDue').value = task.dueDate || '';
+                document.getElementById('editTaskDefer').value = task.deferDate || '';
+                document.getElementById('editTaskLabel').value = task.label || '';
+                document.getElementById('editTaskNotes').value = task.notes || '';
+
+                // Update label options
+                const labelSelect = document.getElementById('editTaskLabel');
+                labelSelect.innerHTML = '<option value="">No Label</option>';
+                this.labels.forEach(label => {
+                    const option = document.createElement('option');
+                    option.value = label.id;
+                    option.textContent = label.name;
+                    labelSelect.appendChild(option);
+                });
+
+                document.getElementById('editModal').classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('editTaskText').focus();
+                }, 100);
+            },
+
+            closeEditModal() {
+                document.getElementById('editModal').classList.remove('active');
+                this.editingTaskId = null;
+            },
+
+            updateTask(event) {
+                event.preventDefault();
+                const task = this.findTask(this.editingTaskId);
+                if (!task) return;
+
+                task.text = this.sanitizeInput(document.getElementById('editTaskText').value);
+                task.starred = document.getElementById('editTaskStarred').checked;
+                task.dueDate = document.getElementById('editTaskDue').value || null;
+                task.deferDate = document.getElementById('editTaskDefer').value || null;
+                task.label = document.getElementById('editTaskLabel').value || null;
+                task.notes = this.sanitizeInput(document.getElementById('editTaskNotes').value);
+
+                this.saveData();
+                this.render();
+                this.closeEditModal();
+                this.showNotification('Task updated! 📝');
+            },
+
+            showLabelModal() {
+                document.getElementById('labelModal').classList.add('active');
+                setTimeout(() => {
+                    document.getElementById('labelName').focus();
+                }, 100);
+            },
+
+            closeLabelModal() {
+                document.getElementById('labelModal').classList.remove('active');
+                document.getElementById('labelName').value = '';
+                document.getElementById('labelColor').value = '#4a90e2';
+            },
+
+            addLabel(event) {
+                event.preventDefault();
+                const name = this.sanitizeInput(document.getElementById('labelName').value);
+                const color = document.getElementById('labelColor').value;
+
+                if (this.labels.some(l => l.name.toLowerCase() === name.toLowerCase())) {
+                    alert('A label with this name already exists');
+                    return;
+                }
+
+                const label = {
+                    id: Date.now().toString(),
+                    name,
+                    color
+                };
+
+                this.labels.push(label);
+                this.saveData();
+                this.render();
+                this.updateFilterLabelOptions();
+                this.closeLabelModal();
+                this.showNotification('Label created! 🏷️');
+            },
+
+            deleteLabel(id) {
+                if (!confirm('Delete this label? Tasks will keep their current label assignment.')) return;
+
+                this.labels = this.labels.filter(label => label.id !== id);
+                this.saveData();
+                this.render();
+                this.showNotification('Label deleted');
+            },
+
+            filterByLabel(labelId) {
+                this.currentFilter = labelId;
+                document.querySelectorAll('#todo-app-container .filter-tab').forEach(tab => {
+                    tab.classList.remove('active');
+                    tab.setAttribute('aria-selected', 'false');
+                });
+                this.render();
+            },
+
+            isTaskDeferred(task) {
+                if (!task.deferDate) return false;
+                const now = new Date();
+                const deferDate = new Date(task.deferDate);
+                return deferDate > now;
+            },
+
+            getFilteredTasks() {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                let tasks = this.tasks.filter(task => !this.isTaskDeferred(task));
+
+                switch (this.currentFilter) {
+                    case 'all':
+                        tasks = this.applyAdvancedFilters(tasks);
+                        break;
+                    case 'inbox':
+                        tasks = tasks.filter(task => !task.completed && !task.label);
+                        break;
+                    case 'starred':
+                        tasks = tasks.filter(task => task.starred && !task.completed);
+                        break;
+                    case 'today':
+                        tasks = tasks.filter(task => {
+                            if (!task.dueDate) return false;
+                            const due = new Date(task.dueDate);
+                            return due >= today && due < tomorrow;
+                        });
+                        break;
+                    case 'upcoming':
+                        tasks = tasks.filter(task => {
+                            if (!task.dueDate) return false;
+                            const due = new Date(task.dueDate);
+                            return due >= tomorrow;
+                        });
+                        break;
+                    case 'deferred':
+                        tasks = this.tasks.filter(task => this.isTaskDeferred(task));
+                        break;
+                    case 'completed':
+                        tasks = this.tasks.filter(task => task.completed);
+                        break;
+                    default:
+                        // Label filter
+                        tasks = tasks.filter(task => task.label === this.currentFilter);
+                }
+
+                // Sort: starred tasks first, then by creation date
+                return tasks.sort((a, b) => {
+                    if (a.starred && !b.starred) return -1;
+                    if (!a.starred && b.starred) return 1;
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                });
+            },
+
+            applyAdvancedFilters(tasks) {
+                const text = document.getElementById('filterText').value.toLowerCase();
+                const label = document.getElementById('filterLabel').value;
+                const dueDate = document.getElementById('filterDueDate').value;
+                const deferDate = document.getElementById('filterDeferDate').value;
+                const hasDue = document.getElementById('filterHasDue').value;
+                const hasDefer = document.getElementById('filterHasDefer').value;
+                const starred = document.getElementById('filterStarred').value;
+                const status = document.getElementById('filterStatus').value;
+
+                return tasks.filter(task => {
+                    if (text && !task.text.toLowerCase().includes(text) &&
+                        !task.notes.toLowerCase().includes(text)) {
+                        return false;
+                    }
+
+                    if (label && task.label !== label) {
+                        return false;
+                    }
+
+                    if (dueDate) {
+                        if (!task.dueDate) return false;
+                        const taskDue = new Date(task.dueDate).toDateString();
+                        const filterDue = new Date(dueDate).toDateString();
+                        if (taskDue !== filterDue) return false;
+                    }
+
+                    if (deferDate) {
+                        if (!task.deferDate) return false;
+                        const taskDefer = new Date(task.deferDate).toDateString();
+                        const filterDefer = new Date(deferDate).toDateString();
+                        if (taskDefer !== filterDefer) return false;
+                    }
+
+                    if (hasDue === 'true' && !task.dueDate) return false;
+                    if (hasDue === 'false' && task.dueDate) return false;
+
+                    if (hasDefer === 'true' && !task.deferDate) return false;
+                    if (hasDefer === 'false' && task.deferDate) return false;
+
+                    if (starred === 'true' && !task.starred) return false;
+                    if (starred === 'false' && task.starred) return false;
+
+                    if (status === 'active' && task.completed) return false;
+                    if (status === 'completed' && !task.completed) return false;
+
+                    return true;
+                });
+            },
+
+            applyFilters() {
+                if (this.currentFilter === 'all') {
+                    this.render();
+                }
+            },
+
+            clearFilters() {
+                document.getElementById('filterText').value = '';
+                document.getElementById('filterLabel').value = '';
+                document.getElementById('filterDueDate').value = '';
+                document.getElementById('filterDeferDate').value = '';
+                document.getElementById('filterHasDue').value = '';
+                document.getElementById('filterHasDefer').value = '';
+                document.getElementById('filterStarred').value = '';
+                document.getElementById('filterStatus').value = '';
+                this.render();
+            },
+
+            updateFilterLabelOptions() {
+                const filterLabel = document.getElementById('filterLabel');
+                filterLabel.innerHTML = '<option value="">All Labels</option>';
+                this.labels.forEach(label => {
+                    const option = document.createElement('option');
+                    option.value = label.id;
+                    option.textContent = label.name;
+                    filterLabel.appendChild(option);
+                });
+            },
+
+            formatDueDate(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                if (date < today) {
+                    return 'Overdue';
+                } else if (date >= today && date < tomorrow) {
+                    return 'Today';
+                } else {
+                    return date.toLocaleDateString();
+                }
+            },
+
+            getDueDateClass(dateString) {
+                if (!dateString) return '';
+                const date = new Date(dateString);
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                if (date < today) {
+                    return 'overdue';
+                } else if (date >= today && date < tomorrow) {
+                    return 'today';
+                }
+                return '';
+            },
+
+            renderTask(task) {
+                const label = this.labels.find(l => l.id === task.label);
+                const dueDateClass = this.getDueDateClass(task.dueDate);
+
+                return `
+                    <li class="task-item ${task.completed ? 'completed' : ''} ${task.starred ? 'starred' : ''}"
+                        data-task-id="${task.id}"
+                        role="listitem">
+                        <div class="task-item-header">
+                            <div class="task-checkbox"
+                                 onclick="todoApp.toggleTask(${task.id})"
+                                 role="checkbox"
+                                 aria-checked="${task.completed}"
+                                 tabindex="0"
+                                 aria-label="Mark task as ${task.completed ? 'incomplete' : 'complete'}"></div>
+                            <div class="task-star"
+                                 onclick="todoApp.toggleStar(${task.id})"
+                                 role="button"
+                                 tabindex="0"
+                                 aria-label="${task.starred ? 'Remove star' : 'Add star'}"
+                                 aria-pressed="${task.starred}">⭐</div>
+                            <div class="task-text">${this.escapeHtml(task.text)}</div>
+                            <div class="task-actions">
+                                <button class="task-action"
+                                        onclick="todoApp.showEditModal(${task.id})"
+                                        aria-label="Edit task">✏️</button>
+                                <button class="task-action"
+                                        onclick="todoApp.deleteTask(${task.id})"
+                                        aria-label="Delete task">🗑️</button>
+                            </div>
+                        </div>
+                        ${(label || task.dueDate || task.deferDate) ? `
+                            <div class="task-meta">
+                                ${label ? `
+                                    <span class="task-label"
+                                          style="background: ${label.color}20; color: ${label.color}; border-color: ${label.color}30;">
+                                        ${this.escapeHtml(label.name)}
+                                    </span>
+                                ` : ''}
+                                ${task.dueDate ? `
+                                    <span class="task-due ${dueDateClass}">
+                                        <span aria-hidden="true">📅</span> ${this.formatDueDate(task.dueDate)}
+                                    </span>
+                                ` : ''}
+                                ${task.deferDate ? `
+                                    <span class="task-defer">
+                                        <span aria-hidden="true">⏸️</span> Deferred until ${new Date(task.deferDate).toLocaleDateString()}
+                                    </span>
+                                ` : ''}
+                            </div>
+                        ` : ''}
+                    </li>
+                `;
+            },
+
+            render() {
+                const taskList = document.getElementById('taskList');
+                const emptyState = document.querySelector('#todo-app-container .empty-state');
+                const filteredTasks = this.getFilteredTasks();
+
+                if (filteredTasks.length === 0) {
+                    taskList.innerHTML = '';
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                    taskList.innerHTML = filteredTasks.map(task => this.renderTask(task)).join('');
+
+                    // Add keyboard event listeners to interactive elements
+                    taskList.querySelectorAll('.task-checkbox, .task-star').forEach(el => {
+                        el.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                el.click();
+                            }
+                        });
+                    });
+                }
+
+                this.updateCounts();
+                this.renderLabels();
+            },
+
+            renderLabels() {
+                const labelsGrid = document.getElementById('labelsGrid');
+                if (this.labels.length === 0) {
+                    labelsGrid.innerHTML = '<p style="color: var(--text-muted); font-size: 0.875rem;">No labels yet</p>';
+                    return;
+                }
+
+                labelsGrid.innerHTML = this.labels.map(label => {
+                    const count = this.tasks.filter(t => t.label === label.id && !t.completed && !this.isTaskDeferred(t)).length;
+                    return `
+                        <div class="label-chip"
+                             onclick="todoApp.filterByLabel('${label.id}')"
+                             style="background: ${label.color}20; color: ${label.color}; border-color: ${label.color}30;"
+                             role="button"
+                             tabindex="0"
+                             aria-label="Filter by ${this.escapeHtml(label.name)} label">
+                            <span style="color: ${label.color};">●</span>
+                            <span>${this.escapeHtml(label.name)}</span>
+                            <span class="filter-tab-count" style="background: ${label.color}30; color: ${label.color};">${count}</span>
+                            <button class="label-delete"
+                                    onclick="event.stopPropagation(); todoApp.deleteLabel('${label.id}')"
+                                    aria-label="Delete ${this.escapeHtml(label.name)} label">
+                                <span aria-hidden="true">✕</span>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+
+                // Add keyboard navigation
+                labelsGrid.querySelectorAll('.label-chip').forEach(chip => {
+                    chip.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            chip.click();
+                        }
+                    });
+                });
+            },
+
+            updateCounts() {
+                const now = new Date();
+                const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+
+                const activeTasks = this.tasks.filter(task => !this.isTaskDeferred(task));
+
+                const counts = {
+                    all: this.tasks.filter(t => !this.isTaskDeferred(t)).length,
+                    inbox: activeTasks.filter(t => !t.completed && !t.label).length,
+                    starred: activeTasks.filter(t => t.starred && !t.completed).length,
+                    today: activeTasks.filter(t => {
+                        if (!t.dueDate) return false;
+                        const due = new Date(t.dueDate);
+                        return due >= today && due < tomorrow;
+                    }).length,
+                    upcoming: activeTasks.filter(t => {
+                        if (!t.dueDate) return false;
+                        const due = new Date(t.dueDate);
+                        return due >= tomorrow;
+                    }).length,
+                    deferred: this.tasks.filter(t => this.isTaskDeferred(t)).length,
+                    completed: this.tasks.filter(t => t.completed).length
+                };
+
+                // Update UI
+                Object.entries(counts).forEach(([filter, count]) => {
+                    const element = document.querySelector(`#todo-app-container [data-filter="${filter}"] .filter-tab-count`);
+                    if (element) {
+                        element.textContent = count;
+                    }
+                });
+            },
+
+            checkDueDates() {
+                const now = new Date();
+                const soon = new Date(now.getTime() + 60 * 60 * 1000); // 1 hour from now
+
+                this.tasks.forEach(task => {
+                    if (!task.completed && task.dueDate && !this.isTaskDeferred(task)) {
+                        const due = new Date(task.dueDate);
+                        if (due <= soon && due > now) {
+                            this.showNotification(`Task "${task.text}" is due soon! ⏰`);
+                        }
+                    }
+                });
+            },
+
+            showNotification(message) {
+                if (this.notificationTimeout) {
+                    clearTimeout(this.notificationTimeout);
+                }
+
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.classList.add('show');
+
+                this.notificationTimeout = setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 3000);
+            },
+
+            clearCompleted() {
+                const count = this.tasks.filter(t => t.completed).length;
+                if (count === 0) {
+                    this.showNotification('No completed tasks to clear');
+                    return;
+                }
+
+                if (confirm(`Delete ${count} completed task${count > 1 ? 's' : ''}?`)) {
+                    this.tasks = this.tasks.filter(t => !t.completed);
+                    this.saveData();
+                    this.render();
+                    this.showNotification(`Cleared ${count} completed task${count > 1 ? 's' : ''}! 🧹`);
+                }
+            },
+
+            exportData() {
+                const data = {
+                    version: '1.0',
+                    exportDate: new Date().toISOString(),
+                    tasks: this.tasks,
+                    labels: this.labels
+                };
+
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `todo-export-${new Date().toISOString().split('T')[0]}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+
+                this.showNotification('Data exported successfully! 💾');
+            },
+
+            importData() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (e) => {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const data = JSON.parse(e.target.result);
+                            if (data.version === '1.0' && data.tasks && data.labels) {
+                                this.tasks = data.tasks;
+                                this.labels = data.labels;
+                                this.saveData();
+                                this.updateFilterLabelOptions();
+                                this.render();
+                                this.showNotification('Data imported successfully! 📥');
+                            } else {
+                                throw new Error('Invalid file format');
+                            }
+                        } catch (error) {
+                            alert('Failed to import data. Please check the file format.');
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            },
+
+            saveData() {
+                try {
+                    const data = JSON.stringify({
+                        tasks: this.tasks,
+                        labels: this.labels
+                    });
+                    localStorage.setItem('todoAppData', data);
+                } catch (e) {
+                    console.warn('Could not save to localStorage:', e);
+                    // Fallback to memory storage
+                    window.todoAppData = {
+                        tasks: this.tasks,
+                        labels: this.labels
+                    };
+                }
+            },
+
+            loadData() {
+                try {
+                    const stored = localStorage.getItem('todoAppData');
+                    if (stored) {
+                        const data = JSON.parse(stored);
+                        this.tasks = data.tasks || [];
+                        this.labels = data.labels || [];
+                    } else {
+                        this.initializeDefaults();
+                    }
+                } catch (e) {
+                    console.warn('Could not load from localStorage:', e);
+                    // Fallback to memory storage
+                    if (window.todoAppData) {
+                        this.tasks = window.todoAppData.tasks || [];
+                        this.labels = window.todoAppData.labels || [];
+                    } else {
+                        this.initializeDefaults();
+                    }
+                }
+                this.updateFilterLabelOptions();
+            },
+
+            initializeDefaults() {
+                this.labels = [
+                    { id: '1', name: 'Personal', color: '#4CAF50' },
+                    { id: '2', name: 'Work', color: '#2196F3' },
+                    { id: '3', name: 'Important', color: '#FF5722' }
+                ];
+            },
+
+            // Utility functions
+            sanitizeInput(input) {
+                const div = document.createElement('div');
+                div.textContent = input;
+                return div.innerHTML;
+            },
+
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+        };
+
+        // Initialize the app when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => todoApp.init());
+        } else {
+            todoApp.init();
+        }
+    </script>
+</div>

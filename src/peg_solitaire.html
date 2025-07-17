@@ -1,0 +1,3362 @@
+<div id="peg-solitaire-game" style="width: 100%; min-height: 750px;">
+    <!-- Peg Solitaire Game - Production Ready v1.0 -->
+    <style>
+        /* Reset and isolate styles to prevent conflicts */
+        #peg-solitaire-game {
+            height: auto !important;
+            min-height: 750px;
+            overflow: visible !important;
+            position: relative;
+            box-sizing: content-box !important;
+        }
+
+        #peg-solitaire-game *,
+        #peg-solitaire-game *::before,
+        #peg-solitaire-game *::after {
+            box-sizing: border-box !important;
+            margin: 0;
+            padding: 0;
+        }
+
+        #peg-solitaire-game {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: visible !important;
+            box-sizing: border-box;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        #peg-solitaire-game .game-container {
+            background: #000000;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 40px;
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            border: none;
+            justify-content: space-evenly;
+            min-height: 700px;
+            height: auto;
+            position: relative;
+            overflow: visible;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        /* Fixed dropdown z-index hierarchy */
+        #peg-solitaire-game .stats-container {
+            display: flex;
+            gap: 32px;
+            width: 100%;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        #peg-solitaire-game .board-container {
+            background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 100%);
+            border-radius: 20px;
+            padding: 60px 40px;
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid #1a1a1a;
+            transition: all 0.3s ease;
+            min-height: 400px;
+            overflow: visible;
+            position: relative;
+            max-width: 100%;
+            box-sizing: border-box;
+            z-index: 1;
+        }
+
+        #peg-solitaire-game .controls-container {
+            display: flex;
+            gap: 32px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 10;
+            overflow: visible;
+        }
+
+        /* Fixed dropdown styles with proper z-index stacking */
+        #peg-solitaire-game .dropdown {
+            position: relative;
+            min-width: 200px;
+            z-index: auto;
+        }
+
+        #peg-solitaire-game .dropdown.open {
+            z-index: 1000;
+        }
+
+        #peg-solitaire-game .dropdown-menu {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #0a0a0a;
+            border: 2px solid #262626;
+            border-radius: 12px;
+            margin-top: 4px;
+            z-index: 1001;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+            max-height: 300px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            display: none;
+            min-width: 200px;
+            -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        }
+
+        #peg-solitaire-game .dropdown.open .dropdown-menu {
+            display: block;
+        }
+
+        /* Ensure dropdown menus don't go off-screen on mobile */
+        @media (max-width: 768px) {
+            #peg-solitaire-game .dropdown-menu {
+                position: fixed;
+                left: 10px;
+                right: 10px;
+                width: auto;
+                max-width: calc(100vw - 20px);
+            }
+        }
+
+        #peg-solitaire-game .stat-card {
+            background: #0a0a0a;
+            border-radius: 16px;
+            padding: 24px 40px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid #1a1a1a;
+            flex: 1;
+            max-width: 300px;
+            min-width: 150px;
+            white-space: nowrap;
+        }
+
+        #peg-solitaire-game .stat-card:hover {
+            border-color: #262626;
+            transform: translateY(-2px);
+        }
+
+        #peg-solitaire-game .stat-label {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        #peg-solitaire-game .stat-value {
+            font-size: 40px;
+            font-weight: 700;
+            color: #ffffff;
+            white-space: nowrap;
+        }
+
+        #peg-solitaire-game .peg-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        #peg-solitaire-game .peg-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        #peg-solitaire-game .peg-dot.empty {
+            background: #1f2937;
+        }
+
+        #peg-solitaire-game .board-container:hover {
+            border-color: #262626;
+        }
+
+        #peg-solitaire-game .board {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 28px;
+            padding: 15px;
+            max-width: 700px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        #peg-solitaire-game .board-row {
+            display: flex;
+            gap: 22px;
+            flex-shrink: 0;
+        }
+
+        #peg-solitaire-game .hole {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            background: #1a1a1a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: visible;
+            border: 2px solid #262626;
+            flex-shrink: 0;
+            z-index: 1;
+        }
+
+        #peg-solitaire-game .hole:hover {
+            transform: scale(1.05);
+            background: #262626;
+            border-color: #333333;
+        }
+
+        #peg-solitaire-game .hole.valid-move {
+            animation: peg-pulse 1s infinite;
+        }
+
+        @keyframes peg-pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes peg-pulse-sapphire {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), inset 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 40px rgba(59, 130, 246, 0.8), inset 0 0 30px rgba(59, 130, 246, 0.4);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), inset 0 0 20px rgba(59, 130, 246, 0.3);
+            }
+        }
+
+        #peg-solitaire-game .peg {
+            width: 54px;
+            height: 54px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            flex-shrink: 0;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        #peg-solitaire-game .peg::before {
+            content: '';
+            position: absolute;
+            top: 9px;
+            left: 9px;
+            width: 18px;
+            height: 18px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+        }
+
+        #peg-solitaire-game .peg:hover {
+            transform: translateY(-3px);
+        }
+
+        #peg-solitaire-game .peg.selected {
+            animation: peg-bounce 0.5s infinite alternate;
+        }
+
+        @keyframes peg-bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-6px); }
+        }
+
+        #peg-solitaire-game .dropdown-button {
+            width: 100%;
+            padding: 14px 24px;
+            background: #0a0a0a;
+            border: 2px solid #262626;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 500;
+            color: #ffffff;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            user-select: none;
+            font-family: inherit;
+            text-align: left;
+            position: relative;
+            -webkit-appearance: none;
+            appearance: none;
+            outline: none;
+        }
+
+        #peg-solitaire-game .dropdown-button:hover {
+            border-color: #3b82f6;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            background: #1a1a1a;
+        }
+
+        #peg-solitaire-game .dropdown-button::after {
+            content: '▼';
+            font-size: 12px;
+            color: #6b7280;
+            transition: transform 0.3s ease;
+            pointer-events: none;
+        }
+
+        #peg-solitaire-game .dropdown-button.open::after {
+            transform: rotate(180deg);
+        }
+
+        #peg-solitaire-game .dropdown-item {
+            padding: 12px 20px;
+            cursor: pointer !important;
+            background: #0a0a0a;
+            color: #ffffff;
+            font-size: 16px;
+            border-bottom: 1px solid #1a1a1a;
+            display: block;
+            transition: all 0.2s ease;
+            min-height: 44px; /* Better touch target */
+            display: flex;
+            align-items: center;
+            -webkit-tap-highlight-color: transparent; /* Remove tap highlight on mobile */
+        }
+
+        #peg-solitaire-game .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        #peg-solitaire-game .dropdown-item:hover {
+            background: #1a1a1a;
+            color: #3b82f6;
+        }
+
+        #peg-solitaire-game .dropdown-item.active {
+            background: #1a1a1a;
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        #peg-solitaire-game .action-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 5;
+        }
+
+        #peg-solitaire-game .btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 12px;
+            font-size: 17px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 140px;
+            position: relative;
+            overflow: hidden;
+            height: 50px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        #peg-solitaire-game .btn-secondary {
+            background: #0a0a0a;
+            color: #9ca3af;
+            border: 1px solid #262626;
+        }
+
+        #peg-solitaire-game .btn-secondary:hover {
+            background: #1a1a1a;
+            transform: translateY(-1px);
+            border-color: #333333;
+            color: #cbd5e1;
+        }
+
+        #peg-solitaire-game .btn-primary {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #peg-solitaire-game .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #peg-solitaire-game .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        #peg-solitaire-game .btn:not(:disabled) {
+            cursor: pointer;
+        }
+
+        /* Progress bar styles */
+        #peg-solitaire-game .btn-progress-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 14px 32px;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        #peg-solitaire-game .btn .progress-bar {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.3) 0%, rgba(37, 99, 235, 0.3) 100%);
+            border-radius: 12px;
+            width: 0%;
+            transition: width 0.3s ease;
+            z-index: 1;
+        }
+
+        #peg-solitaire-game .btn .progress-text {
+            position: relative;
+            z-index: 3;
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+
+        #peg-solitaire-game #peg-autosolve-btn {
+            min-width: 180px;
+        }
+
+        /* Theme-specific styles */
+        /* Sapphire theme (default blue) */
+        #peg-solitaire-game .peg,
+        #peg-solitaire-game[data-theme="sapphire"] .peg {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game .peg:hover,
+        #peg-solitaire-game[data-theme="sapphire"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game .peg.selected,
+        #peg-solitaire-game[data-theme="sapphire"] .peg.selected {
+            background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game .peg-dot:not(.empty),
+        #peg-solitaire-game[data-theme="sapphire"] .peg-dot:not(.empty) {
+            background: #3b82f6;
+        }
+        #peg-solitaire-game .hole.valid-move,
+        #peg-solitaire-game[data-theme="sapphire"] .hole.valid-move {
+            animation: peg-pulse-sapphire 1s infinite;
+            background: #1e3a8a;
+            border-color: #3b82f6;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.6), inset 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        @keyframes peg-pulse-ocean {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(8, 145, 178, 0.6), inset 0 0 20px rgba(8, 145, 178, 0.3);
+            }
+            50% {
+                transform: scale(1.1);
+                box-shadow: 0 0 40px rgba(8, 145, 178, 0.8), inset 0 0 30px rgba(8, 145, 178, 0.4);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: 0 0 30px rgba(8, 145, 178, 0.6), inset 0 0 20px rgba(8, 145, 178, 0.3);
+            }
+        }
+
+        #peg-solitaire-game[data-theme="ocean"] .peg {
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            box-shadow: 0 4px 12px rgba(8, 145, 178, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="ocean"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(8, 145, 178, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="ocean"] .peg.selected {
+            background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%);
+            box-shadow: 0 6px 16px rgba(6, 182, 212, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="ocean"] .peg-dot:not(.empty) {
+            background: #0891b2;
+        }
+        #peg-solitaire-game[data-theme="ocean"] .hole.valid-move {
+            animation: peg-pulse-ocean 1s infinite;
+            background: #164e63;
+            border-color: #0891b2;
+            box-shadow: 0 0 30px rgba(8, 145, 178, 0.6), inset 0 0 20px rgba(8, 145, 178, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="mint"] .peg {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="mint"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="mint"] .peg.selected {
+            background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+            box-shadow: 0 6px 16px rgba(52, 211, 153, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="mint"] .peg-dot:not(.empty) {
+            background: #10b981;
+        }
+        #peg-solitaire-game[data-theme="mint"] .hole.valid-move {
+            background: #064e3b;
+            border-color: #10b981;
+            box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), inset 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="forest"] .peg {
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="forest"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(5, 150, 105, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="forest"] .peg.selected {
+            background: linear-gradient(135deg, #84cc16 0%, #65a30d 100%);
+            box-shadow: 0 6px 16px rgba(132, 204, 22, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="forest"] .peg-dot:not(.empty) {
+            background: #059669;
+        }
+        #peg-solitaire-game[data-theme="forest"] .hole.valid-move {
+            background: #064e3b;
+            border-color: #059669;
+            box-shadow: 0 0 30px rgba(5, 150, 105, 0.6), inset 0 0 20px rgba(5, 150, 105, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="sunset"] .peg {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="sunset"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="sunset"] .peg.selected {
+            background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
+            box-shadow: 0 6px 16px rgba(236, 72, 153, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="sunset"] .peg-dot:not(.empty) {
+            background: #f59e0b;
+        }
+        #peg-solitaire-game[data-theme="sunset"] .hole.valid-move {
+            background: #7c2d12;
+            border-color: #f59e0b;
+            box-shadow: 0 0 30px rgba(245, 158, 11, 0.6), inset 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="lavender"] .peg {
+            background: linear-gradient(135deg, #9333ea 0%, #7c3aed 100%);
+            box-shadow: 0 4px 12px rgba(147, 51, 234, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="lavender"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(147, 51, 234, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="lavender"] .peg.selected {
+            background: linear-gradient(135deg, #c084fc 0%, #a855f7 100%);
+            box-shadow: 0 6px 16px rgba(192, 132, 252, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="lavender"] .peg-dot:not(.empty) {
+            background: #9333ea;
+        }
+        #peg-solitaire-game[data-theme="lavender"] .hole.valid-move {
+            background: #4c1d95;
+            border-color: #9333ea;
+            box-shadow: 0 0 30px rgba(147, 51, 234, 0.6), inset 0 0 20px rgba(147, 51, 234, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="cherry"] .peg {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="cherry"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(239, 68, 68, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="cherry"] .peg.selected {
+            background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+            box-shadow: 0 6px 16px rgba(248, 113, 113, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="cherry"] .peg-dot:not(.empty) {
+            background: #ef4444;
+        }
+        #peg-solitaire-game[data-theme="cherry"] .hole.valid-move {
+            background: #7f1d1d;
+            border-color: #ef4444;
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.6), inset 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="slate"] .peg {
+            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
+            box-shadow: 0 4px 12px rgba(100, 116, 139, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="slate"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(100, 116, 139, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="slate"] .peg.selected {
+            background: linear-gradient(135deg, #94a3b8 0%, #64748b 100%);
+            box-shadow: 0 6px 16px rgba(148, 163, 184, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="slate"] .peg-dot:not(.empty) {
+            background: #64748b;
+        }
+        #peg-solitaire-game[data-theme="slate"] .hole.valid-move {
+            background: #1e293b;
+            border-color: #64748b;
+            box-shadow: 0 0 30px rgba(100, 116, 139, 0.6), inset 0 0 20px rgba(100, 116, 139, 0.3);
+        }
+
+        #peg-solitaire-game[data-theme="honey"] .peg {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="honey"] .peg:hover {
+            box-shadow: 0 8px 24px rgba(251, 191, 36, 0.6), 0 4px 8px rgba(0, 0, 0, 0.4);
+        }
+        #peg-solitaire-game[data-theme="honey"] .peg.selected {
+            background: linear-gradient(135deg, #fde047 0%, #facc15 100%);
+            box-shadow: 0 6px 16px rgba(253, 224, 71, 0.6), 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        #peg-solitaire-game[data-theme="honey"] .peg-dot:not(.empty) {
+            background: #fbbf24;
+        }
+        #peg-solitaire-game[data-theme="honey"] .hole.valid-move {
+            background: #78350f;
+            border-color: #fbbf24;
+            box-shadow: 0 0 30px rgba(251, 191, 36, 0.6), inset 0 0 20px rgba(251, 191, 36, 0.3);
+        }
+
+        /* Adjust hole size for different board types */
+        #peg-solitaire-game.board-large .hole {
+            width: 48px;
+            height: 48px;
+        }
+
+        #peg-solitaire-game.board-large .peg {
+            width: 38px;
+            height: 38px;
+        }
+
+        #peg-solitaire-game.board-large .peg::before {
+            width: 12px;
+            height: 12px;
+            top: 6px;
+            left: 6px;
+        }
+
+        #peg-solitaire-game.board-large .board {
+            gap: 14px;
+        }
+
+        #peg-solitaire-game.board-large .board-row {
+            gap: 12px;
+        }
+
+        /* Extra large boards (English, French, etc.) need even smaller sizing */
+        #peg-solitaire-game.board-xlarge .hole {
+            width: 42px;
+            height: 42px;
+        }
+
+        #peg-solitaire-game.board-xlarge .peg {
+            width: 34px;
+            height: 34px;
+        }
+
+        #peg-solitaire-game.board-xlarge .peg::before {
+            width: 10px;
+            height: 10px;
+            top: 5px;
+            left: 5px;
+        }
+
+        #peg-solitaire-game.board-xlarge .board {
+            gap: 10px;
+        }
+
+        #peg-solitaire-game.board-xlarge .board-row {
+            gap: 8px;
+        }
+
+        #peg-solitaire-game.board-xlarge .board-container {
+            padding: 40px 20px;
+        }
+
+        /* Board labels */
+        #peg-solitaire-game .board-label {
+            font-size: 10px;
+            color: #4b5563;
+            text-align: center;
+            width: 100%;
+            margin-bottom: 4px;
+        }
+
+        @media (max-width: 768px) {
+            #peg-solitaire-game {
+                padding: 10px;
+            }
+
+            #peg-solitaire-game .game-container {
+                padding: 24px 20px;
+                gap: 20px;
+                overflow: visible !important;
+            }
+
+            #peg-solitaire-game .controls-container {
+                overflow: visible !important;
+                z-index: 10 !important;
+            }
+
+            #peg-solitaire-game .hole {
+                width: 56px;
+                height: 56px;
+            }
+
+            #peg-solitaire-game .peg {
+                width: 46px;
+                height: 46px;
+            }
+
+            #peg-solitaire-game .peg::before {
+                width: 16px;
+                height: 16px;
+                top: 8px;
+                left: 8px;
+            }
+
+            #peg-solitaire-game.board-large .hole {
+                width: 40px;
+                height: 40px;
+            }
+
+            #peg-solitaire-game.board-large .peg {
+                width: 32px;
+                height: 32px;
+            }
+
+            #peg-solitaire-game.board-large .peg::before {
+                width: 10px;
+                height: 10px;
+                top: 5px;
+                left: 5px;
+            }
+
+            /* Extra small sizing for xlarge boards on mobile */
+            #peg-solitaire-game.board-xlarge .hole {
+                width: 32px;
+                height: 32px;
+            }
+
+            #peg-solitaire-game.board-xlarge .peg {
+                width: 26px;
+                height: 26px;
+            }
+
+            #peg-solitaire-game.board-xlarge .peg::before {
+                width: 8px;
+                height: 8px;
+                top: 4px;
+                left: 4px;
+            }
+
+            #peg-solitaire-game.board-xlarge .board {
+                gap: 8px;
+            }
+
+            #peg-solitaire-game.board-xlarge .board-row {
+                gap: 6px;
+            }
+
+            #peg-solitaire-game .stats-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            #peg-solitaire-game .stat-card {
+                max-width: 100%;
+                padding: 16px 24px;
+            }
+
+            #peg-solitaire-game .stat-value {
+                font-size: 32px;
+            }
+
+            #peg-solitaire-game .peg-dot {
+                width: 8px;
+                height: 8px;
+            }
+
+            #peg-solitaire-game .controls-container {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            #peg-solitaire-game .dropdown {
+                width: 100%;
+            }
+
+            #peg-solitaire-game .action-buttons {
+                flex-wrap: wrap;
+                gap: 12px;
+            }
+
+            #peg-solitaire-game .btn {
+                flex: 1;
+                min-width: 110px;
+                font-size: 15px;
+                padding: 12px 20px;
+            }
+
+            #peg-solitaire-game .board-container {
+                padding: 30px 20px;
+            }
+
+            #peg-solitaire-game .board {
+                gap: 16px;
+                padding: 5px;
+            }
+
+            #peg-solitaire-game .board-row {
+                gap: 14px;
+            }
+
+            #peg-solitaire-game .win-message {
+                padding: 30px;
+                max-width: 95%;
+            }
+
+            #peg-solitaire-game .win-emoji {
+                font-size: 60px;
+            }
+
+            #peg-solitaire-game .win-achievement {
+                font-size: 28px;
+            }
+
+            #peg-solitaire-game .win-stats {
+                gap: 20px;
+            }
+
+            #peg-solitaire-game .win-stat-value {
+                font-size: 20px;
+            }
+
+            #peg-solitaire-game .win-tagline {
+                font-size: 14px;
+            }
+
+            #peg-solitaire-game .win-buttons {
+                gap: 12px;
+            }
+
+            #peg-solitaire-game .win-buttons .btn {
+                flex: 1;
+                min-width: 110px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #peg-solitaire-game .game-container {
+                padding: 20px 16px;
+                min-height: 600px;
+            }
+
+            #peg-solitaire-game .board-container {
+                padding: 20px 16px;
+                min-height: 350px;
+            }
+
+            #peg-solitaire-game .hole {
+                width: 44px;
+                height: 44px;
+            }
+
+            #peg-solitaire-game .peg {
+                width: 36px;
+                height: 36px;
+            }
+
+            #peg-solitaire-game .peg::before {
+                width: 14px;
+                height: 14px;
+                top: 6px;
+                left: 6px;
+            }
+
+            #peg-solitaire-game.board-large .hole {
+                width: 36px;
+                height: 36px;
+            }
+
+            #peg-solitaire-game.board-large .peg {
+                width: 28px;
+                height: 28px;
+            }
+
+            #peg-solitaire-game.board-large .peg::before {
+                width: 10px;
+                height: 10px;
+                top: 5px;
+                left: 5px;
+            }
+
+            #peg-solitaire-game .board {
+                gap: 14px;
+                padding: 5px;
+            }
+
+            #peg-solitaire-game .board-row {
+                gap: 12px;
+            }
+
+            #peg-solitaire-game.board-large .board {
+                gap: 12px;
+            }
+
+            #peg-solitaire-game.board-large .board-row {
+                gap: 10px;
+            }
+
+            #peg-solitaire-game .stat-value {
+                font-size: 28px;
+            }
+
+            #peg-solitaire-game .btn {
+                font-size: 15px;
+                padding: 12px 16px;
+                min-width: 90px;
+                height: 44px; /* Better touch target */
+            }
+
+            #peg-solitaire-game .dropdown-button {
+                font-size: 15px;
+                padding: 12px 20px;
+                height: 44px; /* Better touch target */
+            }
+            #peg-solitaire-game .win-message {
+                padding: 25px 20px;
+            }
+
+            #peg-solitaire-game .win-emoji {
+                font-size: 50px;
+            }
+
+            #peg-solitaire-game .win-achievement {
+                font-size: 24px;
+            }
+
+            #peg-solitaire-game .win-stat-value {
+                font-size: 18px;
+            }
+
+            #peg-solitaire-game .win-stat-label {
+                font-size: 11px;
+            }
+
+            #peg-solitaire-game .win-tagline {
+                font-size: 13px;
+            }
+
+            #peg-solitaire-game .win-easter-egg {
+                font-size: 12px;
+            }
+
+            /* Ensure buttons stay horizontal on mobile */
+            #peg-solitaire-game .win-buttons {
+                flex-direction: row;
+                gap: 10px;
+            }
+
+            #peg-solitaire-game .win-buttons .btn {
+                flex: 1;
+                min-width: 100px;
+                padding: 12px 16px;
+            }
+        }
+
+        /* Dark overlay for win message */
+        #peg-solitaire-game .win-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(2px);
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        #peg-solitaire-game .win-overlay.show {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        #peg-solitaire-game .win-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px 50px;
+            border-radius: 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 80px rgba(59, 130, 246, 0.2);
+            text-align: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            border: 2px solid #1a1a1a;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        #peg-solitaire-game .win-message.show {
+            opacity: 1;
+            visibility: visible;
+            animation: winPopIn 0.4s ease-out;
+        }
+
+        @keyframes winPopIn {
+            0% {
+                transform: translate(-50%, -50%) scale(0.9);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes emojiPop {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.2); }
+            100% { transform: scale(1); }
+        }
+
+        #peg-solitaire-game .win-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            color: #ffffff;
+        }
+
+        #peg-solitaire-game .win-emoji {
+            font-size: 80px;
+            line-height: 1;
+            margin: 0;
+        }
+
+        #peg-solitaire-game .win-message.show .win-emoji {
+            animation: emojiPop 0.6s ease-out 0.3s;
+        }
+
+        #peg-solitaire-game .win-achievement {
+            font-size: 36px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin: 0;
+        }
+
+        #peg-solitaire-game .win-stats {
+            display: flex;
+            gap: 30px;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        #peg-solitaire-game .win-stat {
+            text-align: center;
+        }
+
+        #peg-solitaire-game .win-stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            display: block;
+        }
+
+        #peg-solitaire-game .win-stat-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #6b7280;
+            margin-top: 4px;
+            display: block;
+        }
+
+        #peg-solitaire-game .win-tagline {
+            font-style: italic;
+            opacity: 0.8;
+            font-size: 16px;
+            line-height: 1.4;
+            color: #9ca3af;
+            margin: 0;
+            max-width: 400px;
+        }
+
+        #peg-solitaire-game .win-easter-egg {
+            font-size: 13px;
+            opacity: 0.6;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        #peg-solitaire-game .win-buttons {
+            display: flex;
+            gap: 16px;
+            margin-top: 10px;
+            width: 100%;
+            justify-content: center;
+        }
+
+        #peg-solitaire-game .win-buttons .btn {
+            flex: 1;
+            max-width: 150px;
+        }
+
+        #peg-solitaire-game .win-buttons .btn-close {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white !important;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        #peg-solitaire-game .win-buttons .btn-close:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.5), 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        #peg-solitaire-game .win-buttons .btn-new {
+            background: #0a0a0a;
+            color: #9ca3af !important;
+            border: 1px solid #262626;
+        }
+
+        #peg-solitaire-game .win-buttons .btn-new:hover {
+            background: #1a1a1a;
+            transform: translateY(-1px);
+            border-color: #333333;
+            color: #cbd5e1 !important;
+        }
+
+        /* Extra large screens */
+        @media (min-width: 1200px) {
+            #peg-solitaire-game .game-container {
+                padding: 60px;
+                gap: 48px;
+            }
+
+            #peg-solitaire-game .hole {
+                width: 80px;
+                height: 80px;
+            }
+
+            #peg-solitaire-game .peg {
+                width: 66px;
+                height: 66px;
+            }
+
+            #peg-solitaire-game .peg::before {
+                width: 22px;
+                height: 22px;
+                top: 11px;
+                left: 11px;
+            }
+
+            #peg-solitaire-game .board {
+                gap: 38px;
+                padding: 35px;
+                max-width: 650px;
+            }
+
+            #peg-solitaire-game .board-row {
+                gap: 30px;
+            }
+
+            #peg-solitaire-game .stat-value {
+                font-size: 48px;
+            }
+
+            #peg-solitaire-game .stat-card {
+                padding: 32px 48px;
+            }
+
+            #peg-solitaire-game .board-container {
+                padding: 80px 60px;
+            }
+        }
+
+        /* Disable hover effects on touch devices */
+        @media (hover: none) {
+            #peg-solitaire-game .hole:hover {
+                transform: scale(1);
+                background: #1a1a1a;
+            }
+
+            #peg-solitaire-game .peg:hover {
+                transform: translateY(0);
+            }
+
+            #peg-solitaire-game .btn:hover {
+                transform: translateY(0);
+            }
+
+            #peg-solitaire-game .btn-secondary:hover {
+                background: #0a0a0a;
+                border-color: #262626;
+                color: #9ca3af;
+            }
+
+            #peg-solitaire-game .btn-primary:hover {
+                box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+
+            #peg-solitaire-game .stat-card:hover {
+                transform: translateY(0);
+                border-color: #1a1a1a;
+            }
+
+            #peg-solitaire-game .board-container:hover {
+                border-color: #1a1a1a;
+            }
+
+            #peg-solitaire-game .dropdown-button:hover {
+                border-color: #1a1a1a;
+                transform: translateY(0);
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            }
+        }
+
+        /* Override any site-wide text color that might affect the game */
+        #peg-solitaire-game,
+        #peg-solitaire-game * {
+            color: inherit !important;
+        }
+
+        /* Ensure game elements use their specific colors */
+        #peg-solitaire-game .stat-label {
+            color: #6b7280 !important;
+        }
+
+        #peg-solitaire-game .stat-value {
+            color: #ffffff !important;
+        }
+
+        #peg-solitaire-game .dropdown-button {
+            color: #ffffff !important;
+        }
+
+        #peg-solitaire-game .dropdown-item {
+            color: #ffffff !important;
+        }
+
+        #peg-solitaire-game .dropdown-item:hover {
+            color: #3b82f6 !important;
+        }
+
+        #peg-solitaire-game .dropdown-item.active {
+            color: #3b82f6 !important;
+        }
+
+        #peg-solitaire-game .btn-secondary {
+            color: #9ca3af !important;
+        }
+
+        #peg-solitaire-game .btn-secondary:hover {
+            color: #cbd5e1 !important;
+        }
+
+        #peg-solitaire-game .btn-primary {
+            color: white !important;
+        }
+
+        #peg-solitaire-game .win-stat-value {
+            color: #ffffff !important;
+        }
+
+        #peg-solitaire-game .win-stat-label {
+            color: #6b7280 !important;
+        }
+
+        #peg-solitaire-game .win-tagline {
+            color: #9ca3af !important;
+        }
+
+        #peg-solitaire-game .win-easter-egg {
+            color: #6b7280 !important;
+        }
+    </style>
+
+    <div class="game-container">
+        <div class="stats-container">
+            <div class="stat-card">
+                <div class="stat-label">Removed</div>
+                <div class="stat-value" id="peg-collected">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Remaining</div>
+                <div class="stat-value" id="peg-remaining">14</div>
+                <div class="peg-indicator" id="peg-indicator"></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Time</div>
+                <div class="stat-value" id="peg-timer">0:00</div>
+            </div>
+        </div>
+
+        <div class="board-container">
+            <div class="board" id="peg-board"></div>
+        </div>
+
+        <div class="controls-container">
+            <div class="dropdown" id="board-dropdown">
+                <button class="dropdown-button" id="peg-board-type">BOARD</button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-item" data-value="triangular">Triangular (15 holes)</div>
+                    <div class="dropdown-item" data-value="english">English Cross (33 holes)</div>
+                    <div class="dropdown-item" data-value="french">French/European (37 holes)</div>
+                    <div class="dropdown-item" data-value="diamond">Diamond (41 holes)</div>
+                    <div class="dropdown-item" data-value="wiegleb">Wiegleb German (45 holes)</div>
+                    <div class="dropdown-item" data-value="asymmetrical">Asymmetrical (39 holes)</div>
+                </div>
+            </div>
+            <div class="dropdown" id="theme-dropdown">
+                <button class="dropdown-button" id="peg-theme">THEME</button>
+                <div class="dropdown-menu">
+                    <div class="dropdown-item" data-value="sapphire">Sapphire</div>
+                    <div class="dropdown-item" data-value="ocean">Ocean</div>
+                    <div class="dropdown-item" data-value="mint">Mint</div>
+                    <div class="dropdown-item" data-value="forest">Forest</div>
+                    <div class="dropdown-item" data-value="sunset">Sunset</div>
+                    <div class="dropdown-item" data-value="lavender">Lavender</div>
+                    <div class="dropdown-item" data-value="cherry">Cherry</div>
+                    <div class="dropdown-item" data-value="slate">Slate</div>
+                    <div class="dropdown-item" data-value="honey">Honey</div>
+                </div>
+            </div>
+            <div class="dropdown" id="start-dropdown">
+                <button class="dropdown-button" id="peg-start-pos">START</button>
+                <div class="dropdown-menu" id="start-menu">
+                    <!-- Filled dynamically based on board type -->
+                </div>
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button class="btn btn-secondary" id="peg-undo-btn">Undo</button>
+            <button class="btn btn-secondary" id="peg-redo-btn">Redo</button>
+            <button class="btn btn-secondary" id="peg-max-score-btn">Max Score</button>
+            <button class="btn btn-secondary" id="peg-autosolve-btn">Autosolve</button>
+            <button class="btn btn-primary" id="peg-new-game-btn">New Game</button>
+        </div>
+    </div>
+
+    <div class="win-overlay" id="peg-win-overlay"></div>
+    <div class="win-message" id="peg-win-message">
+        <div class="win-content">
+            <div class="win-emoji" id="win-emoji">🎉</div>
+            <h2 class="win-achievement" id="win-achievement">Achievement</h2>
+            <div class="win-stats">
+                <div class="win-stat">
+                    <span class="win-stat-value" id="win-pegs">1</span>
+                    <span class="win-stat-label">Pegs Left</span>
+                </div>
+                <div class="win-stat">
+                    <span class="win-stat-value" id="win-time">0:00</span>
+                    <span class="win-stat-label">Time</span>
+                </div>
+            </div>
+            <p class="win-tagline" id="win-tagline">Tagline here</p>
+            <div class="win-easter-egg" id="win-easter-egg" style="display: none;">🎲 Lucky! You got the Cracker Barrel rating!</div>
+            <div class="win-buttons">
+                <button class="btn btn-new" id="win-new-game-btn">New Game</button>
+                <button class="btn btn-close" id="win-close-btn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            const pegSolitaire = (function() {
+                // Production mode - set to false for debugging
+                const PRODUCTION = true;
+                const DEBUG_MOVES = !PRODUCTION && false;
+
+                // Game state
+                let board = [];
+                let selectedPeg = null;
+                let history = [];
+                let historyIndex = -1;
+                let startTime = null;
+                let timerInterval = null;
+                let firstMoveMade = false;
+                let currentTheme = 'sapphire';
+                let boardType = 'triangular';
+                let startPosition = 'center';
+                let autoSolveInterval = null;
+                let isAutoSolving = false;
+                let isSolverRunning = false;
+                let allTimeouts = new Set();
+                let renderQueue = [];
+                let animationFrame = null;
+                let eventListenersSetup = false;
+
+                const themes = ['sapphire', 'ocean', 'mint', 'forest', 'sunset', 'lavender', 'cherry', 'slate', 'honey'];
+
+                // Board configurations
+                const boardConfigs = {
+                    triangular: {
+                        size: 15,
+                        totalPegs: 14,
+                        layout: [
+                            [0],
+                            [1, 2],
+                            [3, 4, 5],
+                            [6, 7, 8, 9],
+                            [10, 11, 12, 13, 14]
+                        ],
+                        startPositions: {
+                            center: 4,
+                            corner: 0,
+                            edge: 2
+                        },
+                        jumps: {
+                            0: [[1, 3], [2, 5]],
+                            1: [[3, 6], [4, 8]],
+                            2: [[4, 7], [5, 9]],
+                            3: [[1, 0], [4, 5], [6, 10], [7, 12]],
+                            4: [[7, 11], [8, 13]],
+                            5: [[2, 0], [4, 3], [8, 12], [9, 14]],
+                            6: [[3, 1], [7, 8]],
+                            7: [[4, 2], [8, 9]],
+                            8: [[4, 1], [7, 6]],
+                            9: [[5, 2], [8, 7]],
+                            10: [[6, 3], [11, 12]],
+                            11: [[7, 4], [12, 13]],
+                            12: [[7, 3], [8, 5], [11, 10], [13, 14]],
+                            13: [[8, 4], [12, 11]],
+                            14: [[9, 5], [13, 12]]
+                        },
+                        nullClass: true
+                    },
+                    english: {
+                        size: 33,
+                        totalPegs: 32,
+                        layout: [
+                            [null, null, 0, 1, 2, null, null],
+                            [null, null, 3, 4, 5, null, null],
+                            [6, 7, 8, 9, 10, 11, 12],
+                            [13, 14, 15, 16, 17, 18, 19],
+                            [20, 21, 22, 23, 24, 25, 26],
+                            [null, null, 27, 28, 29, null, null],
+                            [null, null, 30, 31, 32, null, null]
+                        ],
+                        startPositions: {
+                            center: 16,
+                            corner: 0,
+                            edge: 1
+                        },
+                        jumps: {},
+                        nullClass: true
+                    },
+                    french: {
+                        size: 37,
+                        totalPegs: 36,
+                        layout: [
+                            [null, null, 0, 1, 2, null, null],
+                            [null, 3, 4, 5, 6, 7, null],
+                            [8, 9, 10, 11, 12, 13, 14],
+                            [15, 16, 17, 18, 19, 20, 21],
+                            [22, 23, 24, 25, 26, 27, 28],
+                            [null, 29, 30, 31, 32, 33, null],
+                            [null, null, 34, 35, 36, null, null]
+                        ],
+                        startPositions: {
+                            center: 18,
+                            offset: 11,
+                            corner: 0
+                        },
+                        jumps: {},
+                        nullClass: false,
+                        solvableStarts: [0, 1, 2, 11, 18, 19, 20, 34, 35, 36] // Only 10 solvable positions
+                    },
+                    diamond: {
+                        size: 41,
+                        totalPegs: 40,
+                        layout: [
+                            [null, null, null, 0, null, null, null],
+                            [null, null, 1, 2, 3, null, null],
+                            [null, 4, 5, 6, 7, 8, null],
+                            [9, 10, 11, 12, 13, 14, 15],
+                            [16, 17, 18, 19, 20, 21, 22],
+                            [23, 24, 25, 26, 27, 28, 29],
+                            [null, 30, 31, 32, 33, 34, null],
+                            [null, null, 35, 36, 37, null, null],
+                            [null, null, null, 38, null, null, null],
+                            [null, null, null, 39, null, null, null],
+                            [null, null, null, 40, null, null, null]
+                        ],
+                        startPositions: {
+                            center: 19,
+                            top: 0,
+                            corner: 9
+                        },
+                        jumps: {},
+                        nullClass: false,
+                        solvableStarts: [0, 1, 3, 9, 15, 19, 23, 29, 38, 39, 40] // Only 12 solvable positions
+                    },
+                    wiegleb: {
+                        size: 45,
+                        totalPegs: 44,
+                        layout: [
+                            [0, 1, 2, 3, 4, 5, 6],
+                            [7, 8, 9, 10, 11, 12, 13],
+                            [14, 15, 16, 17, 18, 19, 20],
+                            [21, 22, 23, 24, 25, 26, 27],
+                            [28, 29, 30, 31, 32, 33, 34],
+                            [35, 36, 37, 38, 39, 40, 41],
+                            [null, null, 42, 43, 44, null, null]
+                        ],
+                        startPositions: {
+                            center: 24,
+                            corner: 0,
+                            edge: 3
+                        },
+                        jumps: {},
+                        nullClass: true,
+                        unsolvableStarts: [4] // e1-complement is unsolvable
+                    },
+                    asymmetrical: {
+                        size: 20,
+                        totalPegs: 19,
+                        layout: [
+                            [0, 1, 2],
+                            [3, 4, 5],
+                            [6, 7],
+                            [8, 9],
+                            [10, 11, 12, 13, 14],
+                            [15, 16, 17, 18, 19]
+                        ],
+                        startPositions: {
+                            center: 9,
+                            corner: 0,
+                            bottom: 17
+                        },
+                        jumps: {
+                            // Row 0 (0, 1, 2)
+                            0: [[1, 2], [3, 6]], // right to 2, diagonal down-right to 6
+                            1: [], // center positions can't jump
+                            2: [[1, 0], [5, 7]], // left to 0, diagonal down-left to 7
+
+                            // Row 1 (3, 4, 5)
+                            3: [[4, 5], [6, 8]], // right to 5, diagonal down-right to 8
+                            4: [], // center positions can't jump
+                            5: [[4, 3], [7, 9]], // left to 3, diagonal down-left to 9
+
+                            // Row 2 (6, 7)
+                            6: [[3, 0], [7, 9], [8, 10]], // diagonal up-left to 0, diagonal right to 9, down to 10
+                            7: [[5, 2], [6, 8], [9, 11]], // diagonal up-right to 2, left to 8, down to 11
+
+                            // Row 3 (8, 9)
+                            8: [[6, 3], [9, 11], [10, 12]], // diagonal up-left to 3, diagonal right to 11, down to 12
+                            9: [[7, 5], [8, 10], [11, 13]], // diagonal up-right to 5, left to 10, diagonal down-right to 13
+
+                            // Row 4 (10, 11, 12, 13, 14)
+                            10: [[11, 12], [8, 6]], // right to 12, up to 6
+                            11: [[12, 13], [9, 7]], // right to 13, diagonal up to 7
+                            12: [[11, 10], [13, 14], [8, 6]], // left to 10, right to 14, diagonal up-left to 6
+                            13: [[12, 11], [9, 7]], // left to 11, diagonal up-left to 7
+                            14: [[13, 12], [9, 7]], // left to 12, diagonal up to 7
+
+                            // Row 5 (15, 16, 17, 18, 19)
+                            15: [[16, 17]], // right to 17
+                            16: [[17, 18]], // right to 18
+                            17: [[16, 15], [18, 19]], // left to 15, right to 19
+                            18: [[17, 16]], // left to 16
+                            19: [[18, 17]] // left to 17
+                        },
+                        nullClass: false // This board might not be null-class due to its asymmetry
+                    }
+                };
+
+                // Utility function for safe console logging
+                function log(...args) {
+                    if (DEBUG_MOVES && typeof console !== 'undefined' && console.log) {
+                        console.log('[PegSolitaire]', ...args);
+                    }
+                }
+
+                function error(...args) {
+                    if (!PRODUCTION && typeof console !== 'undefined' && console.error) {
+                        console.error('[PegSolitaire]', ...args);
+                    }
+                }
+
+                // Generate jump tables for grid-based boards
+                function generateJumps(layout) {
+                    const jumps = {};
+                    const positions = [];
+
+                    for (let row = 0; row < layout.length; row++) {
+                        for (let col = 0; col < layout[row].length; col++) {
+                            if (layout[row][col] !== null) {
+                                positions[layout[row][col]] = { row, col };
+                            }
+                        }
+                    }
+
+                    for (let i = 0; i < positions.length; i++) {
+                        if (!positions[i]) continue;
+
+                        jumps[i] = [];
+                        const { row, col } = positions[i];
+
+                        const directions = [
+                            { dr: -2, dc: 0 },
+                            { dr: 2, dc: 0 },
+                            { dr: 0, dc: -2 },
+                            { dr: 0, dc: 2 }
+                        ];
+
+                        for (const { dr, dc } of directions) {
+                            const newRow = row + dr;
+                            const newCol = col + dc;
+                            const midRow = row + dr / 2;
+                            const midCol = col + dc / 2;
+
+                            if (newRow >= 0 && newRow < layout.length &&
+                                newCol >= 0 && newCol < layout[newRow].length &&
+                                layout[newRow][newCol] !== null &&
+                                layout[midRow] && layout[midRow][midCol] !== null) {
+
+                                const over = layout[midRow][midCol];
+                                const to = layout[newRow][newCol];
+                                jumps[i].push([over, to]);
+                            }
+                        }
+                    }
+
+                    return jumps;
+                }
+
+                // Initialize jump tables for grid boards
+                boardConfigs.english.jumps = generateJumps(boardConfigs.english.layout);
+                boardConfigs.french.jumps = generateJumps(boardConfigs.french.layout);
+                boardConfigs.diamond.jumps = generateJumps(boardConfigs.diamond.layout);
+                boardConfigs.wiegleb.jumps = generateJumps(boardConfigs.wiegleb.layout);
+                // Asymmetrical board uses manually defined jumps due to irregular layout
+
+                // Enhanced timeout management
+                function addTimeout(fn, delay) {
+                    const timeoutId = setTimeout(() => {
+                        allTimeouts.delete(timeoutId);
+                        try {
+                            fn();
+                        } catch (e) {
+                            error('Timeout error:', e);
+                        }
+                    }, delay);
+                    allTimeouts.add(timeoutId);
+                    return timeoutId;
+                }
+
+                function clearAllTimeouts() {
+                    allTimeouts.forEach(id => {
+                        try {
+                            clearTimeout(id);
+                        } catch (e) {
+                            // Ignore errors from already cleared timeouts
+                        }
+                    });
+                    allTimeouts.clear();
+                }
+
+                // Enhanced render queue management
+                function queueRender(fn) {
+                    renderQueue.push(fn);
+                    if (!animationFrame) {
+                        animationFrame = requestAnimationFrame(() => {
+                            const queue = renderQueue.slice();
+                            renderQueue = [];
+                            animationFrame = null;
+                            queue.forEach(fn => {
+                                try {
+                                    fn();
+                                } catch (e) {
+                                    error('Render error:', e);
+                                }
+                            });
+                        });
+                    }
+                }
+
+                // Enhanced stopAutoSolve with complete cleanup
+                function stopAutoSolve() {
+                    log('stopAutoSolve called. isAutoSolving:', isAutoSolving);
+
+                    const wasAutoSolving = isAutoSolving;
+                    isAutoSolving = false;
+
+                    clearAllTimeouts();
+
+                    if (autoSolveInterval) {
+                        clearTimeout(autoSolveInterval);
+                        autoSolveInterval = null;
+                    }
+
+                    if (wasAutoSolving) {
+                        selectedPeg = null;
+                    }
+
+                    const button = getCachedElement('peg-autosolve-btn');
+                    if (button && !isSolverRunning) {
+                        const progressContainer = button.querySelector('.btn-progress-container');
+                        const progressBar = button.querySelector('.progress-bar');
+                        if (progressContainer) progressContainer.remove();
+                        if (progressBar) progressBar.remove();
+                        button.textContent = 'Autosolve';
+                        button.disabled = false;
+                    }
+
+                    updateButtons();
+                    if (wasAutoSolving) {
+                        queueRender(() => renderBoard());
+                    }
+
+                    log('Auto-solve stopped');
+                }
+
+                // Global error handler
+                if (!PRODUCTION) {
+                    window.addEventListener('error', function(e) {
+                        if (e.error && e.filename && e.filename.includes('peg-solitaire')) {
+                            error('Game Error:', e.error);
+                            if (isAutoSolving) {
+                                stopAutoSolve();
+                                showMessage('Error', 'An error occurred.', '#ef4444');
+                            }
+                            e.preventDefault();
+                        }
+                    });
+                }
+
+                // Cleanup function for page unload
+                window.addEventListener('beforeunload', () => {
+                    stopAutoSolve();
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                    }
+                    clearAllTimeouts();
+                    if (animationFrame) {
+                        cancelAnimationFrame(animationFrame);
+                        animationFrame = null;
+                    }
+                });
+
+                function initBoard() {
+                    // Clear cached elements for fresh references
+                    cachedElements.clear();
+
+                    const config = boardConfigs[boardType];
+                    board = new Array(config.size).fill(true);
+
+                    const emptyPos = config.startPositions[startPosition] || config.startPositions.center;
+                    board[emptyPos] = false;
+
+                    // Check if this starting position is solvable for boards with restrictions
+                    if (config.solvableStarts && !config.solvableStarts.includes(emptyPos)) {
+                        showMessage('Warning', 'This starting position may not lead to a solvable game. Consider choosing a different starting position.', '#f59e0b');
+                    }
+
+                    if (config.unsolvableStarts && config.unsolvableStarts.includes(emptyPos)) {
+                        showMessage('Warning', 'This starting position has been proven to be unsolvable.', '#ef4444');
+                    }
+
+                    selectedPeg = null;
+                    history = [];
+                    historyIndex = -1;
+                    firstMoveMade = false;
+                    startTime = null;
+
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                    }
+
+                    const timerEl = getCachedElement('peg-timer');
+                    if (timerEl) timerEl.textContent = '0:00';
+
+                    const gameContainer = getCachedElement('peg-solitaire-game');
+                    if (gameContainer) {
+                        gameContainer.classList.remove('board-large', 'board-xlarge');
+                        if (boardType === 'english' || boardType === 'french' || boardType === 'asymmetrical') {
+                            gameContainer.classList.add('board-xlarge');
+                        } else if (config.size > 20) {
+                            gameContainer.classList.add('board-large');
+                        }
+                    }
+
+                    saveState();
+                    updateStats();
+                    queueRender(() => renderBoard());
+                }
+
+                function startTimer() {
+                    if (!firstMoveMade && !startTime) {
+                        firstMoveMade = true;
+                        startTime = Date.now();
+
+                        if (timerInterval) {
+                            clearInterval(timerInterval);
+                        }
+
+                        timerInterval = setInterval(() => {
+                            if (!startTime) return;
+
+                            const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                            const minutes = Math.floor(elapsed / 60);
+                            const seconds = elapsed % 60;
+                            const timerElement = getCachedElement('peg-timer');
+
+                            if (timerElement) {
+                                timerElement.textContent =
+                                    `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                            }
+                        }, 100);
+                    }
+                }
+
+                let renderPending = false;
+
+                function renderBoard() {
+                    if (renderPending) return;
+                    renderPending = true;
+
+                    const boardElement = getCachedElement('peg-board');
+                    if (!boardElement) {
+                        renderPending = false;
+                        return;
+                    }
+
+                    boardElement.innerHTML = '';
+
+                    const config = boardConfigs[boardType];
+
+                    config.layout.forEach((row) => {
+                        const rowElement = document.createElement('div');
+                        rowElement.className = 'board-row';
+
+                        row.forEach(index => {
+                            if (index === null) {
+                                const spacer = document.createElement('div');
+                                spacer.style.width = config.size > 33 ? '56px' : '68px';
+                                spacer.style.height = config.size > 33 ? '56px' : '68px';
+                                rowElement.appendChild(spacer);
+                            } else {
+                                const hole = document.createElement('div');
+                                hole.className = 'hole';
+                                hole.dataset.index = index;
+
+                                if (isAutoSolving || isSolverRunning) {
+                                    hole.style.cursor = 'not-allowed';
+                                } else {
+                                    hole.style.cursor = 'pointer';
+                                }
+
+                                if (board[index]) {
+                                    const peg = document.createElement('div');
+                                    peg.className = 'peg';
+                                    if (selectedPeg === index) {
+                                        peg.classList.add('selected');
+                                    }
+                                    hole.appendChild(peg);
+                                } else if (selectedPeg !== null) {
+                                    if (isValidMove(selectedPeg, index)) {
+                                        hole.classList.add('valid-move');
+                                    }
+                                }
+
+                                hole.addEventListener('click', () => handleClick(index));
+
+                                // Add touch event handling for better mobile experience
+                                let touchStartTime = 0;
+                                hole.addEventListener('touchstart', (e) => {
+                                    e.preventDefault();
+                                    touchStartTime = Date.now();
+                                }, { passive: false });
+
+                                hole.addEventListener('touchend', (e) => {
+                                    e.preventDefault();
+                                    const touchDuration = Date.now() - touchStartTime;
+                                    if (touchDuration < 500) { // Prevent accidental long presses
+                                        handleClick(index);
+                                    }
+                                }, { passive: false });
+                                rowElement.appendChild(hole);
+                            }
+                        });
+
+                        boardElement.appendChild(rowElement);
+                    });
+
+                    updateButtons();
+                    renderPending = false;
+                }
+
+                let lastClickTime = 0;
+                const CLICK_DEBOUNCE = 100;
+
+                function handleClick(index) {
+                    const now = Date.now();
+                    if (now - lastClickTime < CLICK_DEBOUNCE) {
+                        return;
+                    }
+                    lastClickTime = now;
+
+                    if (isAutoSolving) {
+                        log('Click ignored during auto-solve');
+                        return;
+                    }
+
+                    if (isSolverRunning) {
+                        log('Click ignored while solver is running');
+                        return;
+                    }
+
+                    // Prevent accidental clicks on mobile
+                    if ('ontouchstart' in window && event.type === 'click') {
+                        // Touch events are handled separately
+                        return;
+                    }
+
+                    if (board[index]) {
+                        if (selectedPeg === index) {
+                            selectedPeg = null;
+                        } else {
+                            selectedPeg = index;
+                        }
+                    } else if (selectedPeg !== null && isValidMove(selectedPeg, index)) {
+                        if (makeMove(selectedPeg, index)) {
+                            queueRender(() => renderBoard());
+                            return;
+                        }
+                    }
+                    queueRender(() => renderBoard());
+                }
+
+                function getValidMoves(index, boardState = null) {
+                    const currentBoard = boardState || board;
+                    const config = boardConfigs[boardType];
+                    const jumps = config.jumps[index] || [];
+                    const validMoves = [];
+
+                    if (!currentBoard[index]) return validMoves;
+
+                    for (const [over, to] of jumps) {
+                        if (currentBoard[over] && !currentBoard[to]) {
+                            validMoves.push(to);
+                        }
+                    }
+
+                    return validMoves;
+                }
+
+                function isValidMove(from, to) {
+                    if (!board[from] || board[to]) return false;
+
+                    const validMoves = getValidMoves(from);
+                    return validMoves.includes(to);
+                }
+
+                function validateMove(from, to, jumpedPeg, boardState = null) {
+                    const currentBoard = boardState || board;
+                    if (!currentBoard[from]) return `Invalid source position`;
+                    if (currentBoard[to]) return `Target position occupied`;
+                    if (jumpedPeg === null) return `Invalid jump`;
+                    if (!currentBoard[jumpedPeg]) return `No peg to jump`;
+                    return null;
+                }
+
+                function makeMove(from, to, skipValidation = false) {
+                    log(`Attempting move: ${from} to ${to}`);
+
+                    if (typeof from !== 'number' || typeof to !== 'number' ||
+                        from < 0 || to < 0 || from >= board.length || to >= board.length) {
+                        error('Invalid move parameters:', from, to);
+                        return false;
+                    }
+
+                    const jumpedPeg = getJumpedPeg(from, to);
+
+                    if (!skipValidation) {
+                        const moveError = validateMove(from, to, jumpedPeg);
+                        if (moveError) {
+                            if (!isAutoSolving) {
+                                error(`Invalid move: ${moveError}`);
+                            }
+                            if (isAutoSolving) {
+                                showMessage('Error', 'Invalid move detected.', '#ef4444');
+                                stopAutoSolve();
+                            }
+                            return false;
+                        }
+                    }
+
+                    if (!firstMoveMade) {
+                        startTimer();
+                    }
+
+                    board[from] = false;
+                    board[jumpedPeg] = false;
+                    board[to] = true;
+                    selectedPeg = null;
+
+                    log(`Move successful. Jumped peg: ${jumpedPeg}`);
+
+                    history = history.slice(0, historyIndex + 1);
+                    saveState();
+                    updateStats();
+
+                    queueRender(() => {
+                        checkGameEnd();
+                    });
+
+                    return true;
+                }
+
+                function saveState() {
+                    history.push({
+                        board: [...board],
+                        time: startTime ? Date.now() - startTime : 0
+                    });
+                    historyIndex++;
+                }
+
+                function undo() {
+                    if (historyIndex > 0) {
+                        stopAutoSolve();
+                        isSolverRunning = false;
+                        historyIndex--;
+                        board = [...history[historyIndex].board];
+                        selectedPeg = null;
+                        updateStats();
+                        queueRender(() => renderBoard());
+                    }
+                }
+
+                function redo() {
+                    if (historyIndex < history.length - 1) {
+                        stopAutoSolve();
+                        isSolverRunning = false;
+                        historyIndex++;
+                        board = [...history[historyIndex].board];
+                        selectedPeg = null;
+                        updateStats();
+                        queueRender(() => renderBoard());
+                    }
+                }
+
+                // Cache frequently accessed DOM elements
+                const cachedElements = new Map();
+
+                function getCachedElement(id) {
+                    if (!cachedElements.has(id)) {
+                        const element = document.getElementById(id);
+                        if (element) {
+                            cachedElements.set(id, element);
+                        }
+                    }
+                    return cachedElements.get(id);
+                }
+
+                function updateStats() {
+                    const config = boardConfigs[boardType];
+                    const remaining = board.filter(peg => peg).length;
+                    const removed = config.totalPegs - remaining;
+
+                    const remainingEl = getCachedElement('peg-remaining');
+                    const collectedEl = getCachedElement('peg-collected');
+
+                    if (remainingEl) remainingEl.textContent = remaining;
+                    if (collectedEl) collectedEl.textContent = removed;
+
+                    const indicator = getCachedElement('peg-indicator');
+                    if (!indicator) return;
+
+                    indicator.innerHTML = '';
+
+                    const indicatorCount = Math.min(config.totalPegs, 32);
+                    for (let i = 0; i < indicatorCount; i++) {
+                        const dot = document.createElement('div');
+                        dot.className = 'peg-dot';
+                        if (i >= removed * (indicatorCount / config.totalPegs)) {
+                            dot.classList.add('empty');
+                        }
+                        indicator.appendChild(dot);
+                    }
+                }
+
+                // Known optimal solutions for specific board configurations
+                const knownSolutions = {
+                    triangular: {
+                        center: [
+                            [5, 0], [12, 3], [9, 7], [6, 8], [0, 5], [3, 12],
+                            [11, 13], [14, 12], [1, 6], [7, 9], [10, 8], [13, 11], [12, 7]
+                        ],
+                        corner: [
+                            [5, 2], [7, 4], [2, 0], [9, 7], [11, 4],
+                            [12, 5], [4, 2], [14, 12], [2, 7], [13, 11],
+                            [10, 12], [12, 5], [6, 11]
+                        ],
+                        edge: [
+                            [0, 3], [5, 2], [8, 4], [3, 1], [10, 3],
+                            [1, 6], [12, 5], [3, 8], [13, 11], [6, 8],
+                            [14, 12], [11, 13], [9, 7]
+                        ]
+                    },
+                    english: {
+                        center: [
+                            [18, 16], [31, 23], [16, 28], [33, 25], [25, 23], [22, 24],
+                            [13, 23], [23, 25], [10, 24], [24, 22], [21, 23], [7, 21],
+                            [21, 23], [3, 11], [11, 25], [25, 23], [20, 22], [6, 20],
+                            [20, 22], [1, 3], [3, 11], [11, 9], [9, 23], [23, 37],
+                            [26, 24], [37, 23], [30, 32], [27, 29], [32, 30], [29, 31],
+                            [12, 26]
+                        ]
+                    }
+                };
+
+                // Optimized solver with better pruning and memory management
+                function findOptimalSolution(boardState = null, memo = new Map(), onProgress = null, depth = 0, maxDepth = 50) {
+                    const currentBoard = boardState || [...board];
+                    const boardKey = currentBoard.join('');
+
+                    const memoryLimit = boardType === 'english' || boardType === 'french' ? 5000 : 10000;
+                    if (memo.size > memoryLimit) {
+                        const entriesToKeep = memoryLimit / 2;
+                        const entries = Array.from(memo.entries());
+                        memo.clear();
+                        entries.slice(-entriesToKeep).forEach(([key, value]) => memo.set(key, value));
+                    }
+
+                    if (memo.has(boardKey)) {
+                        return memo.get(boardKey);
+                    }
+
+                    const remainingPegs = currentBoard.filter(peg => peg).length;
+
+                    if (remainingPegs === 1) {
+                        memo.set(boardKey, { pegs: 1, path: [] });
+                        return { pegs: 1, path: [] };
+                    }
+
+                    if (depth > maxDepth) {
+                        memo.set(boardKey, { pegs: remainingPegs, path: [] });
+                        return { pegs: remainingPegs, path: [] };
+                    }
+
+                    const moves = [];
+                    const config = boardConfigs[boardType];
+
+                    for (let i = 0; i < currentBoard.length; i++) {
+                        if (!currentBoard[i]) continue;
+
+                        const jumps = config.jumps[i] || [];
+                        for (const [over, to] of jumps) {
+                            if (currentBoard[over] && !currentBoard[to]) {
+                                moves.push([i, to]);
+                            }
+                        }
+                    }
+
+                    if (moves.length === 0) {
+                        const result = { pegs: remainingPegs, path: [] };
+                        memo.set(boardKey, result);
+                        return result;
+                    }
+
+                    if (onProgress && memo.size % 100 === 0) {
+                        onProgress(memo.size, remainingPegs);
+                    }
+
+                    if (moves.length > 1) {
+                        moves.sort((a, b) => {
+                            const [fromA, toA] = a;
+                            const [fromB, toB] = b;
+                            const jumpA = getJumpedPeg(fromA, toA);
+                            const jumpB = getJumpedPeg(fromB, toB);
+
+                            let scoreA = 0, scoreB = 0;
+
+                            const neighborsA = getValidMoves(jumpA, currentBoard).length;
+                            const neighborsB = getValidMoves(jumpB, currentBoard).length;
+                            scoreA += (2 - neighborsA);
+                            scoreB += (2 - neighborsB);
+
+                            if (boardType === 'english' || boardType === 'french') {
+                                const centerIndex = boardType === 'english' ? 16 : 18;
+                                if (jumpA === centerIndex) scoreA += 3;
+                                if (jumpB === centerIndex) scoreB += 3;
+                            }
+
+                            return scoreB - scoreA;
+                        });
+                    }
+
+                    let bestResult = { pegs: remainingPegs, path: [] };
+
+                    for (const [from, to] of moves) {
+                        const newBoard = [...currentBoard];
+                        const jumpedPeg = getJumpedPeg(from, to);
+
+                        newBoard[from] = false;
+                        newBoard[jumpedPeg] = false;
+                        newBoard[to] = true;
+
+                        const result = findOptimalSolution(newBoard, memo, onProgress, depth + 1, maxDepth);
+
+                        if (result && result.pegs < bestResult.pegs) {
+                            bestResult = {
+                                pegs: result.pegs,
+                                path: [[from, to], ...result.path]
+                            };
+
+                            if (result.pegs === 1) {
+                                break;
+                            }
+                        }
+                    }
+
+                    memo.set(boardKey, bestResult);
+                    return bestResult;
+                }
+
+                // Async solver wrapper with better progress reporting
+                async function findOptimalSolutionAsync(boardState = null) {
+                    return new Promise((resolve, reject) => {
+                        const startTime = Date.now();
+                        const timeout = boardType === 'triangular' ? 5000 :
+                                      boardType === 'english' || boardType === 'french' ? 15000 : 10000;
+                        const memo = new Map();
+                        let lastUpdate = Date.now();
+                        let bestSoFar = (boardState || board).filter(peg => peg).length;
+                        let bestSolution = null;
+
+                        const remainingPegs = (boardState || board).filter(peg => peg).length;
+                        const maxDepth = boardType === 'triangular' ? 20 :
+                                       boardType === 'english' || boardType === 'french' ? 15 :
+                                       remainingPegs <= 10 ? 15 :
+                                       remainingPegs <= 20 ? 20 : 25;
+
+                        const timeoutId = addTimeout(() => {
+                            log('Solver timeout reached');
+                            if (bestSolution) {
+                                resolve(bestSolution);
+                            } else {
+                                resolve({ pegs: remainingPegs, path: [] });
+                            }
+                        }, timeout);
+
+                        try {
+                            const quickResult = findOptimalSolution(boardState, memo, (count, pegs) => {
+                                const now = Date.now();
+                                if (now - lastUpdate > 100) {
+                                    lastUpdate = now;
+                                    if (pegs < bestSoFar) {
+                                        bestSoFar = pegs;
+                                        bestSolution = quickResult;
+                                    }
+                                    updateSolverProgress(count, bestSoFar);
+                                }
+
+                                if (now - startTime > timeout - 500) {
+                                    throw new Error('Timeout approaching');
+                                }
+                            }, 0, maxDepth);
+
+                            clearTimeout(timeoutId);
+                            allTimeouts.delete(timeoutId);
+
+                            if (quickResult && quickResult.path.length > 0) {
+                                resolve(quickResult);
+                                return;
+                            }
+
+                            if (boardType === 'english' || boardType === 'french') {
+                                resolve(quickResult || { pegs: remainingPegs, path: [] });
+                                return;
+                            }
+
+                            const deepResult = findOptimalSolution(boardState, memo, (count, pegs) => {
+                                const now = Date.now();
+                                if (now - lastUpdate > 100) {
+                                    lastUpdate = now;
+                                    if (pegs < bestSoFar) {
+                                        bestSoFar = pegs;
+                                        bestSolution = deepResult;
+                                    }
+                                    updateSolverProgress(count, bestSoFar);
+                                }
+                            }, 0, maxDepth + 10);
+
+                            resolve(deepResult);
+                        } catch (e) {
+                            clearTimeout(timeoutId);
+                            allTimeouts.delete(timeoutId);
+                            log('Solver error:', e.message);
+                            if (bestSolution) {
+                                resolve(bestSolution);
+                            } else {
+                                resolve({ pegs: remainingPegs, path: [] });
+                            }
+                        }
+                    });
+                }
+
+                function updateSolverProgress(statesExplored, bestPegs) {
+                    const button = getCachedElement('peg-autosolve-btn');
+                    if (!button) return;
+
+                    const progressBar = button.querySelector('.progress-bar');
+                    const progressText = button.querySelector('.progress-text');
+
+                    if (progressBar && progressText) {
+                        const progress = Math.min(100, Math.log10(statesExplored + 1) * 25);
+                        progressBar.style.width = `${progress}%`;
+
+                        if (boardType === 'triangular') {
+                            progressText.textContent = bestPegs !== undefined ?
+                                `Best: ${bestPegs} pegs` :
+                                `${Math.floor(statesExplored / 100) * 100}+ states`;
+                        } else {
+                            const stateCount = Math.floor(statesExplored / 1000);
+                            progressText.textContent = bestPegs !== undefined ?
+                                `${stateCount}k states • Best: ${bestPegs}` :
+                                `Exploring: ${stateCount}k states`;
+                        }
+                    }
+
+                    const maxButton = getCachedElement('peg-max-score-btn');
+                    if (maxButton) {
+                        const maxProgressBar = maxButton.querySelector('.progress-bar');
+                        const maxProgressText = maxButton.querySelector('.progress-text');
+
+                        if (maxProgressBar && maxProgressText) {
+                            const progress = Math.min(100, Math.log10(statesExplored + 1) * 25);
+                            maxProgressBar.style.width = `${progress}%`;
+
+                            if (boardType === 'triangular') {
+                                maxProgressText.textContent = `${Math.floor(statesExplored / 100) * 100}+ states`;
+                            } else {
+                                const stateCount = Math.floor(statesExplored / 1000);
+                                maxProgressText.textContent = `${stateCount}k states explored`;
+                            }
+                        }
+                    }
+                }
+
+                function getJumpedPeg(from, to) {
+                    const config = boardConfigs[boardType];
+                    const jumps = config.jumps[from] || [];
+
+                    for (const [over, target] of jumps) {
+                        if (target === to) {
+                            return over;
+                        }
+                    }
+                    return null;
+                }
+
+                function showMaxScore() {
+                    if (isSolverRunning) {
+                        showMessage('Please Wait', 'Solver is already running...', '#f59e0b');
+                        return;
+                    }
+
+                    clearAllTimeouts();
+
+                    const config = boardConfigs[boardType];
+                    const remainingPegs = board.filter(peg => peg).length;
+
+                    if (remainingPegs === config.totalPegs && knownSolutions[boardType] && knownSolutions[boardType][startPosition]) {
+                        showMessage('Perfect Game Possible!', 'From this starting position, you can achieve a perfect game with 1 peg remaining!', '#10b981');
+                        return;
+                    }
+
+                    isSolverRunning = true;
+
+                    const button = getCachedElement('peg-max-score-btn');
+                    if (!button) return;
+
+                    const originalText = button.textContent;
+                    const originalHTML = button.innerHTML;
+
+                    button.innerHTML = `
+                        <div class="progress-bar"></div>
+                        <div class="btn-progress-container">
+                            <span class="progress-text">Searching...</span>
+                        </div>
+                    `;
+
+                    button.disabled = true;
+                    updateButtons();
+
+                    findOptimalSolutionAsync().then(result => {
+                        if (result.pegs === 1) {
+                            showMessage('Perfect Game Still Possible!', `You can finish with ${result.pegs} peg remaining.`, '#10b981');
+                        } else {
+                            showMessage('Best Possible Outcome', `From the current position, the best result is ${result.pegs} pegs remaining.`, '#3b82f6');
+                        }
+                    }).catch(e => {
+                        showMessage('Calculation Error', 'Unable to calculate optimal solution.', '#ef4444');
+                    }).finally(() => {
+                        button.innerHTML = originalHTML;
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        isSolverRunning = false;
+                        updateButtons();
+                    });
+                }
+
+                function showMessage(title, text, color) {
+                    const message = document.createElement('div');
+                    message.style.cssText = `
+                        position: fixed;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        background: rgba(10, 10, 10, 0.95);
+                        backdrop-filter: blur(10px);
+                        padding: 30px 40px;
+                        border-radius: 16px;
+                        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), 0 0 40px ${color}40;
+                        text-align: center;
+                        z-index: 10001;
+                        border: 2px solid ${color}40;
+                        max-width: 400px;
+                        animation: messagePopIn 0.3s ease-out;
+                    `;
+
+                    message.innerHTML = `
+                        <h3 style="color: ${color}; font-size: 24px; margin: 0 0 10px 0;">${title}</h3>
+                        <p style="color: #ffffff; font-size: 16px; margin: 0; line-height: 1.5;">${text}</p>
+                    `;
+
+                    const style = document.createElement('style');
+                    style.textContent = `
+                        @keyframes messagePopIn {
+                            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+                            100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+                        }
+                    `;
+                    document.head.appendChild(style);
+
+                    document.body.appendChild(message);
+
+                    const removeTimeout = addTimeout(() => {
+                        message.style.opacity = '0';
+                        message.style.transform = 'translate(-50%, -50%) scale(0.9)';
+                        addTimeout(() => {
+                            message.remove();
+                            style.remove();
+                        }, 300);
+                    }, 3000);
+                }
+
+                function autoSolve() {
+                    log('autoSolve called. isAutoSolving:', isAutoSolving, 'isSolverRunning:', isSolverRunning);
+
+                    if (isAutoSolving) {
+                        log('Stopping auto-solve...');
+                        stopAutoSolve();
+                        return;
+                    }
+
+                    if (isSolverRunning) {
+                        showMessage('Please Wait', 'Solver is already running...', '#f59e0b');
+                        return;
+                    }
+
+                    const config = boardConfigs[boardType];
+                    const remainingPegs = board.filter(peg => peg).length;
+                    let solution = null;
+
+                    if (remainingPegs === config.totalPegs && knownSolutions[boardType] && knownSolutions[boardType][startPosition]) {
+                        solution = { path: knownSolutions[boardType][startPosition] };
+
+                        let testBoard = [...board];
+                        let validSolution = true;
+
+                        for (const [from, to] of solution.path) {
+                            if (!verifyMove(from, to, testBoard)) {
+                                validSolution = false;
+                                error(`Invalid move in known solution: ${from} to ${to}`);
+                                break;
+                            }
+                            const jumpedPeg = getJumpedPeg(from, to);
+                            testBoard[from] = false;
+                            testBoard[jumpedPeg] = false;
+                            testBoard[to] = true;
+                        }
+
+                        if (validSolution) {
+                            log('Using known optimal solution');
+                            startAutoSolving(solution);
+                            return;
+                        } else {
+                            error('Known solution is invalid, calculating new solution...');
+                            solution = null;
+                        }
+                    }
+
+                    isSolverRunning = true;
+
+                    const button = getCachedElement('peg-autosolve-btn');
+                    if (!button) return;
+
+                    const originalText = button.textContent;
+                    const originalHTML = button.innerHTML;
+
+                    button.innerHTML = `
+                        <div class="progress-bar"></div>
+                        <div class="btn-progress-container">
+                            <span class="progress-text">Finding solution...</span>
+                        </div>
+                    `;
+
+                    button.disabled = true;
+                    updateButtons();
+
+                    findOptimalSolutionAsync().then(result => {
+                        if (!isSolverRunning) {
+                            log('Solver was stopped before result');
+                            return;
+                        }
+
+                        if (!result || !result.path || result.path.length === 0) {
+                            if (!hasValidMoves()) {
+                                showMessage('No Moves Available', 'No more moves available from this position!', '#ef4444');
+                            } else if (boardType === 'english' || boardType === 'french') {
+                                showMessage('Complex Board', 'This board is too complex to solve quickly. Try making some moves manually first.', '#f59e0b');
+                            } else {
+                                showMessage('Solver Timeout', 'Unable to find optimal solution in time.', '#f59e0b');
+                            }
+                            button.innerHTML = originalHTML;
+                            button.textContent = originalText;
+                            button.disabled = false;
+                            isSolverRunning = false;
+                            updateButtons();
+                        } else {
+                            let testBoard = [...board];
+                            let validPath = true;
+
+                            for (const [from, to] of result.path) {
+                                if (!verifyMove(from, to, testBoard)) {
+                                    validPath = false;
+                                    error(`Invalid move in calculated solution: ${from} to ${to}`);
+                                    break;
+                                }
+                                const jumpedPeg = getJumpedPeg(from, to);
+                                testBoard[from] = false;
+                                testBoard[jumpedPeg] = false;
+                                testBoard[to] = true;
+                            }
+
+                            if (validPath) {
+                                button.innerHTML = '';
+                                button.textContent = 'Stop';
+                                button.disabled = false;
+                                isSolverRunning = false;
+                                updateButtons();
+                                log(`Starting autosolve with ${result.path.length} moves, final pegs: ${result.pegs}`);
+                                const startDelay = addTimeout(() => {
+                                    startAutoSolving(result);
+                                }, 100);
+                            } else {
+                                showMessage('Solution Error', 'Generated solution contains invalid moves.', '#ef4444');
+                                button.innerHTML = originalHTML;
+                                button.textContent = originalText;
+                                button.disabled = false;
+                                isSolverRunning = false;
+                                updateButtons();
+                            }
+                        }
+                    }).catch(e => {
+                        error('Solver error:', e);
+                        showMessage('Solver Error', 'An error occurred while finding the solution.', '#ef4444');
+                        button.innerHTML = originalHTML;
+                        button.textContent = originalText;
+                        button.disabled = false;
+                        isSolverRunning = false;
+                        updateButtons();
+                    });
+                }
+
+                function verifyMove(from, to, boardState = null) {
+                    const currentBoard = boardState || board;
+                    const jumpedPeg = getJumpedPeg(from, to);
+                    const err = validateMove(from, to, jumpedPeg, currentBoard);
+                    if (err) {
+                        log(`Move ${from} to ${to} invalid: ${err}`);
+                    }
+                    return !err;
+                }
+
+                function startAutoSolving(solution) {
+                    log(`Starting auto-solve with ${solution.path.length} moves`);
+
+                    stopAutoSolve();
+
+                    isAutoSolving = true;
+                    let moveIndex = 0;
+
+                    const button = getCachedElement('peg-autosolve-btn');
+                    if (button) {
+                        button.textContent = 'Stop';
+                        button.disabled = false;
+                    }
+                    updateButtons();
+
+                    const executeMove = () => {
+                        log(`executeMove called. moveIndex: ${moveIndex}, isAutoSolving: ${isAutoSolving}`);
+
+                        if (!isAutoSolving) {
+                            log('Auto-solve flag is false, stopping');
+                            return;
+                        }
+
+                        if (!hasValidMoves() && moveIndex < solution.path.length) {
+                            log('No valid moves but solution not complete - stopping');
+                            stopAutoSolve();
+                            checkGameEnd();
+                            return;
+                        }
+
+                        if (moveIndex >= solution.path.length) {
+                            log('All moves completed');
+                            stopAutoSolve();
+                            const endTimeout = addTimeout(() => {
+                                if (!hasValidMoves()) {
+                                    checkGameEnd();
+                                }
+                            }, 100);
+                            return;
+                        }
+
+                        const [from, to] = solution.path[moveIndex];
+                        log(`Move ${moveIndex + 1}/${solution.path.length}: ${from} to ${to}`);
+
+                        if (!verifyMove(from, to)) {
+                            error(`Invalid move: ${from} to ${to}`);
+                            showMessage('Solver Error', `Invalid move detected.`, '#ef4444');
+                            stopAutoSolve();
+                            return;
+                        }
+
+                        selectedPeg = from;
+                        queueRender(() => renderBoard());
+
+                        const moveTimeout = addTimeout(() => {
+                            if (!isAutoSolving) {
+                                log('Cancelled during move animation');
+                                return;
+                            }
+
+                            log(`Making move: ${from} to ${to}`);
+                            makeMove(from, to);
+                            queueRender(() => renderBoard());
+                            moveIndex++;
+
+                            const nextTimeout = addTimeout(executeMove, 800);
+                        }, 400);
+                    };
+
+                    const startTimeout = addTimeout(executeMove, 300);
+                    autoSolveInterval = startTimeout;
+
+                    const failsafeTimeout = addTimeout(() => {
+                        if (isAutoSolving) {
+                            error('Autosolve timeout - stopping');
+                            showMessage('Timeout', 'Autosolve took too long and was stopped.', '#ef4444');
+                            stopAutoSolve();
+                        }
+                    }, 120000);
+                }
+
+                function updateButtons() {
+                    const undoBtn = getCachedElement('peg-undo-btn');
+                    const redoBtn = getCachedElement('peg-redo-btn');
+                    const maxScoreBtn = getCachedElement('peg-max-score-btn');
+                    const autosolveBtn = getCachedElement('peg-autosolve-btn');
+
+                    if (undoBtn) undoBtn.disabled = historyIndex <= 0 || isAutoSolving || isSolverRunning;
+                    if (redoBtn) redoBtn.disabled = historyIndex >= history.length - 1 || isAutoSolving || isSolverRunning;
+                    if (maxScoreBtn) maxScoreBtn.disabled = isAutoSolving || isSolverRunning;
+
+                    if (autosolveBtn) {
+                        if (isAutoSolving) {
+                            autosolveBtn.disabled = false;
+                            autosolveBtn.textContent = 'Stop';
+                        } else if (isSolverRunning) {
+                            autosolveBtn.disabled = true;
+                        } else {
+                            const hasMovesAvailable = hasValidMoves();
+                            autosolveBtn.disabled = !hasMovesAvailable;
+                            autosolveBtn.textContent = 'Autosolve';
+                        }
+                    }
+
+                    log('updateButtons:', { isAutoSolving, isSolverRunning });
+                }
+
+                function hasValidMoves(boardState = null) {
+                    const currentBoard = boardState || board;
+
+                    for (let i = 0; i < currentBoard.length; i++) {
+                        if (currentBoard[i] && getValidMoves(i, currentBoard).length > 0) {
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+
+                let gameEndCheckPending = false;
+
+                function checkGameEnd() {
+                    if (gameEndCheckPending) return false;
+
+                    const remaining = board.filter(peg => peg).length;
+
+                    if (isAutoSolving) {
+                        stopAutoSolve();
+                    }
+
+                    if (hasValidMoves()) {
+                        return false;
+                    }
+
+                    gameEndCheckPending = true;
+
+                    const endMessageTimeout = addTimeout(() => {
+                        showEndMessage(remaining);
+                        gameEndCheckPending = false;
+                    }, 300);
+                    return true;
+                }
+
+                function getAchievement(pegsLeft) {
+                    // Scale achievements based on board size
+                    const config = boardConfigs[boardType];
+                    const totalPegs = config.totalPegs;
+                    const percentageLeft = (pegsLeft / totalPegs) * 100;
+
+                    // Special handling for triangular board (Cracker Barrel)
+                    if (boardType === 'triangular') {
+                        const useCrackerBarrel = Math.random() < 0.2;
+                        const triangularAchievements = {
+                            1: {
+                                rank: "Perfect",
+                                crackerBarrel: "Genius!",
+                                tagline: "Flawless finish, centre peg preferable.",
+                                emoji: "🏆",
+                                color: "#fbbf24"
+                            },
+                            2: {
+                                rank: "Superb",
+                                crackerBarrel: "Purty Smart",
+                                tagline: "Missed perfection by a single slip.",
+                                emoji: "⭐",
+                                color: "#10b981"
+                            },
+                            3: {
+                                rank: "Solid",
+                                crackerBarrel: "Just Plain Dumb",
+                                tagline: "Still beats the statistical average.",
+                                emoji: "✨",
+                                color: "#3b82f6"
+                            },
+                            4: {
+                                rank: "Rough",
+                                crackerBarrel: "Eg-no-ra-moose",
+                                tagline: "You stalled one peg shy of mid-board.",
+                                emoji: "🎯",
+                                color: "#8b5cf6"
+                            }
+                        };
+
+                        if (pegsLeft <= 4) {
+                            const achievement = triangularAchievements[pegsLeft];
+                            return {
+                                ...achievement,
+                                label: (useCrackerBarrel && achievement.crackerBarrel) ?
+                                       achievement.crackerBarrel : achievement.rank,
+                                isCrackerBarrel: useCrackerBarrel && achievement.crackerBarrel
+                            };
+                        }
+                    }
+
+                    // Scaled achievements for larger boards
+                    let achievement;
+
+                    if (totalPegs <= 20) {
+                        // Small boards (Triangular, Asymmetrical)
+                        if (pegsLeft === 1) {
+                            achievement = {
+                                rank: "Perfect",
+                                tagline: "Flawless execution!",
+                                emoji: "🏆",
+                                color: "#fbbf24"
+                            };
+                        } else if (pegsLeft <= 3) {
+                            achievement = {
+                                rank: "Excellent",
+                                tagline: "Nearly perfect play!",
+                                emoji: "⭐",
+                                color: "#10b981"
+                            };
+                        } else if (pegsLeft <= 5) {
+                            achievement = {
+                                rank: "Good",
+                                tagline: "Solid performance.",
+                                emoji: "✨",
+                                color: "#3b82f6"
+                            };
+                        } else {
+                            achievement = {
+                                rank: "Keep Trying",
+                                tagline: "Practice makes perfect.",
+                                emoji: "💫",
+                                color: "#ef4444"
+                            };
+                        }
+                    } else if (totalPegs <= 40) {
+                        // Medium boards (English, French)
+                        if (pegsLeft === 1) {
+                            achievement = {
+                                rank: "Perfect",
+                                tagline: "Mathematical mastery achieved!",
+                                emoji: "🏆",
+                                color: "#fbbf24"
+                            };
+                        } else if (pegsLeft <= 3) {
+                            achievement = {
+                                rank: "Excellent",
+                                tagline: "Outstanding strategic play!",
+                                emoji: "⭐",
+                                color: "#10b981"
+                            };
+                        } else if (pegsLeft <= 5) {
+                            achievement = {
+                                rank: "Very Good",
+                                tagline: "Impressive problem-solving!",
+                                emoji: "✨",
+                                color: "#3b82f6"
+                            };
+                        } else if (pegsLeft <= 8) {
+                            achievement = {
+                                rank: "Good",
+                                tagline: "Nice strategic thinking.",
+                                emoji: "🎯",
+                                color: "#8b5cf6"
+                            };
+                        } else if (pegsLeft <= 12) {
+                            achievement = {
+                                rank: "Fair",
+                                tagline: "Room for improvement.",
+                                emoji: "💫",
+                                color: "#ec4899"
+                            };
+                        } else {
+                            achievement = {
+                                rank: "Need Practice",
+                                tagline: "Keep analyzing your moves.",
+                                emoji: "🌟",
+                                color: "#ef4444"
+                            };
+                        }
+                    } else {
+                        // Large boards (Diamond, Wiegleb)
+                        if (pegsLeft <= 2) {
+                            achievement = {
+                                rank: "Master",
+                                tagline: "Exceptional mastery of complex patterns!",
+                                emoji: "🏆",
+                                color: "#fbbf24"
+                            };
+                        } else if (pegsLeft <= 5) {
+                            achievement = {
+                                rank: "Expert",
+                                tagline: "Superior analytical skills!",
+                                emoji: "⭐",
+                                color: "#10b981"
+                            };
+                        } else if (pegsLeft <= 9) {
+                            achievement = {
+                                rank: "Advanced",
+                                tagline: "Strong strategic performance!",
+                                emoji: "✨",
+                                color: "#3b82f6"
+                            };
+                        } else if (pegsLeft <= 14) {
+                            achievement = {
+                                rank: "Intermediate",
+                                tagline: "Good progress on a challenging board.",
+                                emoji: "🎯",
+                                color: "#8b5cf6"
+                            };
+                        } else if (pegsLeft <= 20) {
+                            achievement = {
+                                rank: "Beginner",
+                                tagline: "Learning the complexities.",
+                                emoji: "💫",
+                                color: "#ec4899"
+                            };
+                        } else {
+                            achievement = {
+                                rank: "Keep Trying",
+                                tagline: "Complex boards require patience.",
+                                emoji: "🌟",
+                                color: "#ef4444"
+                            };
+                        }
+                    }
+
+                    return {
+                        ...achievement,
+                        label: achievement.rank,
+                        isCrackerBarrel: false
+                    };
+                }
+
+                function showEndMessage(pegsLeft) {
+                    if (timerInterval) {
+                        clearInterval(timerInterval);
+                        timerInterval = null;
+                    }
+
+                    let timeString = '0:00';
+                    if (startTime) {
+                        const elapsed = Math.floor((Date.now() - startTime) / 1000);
+                        const minutes = Math.floor(elapsed / 60);
+                        const seconds = elapsed % 60;
+                        timeString = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+                    }
+
+                    const achievement = getAchievement(pegsLeft);
+
+                    const winMessage = getCachedElement('peg-win-message');
+                    const winOverlay = getCachedElement('peg-win-overlay');
+
+                    const emojiEl = getCachedElement('win-emoji');
+                    if (emojiEl) emojiEl.textContent = achievement.emoji;
+
+                    const achievementEl = getCachedElement('win-achievement');
+                    if (achievementEl) {
+                        achievementEl.textContent = achievement.label;
+                        achievementEl.style.color = achievement.color;
+                    }
+
+                    const pegsEl = getCachedElement('win-pegs');
+                    const timeEl = getCachedElement('win-time');
+                    if (pegsEl) pegsEl.textContent = pegsLeft;
+                    if (timeEl) timeEl.textContent = timeString;
+
+                    const taglineEl = getCachedElement('win-tagline');
+                    if (taglineEl) taglineEl.textContent = achievement.tagline;
+
+                    const easterEggEl = getCachedElement('win-easter-egg');
+                    if (easterEggEl) {
+                        easterEggEl.style.display = achievement.isCrackerBarrel ? 'block' : 'none';
+                    }
+
+                    if (winMessage) {
+                        winMessage.style.boxShadow = `0 20px 60px rgba(0, 0, 0, 0.8), 0 0 80px ${achievement.color}40`;
+                    }
+
+                    if (winOverlay) winOverlay.classList.add('show');
+                    if (winMessage) winMessage.classList.add('show');
+
+                    const focusTimeout = addTimeout(() => {
+                        const closeBtn = getCachedElement('win-close-btn');
+                        if (closeBtn) closeBtn.focus();
+                    }, 100);
+                }
+
+                function hideWinMessage() {
+                    stopAutoSolve();
+                    const winMessage = getCachedElement('peg-win-message');
+                    const winOverlay = getCachedElement('peg-win-overlay');
+                    if (winMessage) {
+                        winMessage.classList.remove('show');
+                        winMessage.style.boxShadow = '';
+                    }
+                    if (winOverlay) winOverlay.classList.remove('show');
+                }
+
+                function newGame() {
+                    hideWinMessage();
+                    stopAutoSolve();
+                    isSolverRunning = false;
+                    gameEndCheckPending = false;
+                    renderPending = false;
+
+                    const autoButton = getCachedElement('peg-autosolve-btn');
+                    if (autoButton) {
+                        const progressBar = autoButton.querySelector('.progress-bar');
+                        const progressContainer = autoButton.querySelector('.btn-progress-container');
+                        if (progressBar) progressBar.remove();
+                        if (progressContainer) progressContainer.remove();
+                        autoButton.textContent = 'Autosolve';
+                    }
+
+                    initBoard();
+                }
+
+                function setTheme(theme) {
+                    currentTheme = theme;
+                    const gameContainer = getCachedElement('peg-solitaire-game');
+                    if (gameContainer) {
+                        gameContainer.setAttribute('data-theme', theme);
+                    }
+                }
+
+                function setBoardType(type) {
+                    stopAutoSolve();
+                    isSolverRunning = false;
+
+                    const autoButton = getCachedElement('peg-autosolve-btn');
+                    if (autoButton) {
+                        const progressBar = autoButton.querySelector('.progress-bar');
+                        const progressContainer = autoButton.querySelector('.btn-progress-container');
+                        if (progressBar) progressBar.remove();
+                        if (progressContainer) progressContainer.remove();
+                        autoButton.textContent = 'Autosolve';
+                    }
+
+                    boardType = type;
+                    startPosition = 'center';
+                    updateStartPositions();
+                    newGame();
+                }
+
+                function setStartPosition(pos) {
+                    stopAutoSolve();
+                    startPosition = pos;
+                    newGame();
+                }
+
+                function updateStartPositions() {
+                    const config = boardConfigs[boardType];
+                    const menu = getCachedElement('start-menu');
+                    if (!menu) return;
+
+                    menu.innerHTML = '';
+
+                    Object.keys(config.startPositions).forEach(pos => {
+                        const item = document.createElement('div');
+                        item.className = 'dropdown-item';
+                        item.dataset.value = pos;
+                        item.textContent = pos.charAt(0).toUpperCase() + pos.slice(1);
+                        if (pos === startPosition) {
+                            item.classList.add('active');
+                        }
+                        item.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            setStartPosition(pos);
+                            const startPosBtn = getCachedElement('peg-start-pos');
+                            if (startPosBtn) startPosBtn.textContent = this.textContent.toUpperCase();
+
+                            const parentDropdown = this.closest('.dropdown');
+                            if (parentDropdown) {
+                                parentDropdown.classList.remove('open');
+                            }
+                            this.parentElement.style.display = 'none';
+
+                            document.querySelectorAll('#start-menu .dropdown-item').forEach(i => i.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                        menu.appendChild(item);
+                    });
+                }
+
+                function setupDropdowns() {
+                    document.querySelectorAll('#board-dropdown .dropdown-item').forEach(item => {
+                        item.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const value = this.dataset.value;
+                            setBoardType(value);
+                            const boardBtn = getCachedElement('peg-board-type');
+                            if (boardBtn) boardBtn.textContent = this.textContent.split(' (')[0].toUpperCase();
+
+                            const parentDropdown = this.closest('.dropdown');
+                            if (parentDropdown) {
+                                parentDropdown.classList.remove('open');
+                            }
+                            this.parentElement.style.display = 'none';
+
+                            document.querySelectorAll('#board-dropdown .dropdown-item').forEach(i => i.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+
+                    document.querySelectorAll('#theme-dropdown .dropdown-item').forEach(item => {
+                        item.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const value = this.dataset.value;
+                            setTheme(value);
+                            const themeBtn = getCachedElement('peg-theme');
+                            if (themeBtn) themeBtn.textContent = this.textContent.toUpperCase();
+
+                            const parentDropdown = this.closest('.dropdown');
+                            if (parentDropdown) {
+                                parentDropdown.classList.remove('open');
+                            }
+                            this.parentElement.style.display = 'none';
+
+                            document.querySelectorAll('#theme-dropdown .dropdown-item').forEach(i => i.classList.remove('active'));
+                            this.classList.add('active');
+                        });
+                    });
+                }
+
+                function closeDropdowns() {
+                    document.querySelectorAll('#peg-solitaire-game .dropdown').forEach(dropdown => {
+                        dropdown.classList.remove('open');
+                        const menu = dropdown.querySelector('.dropdown-menu');
+                        if (menu) menu.style.display = 'none';
+                    });
+                    document.querySelectorAll('#peg-solitaire-game .dropdown-button').forEach(btn => {
+                        btn.classList.remove('open');
+                    });
+                }
+
+                function toggleDropdown(dropdownId, event) {
+                    event.stopPropagation();
+                    event.preventDefault();
+
+                    const dropdown = getCachedElement(dropdownId);
+                    if (!dropdown) return;
+
+                    const menu = dropdown.querySelector('.dropdown-menu');
+                    const button = dropdown.querySelector('.dropdown-button');
+                    const isOpen = dropdown.classList.contains('open');
+
+                    // Close all dropdowns first
+                    closeDropdowns();
+
+                    // Toggle this dropdown
+                    if (!isOpen) {
+                        dropdown.classList.add('open');
+                        if (menu) {
+                            menu.style.display = 'block';
+
+                            // Adjust position for mobile if menu goes off-screen
+                            if (window.innerWidth <= 768) {
+                                const rect = button.getBoundingClientRect();
+                                menu.style.top = (rect.bottom + 4) + 'px';
+                            }
+                        }
+                        if (button) button.classList.add('open');
+                    }
+                }
+
+                // Setup event listeners
+                function setupEventListeners() {
+                    if (eventListenersSetup) return;
+                    eventListenersSetup = true;
+
+                    // Win message event listeners
+                    const winOverlay = getCachedElement('peg-win-overlay');
+                    const winMessage = getCachedElement('peg-win-message');
+
+                    if (winOverlay) {
+                        winOverlay.addEventListener('click', hideWinMessage);
+                    }
+
+                    if (winMessage) {
+                        winMessage.addEventListener('click', function(e) {
+                            if (e.target === this) {
+                                hideWinMessage();
+                            }
+                        });
+                    }
+
+                    // Button event listeners
+                    const undoBtn = getCachedElement('peg-undo-btn');
+                    const redoBtn = getCachedElement('peg-redo-btn');
+                    const maxScoreBtn = getCachedElement('peg-max-score-btn');
+                    const autosolveBtn = getCachedElement('peg-autosolve-btn');
+                    const newGameBtn = getCachedElement('peg-new-game-btn');
+                    const winNewGameBtn = getCachedElement('win-new-game-btn');
+                    const winCloseBtn = getCachedElement('win-close-btn');
+
+                    if (undoBtn) undoBtn.addEventListener('click', undo);
+                    if (redoBtn) redoBtn.addEventListener('click', redo);
+                    if (maxScoreBtn) maxScoreBtn.addEventListener('click', showMaxScore);
+                    if (autosolveBtn) autosolveBtn.addEventListener('click', autoSolve);
+                    if (newGameBtn) newGameBtn.addEventListener('click', newGame);
+
+                    if (winNewGameBtn) {
+                        winNewGameBtn.addEventListener('click', function() {
+                            hideWinMessage();
+                            newGame();
+                        });
+                    }
+
+                    if (winCloseBtn) {
+                        winCloseBtn.addEventListener('click', hideWinMessage);
+                    }
+
+                    // Dropdown button event listeners
+                    const boardTypeBtn = getCachedElement('peg-board-type');
+                    const themeBtn = getCachedElement('peg-theme');
+                    const startPosBtn = getCachedElement('peg-start-pos');
+
+                    if (boardTypeBtn) {
+                        boardTypeBtn.addEventListener('click', function(e) {
+                            toggleDropdown('board-dropdown', e);
+                        });
+                    }
+
+                    if (themeBtn) {
+                        themeBtn.addEventListener('click', function(e) {
+                            toggleDropdown('theme-dropdown', e);
+                        });
+                    }
+
+                    if (startPosBtn) {
+                        startPosBtn.addEventListener('click', function(e) {
+                            toggleDropdown('start-dropdown', e);
+                        });
+                    }
+
+                    // Global event listeners
+                    document.addEventListener('keydown', function(e) {
+                        if (e.key === 'Escape') {
+                            const winMsg = getCachedElement('peg-win-message');
+                            if (winMsg && winMsg.classList.contains('show')) {
+                                hideWinMessage();
+                            } else if (isAutoSolving) {
+                                stopAutoSolve();
+                            }
+                        }
+                        else if (e.ctrlKey && e.key === 'z' && !e.shiftKey) {
+                            e.preventDefault();
+                            undo();
+                        }
+                        else if ((e.ctrlKey && e.key === 'y') || (e.ctrlKey && e.shiftKey && e.key === 'z')) {
+                            e.preventDefault();
+                            redo();
+                        }
+                    });
+
+                    // Close dropdowns when clicking outside
+                    document.addEventListener('click', function(e) {
+                        if (!e.target.closest('#peg-solitaire-game .dropdown')) {
+                            closeDropdowns();
+                        }
+                    });
+                }
+
+                // Initialize the game
+                function init() {
+                    setTheme('sapphire');
+                    updateStartPositions();
+                    setupDropdowns();
+                    setupEventListeners();
+
+                    // Set initial active states
+                    const triangularItem = document.querySelector('#board-dropdown .dropdown-item[data-value="triangular"]');
+                    const sapphireItem = document.querySelector('#theme-dropdown .dropdown-item[data-value="sapphire"]');
+                    if (triangularItem) triangularItem.classList.add('active');
+                    if (sapphireItem) sapphireItem.classList.add('active');
+
+                    initBoard();
+                }
+
+                // Call init when DOM is ready
+                if (document.readyState === 'loading') {
+                    document.addEventListener('DOMContentLoaded', init);
+                } else {
+                    init();
+                }
+
+                // Public API
+                return {
+                    undo,
+                    redo,
+                    newGame,
+                    hideWinMessage,
+                    toggleDropdown,
+                    showMaxScore,
+                    autoSolve,
+                    stopAutoSolve
+                };
+            })();
+
+            // Make pegSolitaire available globally for onclick handlers
+            window.pegSolitaire = pegSolitaire;
+        })();
+    </script>
+</div>
